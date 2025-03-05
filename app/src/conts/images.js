@@ -1,0 +1,22 @@
+const IMAGES = {
+  Logo: require('../assets/images/others/logo.png'),
+  ngLogo: require('../assets/images/others/ng.png'),
+  ukLogo: require('../assets/images/others/uk.png'),
+  euroLogo: require('../assets/images/others/euro.png'),
+  usaLogo: require('../assets/images/others/usa.png'),
+  error: require('../assets/images/others/error.png'),
+  payoneer: require('../assets/images/others/payoneer.png'),
+  paypal: require('../assets/images/others/paypal.png'),
+  person: require('../assets/images/others/person.png'),
+  opay: require('../assets/images/others/opay.png'),
+  paystack: require('../assets/images/others/paystack.png'),
+  moniepoint: require('../assets/images/others/moniepoint.png'),
+  wema: require('../assets/images/others/wema.png'),
+  shareAvatar: require('../assets/images/others/shareAvatar.png'),
+  chevron: require('../assets/images/others/chevron.png'),
+  neco: require('../assets/images/others/neco.png'),
+  waec: require('../assets/images/others/waec.png'),
+  newsPapper: require('../assets/images/others/newsPapper.png'),
+  logoIcon: require('../assets/images/others/logoIcon.png'),
+};
+export default IMAGES;

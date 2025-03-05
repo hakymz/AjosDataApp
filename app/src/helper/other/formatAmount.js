@@ -1,0 +1,10 @@
+export const formatAmount = (price, type) => {
+  if (price) {
+    const amount = price * 1;
+    return isNaN(amount)
+      ? '0.00'
+      : amount?.toFixed?.(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+  } else {
+    return '0.00';
+  }
+};
