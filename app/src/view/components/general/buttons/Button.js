@@ -15,7 +15,7 @@ export const Button = ({
   rightIcon,
   disabled,
   children,
-  fontSize = 18,
+  fontSize = 16,
   loading,
 }) => {
   const configStyle = {
@@ -31,7 +31,7 @@ export const Button = ({
     if (big) {
       return s(60);
     } else {
-      return 56;
+      return 48;
     }
   };
 
@@ -42,8 +42,10 @@ export const Button = ({
       onPress={onPress}
       style={{
         height: getButtonSize(),
-        backgroundColor: configStyle[type].backgroundColor,
-        borderRadius: 8,
+        backgroundColor: disabled
+          ? '#6F889D40'
+          : configStyle[type].backgroundColor,
+        borderRadius: 16,
         alignItems: 'center',
         width: '100%',
         flexDirection: 'row',
@@ -69,7 +71,6 @@ export const Button = ({
 
           {title ? (
             <Text
-              fontWeight={'800'}
               numberOfLines={1}
               semiBold
               size={fontSize}

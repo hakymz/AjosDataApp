@@ -1,8 +1,9 @@
 import React from 'react';
-import {View, StatusBar, SafeAreaView} from 'react-native';
+import {View, StatusBar, SafeAreaView, Image} from 'react-native';
 import {COLORS, FONTS} from '../../../conts';
 
 import {
+  CircleButton,
   Input,
   KeyboardAvoidingViewWrapper,
   Text,
@@ -148,47 +149,48 @@ export const OtpScreen = ({navigation, route}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
       <StatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
-      <BackNav />
 
       <KeyboardAvoidingViewWrapper
         contentContainerStyle={{
-          paddingHorizontal: 30,
+          paddingHorizontal: 20,
           minHeight: '100%',
           paddingBottom: 20,
         }}>
+        <CircleButton />
         <View>
-          <Text bd size={35} textAlign="left" style={{paddingTop: 50}}>
-            Verify Code
+          <Text
+            semiBold
+            size={25}
+            style={{paddingTop: 30}}
+            color={COLORS.darkBlue}>
+            Verification Code
           </Text>
           <Text
             lineHeight={'22'}
-            style={{marginTop: 30}}
-            color={'#3D3A3B'}
-            size={16}>
-            Check your Email inbox, we have sent the code to{' '}
-            <Text
-              lineHeight={'22'}
-              color={'#3D3A3B'}
-              size={16}
-              fontWeight={'700'}>
+            style={{marginTop: 10}}
+            color={'#868D95'}
+            size={14}>
+            Check your Email inbox, we have sent the code to
+            <Text lineHeight={'22'} color={'#868D95'} size={14} bold>
               {email}
             </Text>{' '}
           </Text>
         </View>
         {/* Inputs Section */}
-        <View style={{marginTop: 30, height: 220}}>
+        <View style={{marginTop: 30}}>
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'space-between',
+              justifyContent: 'center',
             }}>
             {['-', '-', '-', '-']?.map((_, index) => {
               return (
                 <View>
                   <Input
                     backgroundColor={{
-                      active: '#4961AC',
-                      blur: state.inputs?.[index] == '' ? '#EFF1FB' : '#F8F8F8',
+                      active: COLORS.white,
+                      blur:
+                        state.inputs?.[index] == '' ? '#ECF2F7' : COLORS.white,
                     }}
                     textColor={{
                       active: 'white',
@@ -214,22 +216,16 @@ export const OtpScreen = ({navigation, route}) => {
                     }}
                     ref={ref => inputsRef.current.push(ref)}
                     style={{
-                      width: 70,
-                      height: 70,
-                      borderRadius: 15,
+                      width: 60,
+                      height: 60,
+                      borderRadius: 60,
                       paddingHorizontal: 10,
-                      shadowColor:
-                        state?.focusedIndex == index
-                          ? 'rgba(49, 75, 206, 0.4)'
-                          : 'transparent',
-                      shadowOpacity: 0.3,
-                      shadowRadius: 7,
-                      shadowOffset: {height: 20},
+                      marginHorizontal: 5,
                     }}
                     inputStyle={{
                       textAlign: 'center',
-                      fontSize: 40,
-                      fontFamily: FONTS.AIRBNBCEREAL_FONTS.Bd,
+                      fontSize: 15,
+                      fontFamily: FONTS.PLUS_JAKARTA_SANS_FONTS.medium,
                     }}
                     placeholder=""
                   />
@@ -237,7 +233,12 @@ export const OtpScreen = ({navigation, route}) => {
               );
             })}
           </View>
-          <Text fontWeight={700} style={{marginTop: 20}} size={13}>
+          <Text
+            color={COLORS.red}
+            textAlign={'center'}
+            fontWeight={700}
+            style={{marginTop: 20}}
+            size={13}>
             (00:
             {`${
               state?.remainSecond > 0
@@ -251,24 +252,16 @@ export const OtpScreen = ({navigation, route}) => {
         </View>
 
         <View>
-          {state?.remainSecond > 0 && (
-            <Text
-              lineHeight={'24'}
-              size={14}
-              color={'#3D3A3B'}
-              style={{paddingRight: 40}}>
-              This session will end in 60 seconds.
-            </Text>
-          )}
-
           {state?.remainSecond < 1 && (
             <Text
+              textAlign={'center'}
               lineHeight={'24'}
               size={14}
               color={'#3D3A3B'}
-              style={{paddingRight: 40}}>
+              style={{marginTop: 15}}>
               Didn’t receive a code?{' '}
               <Text
+                textAlign={'center'}
                 onPress={sendLink}
                 lineHeight={'24'}
                 style={{textDecorationLine: 'underline'}}
@@ -278,6 +271,17 @@ export const OtpScreen = ({navigation, route}) => {
               </Text>
             </Text>
           )}
+        </View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+          }}>
+          <Image
+            style={{height: 222, width: 222}}
+            source={require('../../../assets/images/others/noEmail.png')}
+          />
         </View>
       </KeyboardAvoidingViewWrapper>
     </SafeAreaView>

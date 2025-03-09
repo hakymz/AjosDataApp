@@ -7,13 +7,14 @@ import {
   Image,
 } from 'react-native';
 import {COLORS, FONTS} from '../../../../conts';
-import {BottomSheetTextInput, TouchableOpacity} from '@gorhom/bottom-sheet';
+import {TouchableOpacity} from '@gorhom/bottom-sheet';
+import {Icons} from '../others';
 
 export const Input = React.forwardRef(
   (
     {
       error = null,
-      type = 'grey',
+      type = 'white',
       fontFamily,
       fontSize = 16,
       name,
@@ -48,7 +49,7 @@ export const Input = React.forwardRef(
           active: COLORS.white,
           blur: 'rgba(255, 255, 255, 0.1)',
         },
-        textColor: {active: COLORS.voodoo, blur: 'rgba(82, 52, 90, 0.5)'},
+        textColor: {active: COLORS.darkBlue, blur: '#848A94'},
       },
       grey: {
         backgroundColor: {
@@ -94,7 +95,7 @@ export const Input = React.forwardRef(
         }
       } else {
         return error && !focused
-          ? COLORS.primary
+          ? inputStyleConfig[type].textColor.blur
           : focused
           ? inputStyleConfig[type].textColor.active
           : inputStyleConfig[type].textColor.blur;
@@ -115,17 +116,17 @@ export const Input = React.forwardRef(
           style={[
             styles.inputContainer,
             {
-              height: big ? 60 : 54,
+              height: 60,
               alignItems: 'center',
               backgroundColor: getBackgroundColor(),
               borderWidth: 1,
               borderColor: !border
                 ? COLORS.white
                 : focused && !error
-                ? COLORS.blue
+                ? COLORS.primary
                 : error
                 ? COLORS.error
-                : 'rgba(208, 208, 208, 0)',
+                : '#E9F1FF',
               ...style,
             },
           ]}>
@@ -137,7 +138,7 @@ export const Input = React.forwardRef(
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <ActivityIndicator color={COLORS.yellow} />
+              <ActivityIndicator color={COLORS.primary} />
             </View>
           ) : (
             <>
@@ -159,7 +160,7 @@ export const Input = React.forwardRef(
                   ...styles.input,
                   color: getTextColor(),
                   textAlign: centerText ? 'center' : 'left',
-                  fontFamily: FONTS.AIRBNBCEREAL_FONTS.Md,
+                  fontFamily: FONTS.PLUS_JAKARTA_SANS_FONTS.regular,
                   ...inputStyle,
                 }}
                 ref={ref}
@@ -178,10 +179,7 @@ export const Input = React.forwardRef(
                         onPress={() => {
                           setShowPassword(!showPassword);
                         }}>
-                        <Image
-                          style={{height: 20, width: 20}}
-                          source={require('../../../../assets/images/others/eyeClose.png')}
-                        />
+                        <Icons.EyeLash size={22} />
                       </TouchableOpacity>
                     ) : (
                       <View style={{right: -20}}>{rightIcon}</View>
@@ -201,7 +199,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 16,
     paddingHorizontal: 20,
     width: '100%',
     justifyContent: 'center',

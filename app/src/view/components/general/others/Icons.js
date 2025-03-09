@@ -56,6 +56,15 @@ import EditPen from '../../../../assets/svgs/icons/editPen.svg';
 import DollarCoin from '../../../../assets/svgs/icons/dollarCoin.svg';
 import ArrowCircleRight from '../../../../assets/svgs/icons/arrowCircleRight.svg';
 
+import BackArrowGrey from '../../../../assets/svgs/icons/backArrowGrey.svg';
+import EyeLash from '../../../../assets/svgs/icons/eyeLash.svg';
+import NoteRedDot from '../../../../assets/svgs/icons/noteRedDot.svg';
+import StickMan from '../../../../assets/svgs/icons/stickMan.svg';
+import Plus from '../../../../assets/svgs/icons/plus.svg';
+import Clipboard from '../../../../assets/svgs/icons/clipboard.svg';
+import ChatRound from '../../../../assets/svgs/icons/chatRound.svg';
+import BombEmoji from '../../../../assets/svgs/icons/bombEmoji.svg';
+
 const width = 30;
 const height = 30;
 
@@ -69,6 +78,32 @@ const customStyle = props => {
   };
 };
 export const Icons = {
+  ChatRound: ({...props}) => {
+    return <Svg {...customStyle(props)} file={ChatRound} />;
+  },
+  BombEmoji: ({...props}) => {
+    return <Svg {...customStyle(props)} file={BombEmoji} />;
+  },
+  Clipboard: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Clipboard} />;
+  },
+  Plus: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Plus} />;
+  },
+  StickMan: ({...props}) => {
+    return <Svg {...customStyle(props)} file={StickMan} />;
+  },
+  NoteRedDot: ({...props}) => {
+    return <Svg {...customStyle(props)} file={NoteRedDot} />;
+  },
+  EyeLash: ({...props}) => {
+    return <Svg {...customStyle(props)} file={EyeLash} />;
+  },
+  BackArrowGrey: ({...props}) => {
+    return <Svg {...customStyle(props)} file={BackArrowGrey} />;
+  },
+
+  // old Icons
   EditPen: ({...props}) => {
     return <Svg {...customStyle(props)} file={EditPen} />;
   },

@@ -1,7 +1,7 @@
 import React from 'react';
-import {View, StatusBar, SafeAreaView, Keyboard} from 'react-native';
+import {View, StatusBar, SafeAreaView, Keyboard, Image} from 'react-native';
 import {COLORS} from '../../../conts';
-import {Button} from '../../components/general';
+import {Button, CircleButton} from '../../components/general';
 import {
   Input,
   KeyboardAvoidingViewWrapper,
@@ -91,37 +91,44 @@ export const ForgotPasswordScreen = ({navigation}) => {
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
       <StatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
-      <BackNav />
 
       <KeyboardAvoidingViewWrapper
         contentContainerStyle={{
-          paddingHorizontal: 30,
+          paddingHorizontal: 20,
           minHeight: '100%',
           paddingBottom: 20,
         }}>
+        <CircleButton />
         <View>
-          <Text bd size={35} textAlign="left" style={{paddingTop: 50}}>
-            Forgot Password
+          <Text
+            semiBold
+            size={25}
+            color={COLORS.darkBlue}
+            style={{paddingTop: 30}}>
+            Yikes!!! Not to worry...
           </Text>
           <Text
             lineHeight={'22'}
-            style={{marginTop: 30}}
-            color={'#3D3A3B'}
+            style={{marginTop: 10}}
+            color={'#868D95'}
             size={16}>
-            Please enter your
-            <Text
-              lineHeight={'22'}
-              color={'#3D3A3B'}
-              size={16}
-              fontWeight={'700'}>
-              {' '}
-              email address
-            </Text>{' '}
-            to reset your password
+            Please enter your email address to reset your password
           </Text>
         </View>
+
+        <View
+          style={{
+            marginTop: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image
+            style={{height: 184, width: 184}}
+            source={require('../../../assets/images/others/askingQuestion.png')}
+          />
+        </View>
         {/* Inputs Section */}
-        <View style={{marginTop: 30, height: 300}}>
+        <View style={{marginTop: 30}}>
           <View>
             <Input
               placeholder="Enter Email Address"
@@ -133,14 +140,15 @@ export const ForgotPasswordScreen = ({navigation}) => {
               onBlur={() => setFieldTouched('email', true)}
             />
           </View>
+        </View>
+
+        <View style={{flex: 1, justifyContent: 'flex-end'}}>
           <Button
-            style={{marginTop: 60}}
             // disabled={state.buttonDisabled}
             titleStyle={{color: COLORS.white}}
-            type={state?.buttonDisabled ? 'grey' : 'primary'}
-            title="Send Email"
+            title="Send Me An Email"
             onPress={() => {
-              // navigation.navigate('OtpScreen');
+              navigation.navigate('ChangePasswordScreen');
               submitForm();
               Keyboard.dismiss();
             }}

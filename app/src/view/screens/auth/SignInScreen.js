@@ -5,10 +5,12 @@ import {
   SafeAreaView,
   Keyboard,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import {COLORS} from '../../../conts';
 import {
   Button,
+  CircleButton,
   Icons,
   Input,
   KeyboardAvoidingViewWrapper,
@@ -82,29 +84,28 @@ export const SignInScreen = ({navigation}) => {
         contentContainerStyle={{
           paddingBottom: 20,
           minHeight,
-          paddingHorizontal: 30,
+          paddingHorizontal: 20,
         }}>
+        <CircleButton />
         <View style={{marginTop: 0, flex: 1}}>
-          <Text bd size={35} textAlign="left" style={{paddingTop: 30}}>
-            Log In
+          <Text semiBold size={25} style={{paddingTop: 30}}>
+            Log-into Account
           </Text>
-          {/* 
+          <Text color={'#868D95'} style={{marginTop: 10}}>
+            Please Enter your Sign-in details to get plugged-in.
+          </Text>
+
           <View
             style={{
+              justifyContent: 'center',
+              alignItems: 'center',
               marginTop: 30,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
             }}>
-            <SocialButton title={'GOOGLE'} />
-            <View style={{width: 15}} />
-            <SocialButton
-              title={'FACEBOOK'}
-              style={{backgroundColor: '#F5F6FA'}}
+            <Image
+              style={{height: 184, width: 184}}
+              source={require('../../../assets/images/others/bye.png')}
             />
           </View>
-          <View style={{marginTop: 15}}>
-            <OrLine />
-          </View> */}
 
           {/* Inputs Section */}
           <View style={{marginTop: 15, flex: 1, marginTop: 40}}>
@@ -151,18 +152,18 @@ export const SignInScreen = ({navigation}) => {
                       onBlur={() => setFieldTouched('password', true)}
                     />
                     <Text
+                      textAlign={'center'}
                       onPress={() =>
                         navigation.navigate('ForgotPasswordScreen')
                       }
                       size={14}
                       semiBold
-                      fontWeight={'500'}
-                      color={'#5771F9'}
+                      fontWeight={'700'}
+                      color={COLORS.primary}
                       style={{
-                        textAlign: 'right',
                         marginBottom: 20,
                         marginHorizontal: 20,
-                        marginTop: 20,
+                        marginTop: 10,
                         textDecorationLine: 'underline',
                       }}>
                       Forgot Password?
@@ -173,43 +174,25 @@ export const SignInScreen = ({navigation}) => {
                         Keyboard.dismiss();
                         handleSubmit();
                       }}
-                      title="Log-in"
+                      title="Plug Me In"
                     />
-                    <View style={{alignItems: 'center', marginTop: 30}}>
-                      <SupportButton />
-                    </View>
                   </View>
 
                   <View
                     style={{
                       flex: 1,
-                      justifyContent: 'flex-end',
+
                       marginBottom: 20,
                       paddingHorizontal: 10,
+                      alignItems: 'center',
                     }}>
                     <View style={{marginTop: 30}}>
-                      <Text fontWeight={'700'} color={'#151940'}>
-                        Don’t have an account?
-                      </Text>
-                      <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={() => {
-                          navigation.navigate('SignUpScreen');
-                        }}
-                        style={{
-                          marginTop: 10,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}>
-                        <Text
-                          style={{marginRight: 20}}
-                          size={16}
-                          fontWeight={'700'}
-                          color={COLORS.primary}>
-                          REGISTER
+                      <Text fontWeight={'400'} color={'#848A94'}>
+                        Not me?{' '}
+                        <Text fontWeight={'400'} color={COLORS.primary}>
+                          Sign Up
                         </Text>
-                        <Icons.ArrowRed size={15} />
-                      </TouchableOpacity>
+                      </Text>
                     </View>
                   </View>
                 </View>

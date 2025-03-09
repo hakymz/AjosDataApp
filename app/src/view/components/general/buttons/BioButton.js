@@ -7,17 +7,21 @@ export const BioButton = ({title, icon, onPress, style}) => {
     <TouchableOpacity
       onPress={onPress}
       style={{
-        height: 53,
-        backgroundColor: COLORS.lightGrey,
-        borderRadius: 8,
-        flex: 1,
+        height: 38,
+        backgroundColor: '#ECF2F7',
+        borderRadius: 19,
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
+        paddingHorizontal: 20,
         ...style,
       }}>
       {icon}
-      <Text size={16} style={{paddingLeft: 10}} fontWeight={'700'}>
+      <Text
+        semiBold
+        color={COLORS.darkBlue}
+        size={14}
+        style={{paddingLeft: 10}}>
         {title}
       </Text>
     </TouchableOpacity>

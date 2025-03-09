@@ -11,6 +11,7 @@ import {COLORS, GENERAL, IMAGES} from '../../../conts';
 import {
   BioButton,
   Button,
+  CircleButton,
   Icons,
   Input,
   KeyboardAvoidingViewWrapper,
@@ -102,33 +103,50 @@ export const SignInWithBiometricScreen = ({navigation}) => {
         contentContainerStyle={{
           paddingBottom: 20,
           minHeight,
-          paddingHorizontal: 30,
+          paddingHorizontal: 20,
         }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <CircleButton style={{marginTop: 0}} />
+          <View
+            style={{
+              height: 64,
+              width: 64,
+              backgroundColor: '#ECF2F7',
+              borderRadius: 100,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image source={IMAGES.face} style={{width: 34, height: 46}} />
+          </View>
+        </View>
         <View style={{marginTop: 0, flex: 1}}>
-          <Text bd size={35} textAlign="left" style={{paddingTop: 30}}>
-            Log In
+          <Text color={'#868D95'} size={14} style={{paddingTop: 30}}>
+            Welcome back
           </Text>
 
-          <View style={{marginTop: 40, marginBottom: 20}}>
+          <Text semiBold color={COLORS.darkBlue} size={25} style={{}}>
+            Holla! {data?.user?.firstName}
+          </Text>
+
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 30,
+            }}>
             <Image
-              resizeMode={FastImage.resizeMode.cover}
-              style={{height: 110, width: 110, borderRadius: 100}}
-              source={
-                data?.user?.avatar == 'NULL'
-                  ? IMAGES.person
-                  : {uri: data?.user?.avatar}
-              }
+              style={{height: 184, width: 184}}
+              source={require('../../../assets/images/others/bye.png')}
             />
           </View>
 
           {/* Inputs Section */}
           <View style={{marginTop: 20, flex: 1}}>
-            <Text size={16} style={{marginBottom: 15}}>
-              Welcome Back,{' '}
-              <Text size={16} fontWeight={'700'}>
-                {data?.user?.firstName}
-              </Text>
-            </Text>
             <Formik
               innerRef={formikRef}
               initialValues={{
@@ -166,11 +184,11 @@ export const SignInWithBiometricScreen = ({navigation}) => {
                         navigation.navigate('ForgotPasswordScreen')
                       }
                       size={14}
-                      semiBold
+                      bold
+                      textAlign={'center'}
                       fontWeight={'500'}
-                      color={'#5771F9'}
+                      color={COLORS.primary}
                       style={{
-                        textAlign: 'right',
                         marginBottom: 20,
                         marginHorizontal: 20,
                         marginTop: 20,
@@ -178,19 +196,7 @@ export const SignInWithBiometricScreen = ({navigation}) => {
                       }}>
                       Forgot Password?
                     </Text>
-                    <View style={{flexDirection: 'row', marginTop: 30}}>
-                      <BioButton
-                        onPress={SignInWithAuth}
-                        icon={
-                          Platform.OS == 'ios' ? (
-                            <Icons.FaceId size={24} />
-                          ) : (
-                            <Icons.FingerPrint size={24} />
-                          )
-                        }
-                        title={Platform.OS == 'ios' ? 'Face-ID' : 'Biometrics'}
-                      />
-                      <View style={{width: 15}} />
+                    <View style={{marginTop: 20}}>
                       <Button
                         fontSize={16}
                         style={{width: 'auto', flex: 1}}
@@ -198,12 +204,29 @@ export const SignInWithBiometricScreen = ({navigation}) => {
                           Keyboard.dismiss();
                           handleSubmit();
                         }}
-                        title="Log-in"
+                        title="Plug Me In"
                       />
                     </View>
 
-                    <View style={{alignItems: 'center', marginTop: 40}}>
-                      <SupportButton />
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        marginTop: 40,
+                      }}>
+                      <BioButton
+                        onPress={SignInWithAuth}
+                        icon={
+                          Platform.OS == 'ios' ? (
+                            <Icons.FaceId size={31} />
+                          ) : (
+                            <Icons.FingerPrint size={31} />
+                          )
+                        }
+                        title={
+                          Platform.OS == 'ios' ? 'Use FaceID' : 'Use Biometrics'
+                        }
+                      />
                     </View>
                   </View>
 
@@ -215,32 +238,15 @@ export const SignInWithBiometricScreen = ({navigation}) => {
                       paddingHorizontal: 10,
                     }}>
                     <View style={{marginTop: 30}}>
-                      <Text fontWeight={'700'} color={'#151940'}>
-                        Don’t have an account?
-                      </Text>
-                      <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={() => {
-                          updateUserData({
-                            data: data,
-                            settings: {...settings, biometric: false},
-                          });
-                          navigation.navigate('SignInScreen');
-                        }}
-                        style={{
-                          marginTop: 10,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}>
+                      <Text textAlign={'center'} color={'#848A94'}>
+                        Not me?{' '}
                         <Text
-                          style={{marginRight: 20}}
-                          size={16}
-                          fontWeight={'700'}
+                          semiBold
+                          textAlign={'center'}
                           color={COLORS.primary}>
-                          LOG OUT
+                          Sign Up
                         </Text>
-                        <Icons.ArrowRed size={15} />
-                      </TouchableOpacity>
+                      </Text>
                     </View>
                   </View>
                 </View>

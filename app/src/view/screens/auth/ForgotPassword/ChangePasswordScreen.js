@@ -1,8 +1,9 @@
-import {SafeAreaView, View, StatusBar} from 'react-native';
+import {SafeAreaView, View, StatusBar, Image} from 'react-native';
 import React from 'react';
 import {COLORS} from '../../../../conts';
 import {
   Button,
+  CircleButton,
   KeyboardAvoidingViewWrapper,
   Text,
 } from '../../../components/general';
@@ -87,30 +88,41 @@ export const ChangePasswordScreen = ({navigation, route}) => {
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
       <StatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
 
-      <BackNav />
-
       <KeyboardAvoidingViewWrapper
         // bounces={false}
         addMinHeight
         contentContainerStyle={{
           paddingBottom: 20,
-          paddingHorizontal: 30,
+          paddingHorizontal: 20,
         }}>
-        <View style={{alignItems: 'center', marginTop: 0, flex: 1}}>
-          <Text bd size={35} style={{paddingTop: 50}}>
-            Forgot Password
-          </Text>
-
+        <CircleButton />
+        <View style={{marginTop: 0, flex: 1}}>
           <Text
-            lineHeight={'22'}
-            style={{marginTop: 30}}
-            color={'#3D3A3B'}
-            size={16}>
-            You can now proceed to create a new password, Try not to forget this
-            time ☺️
+            color={COLORS.darkBlue}
+            semiBold
+            size={25}
+            style={{paddingTop: 30}}>
+            Create a new password
           </Text>
 
-          <View style={{marginTop: 50, width: '100%', flex: 1}}>
+          <Text size={14} color={'#868D95'} style={{marginTop: 10}}>
+            Please enter a secure password and make sure your write it down
+            somewhere safe.
+          </Text>
+
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 30,
+            }}>
+            <Image
+              style={{height: 184, width: 184}}
+              source={require('../../../../assets/images/others/securityShield.png')}
+            />
+          </View>
+
+          <View style={{marginTop: 40, width: '100%', flex: 1}}>
             <View style={{flex: 1}}>
               <Input
                 password
@@ -139,15 +151,15 @@ export const ChangePasswordScreen = ({navigation, route}) => {
                 style={{
                   flex: 1,
                   marginBottom: 20,
-                  marginTop: 20,
+                  marginTop: 50,
                 }}>
                 <Button
                   titleStyle={{color: COLORS.white}}
-                  type={state?.buttonDisabled ? 'grey' : 'primary'}
                   onPress={() => {
                     submitForm();
+                    navigation.navigate('ChangePasswordSuccessScreen');
                   }}
-                  title="Save Password"
+                  title="Save New Password"
                 />
               </View>
             </View>

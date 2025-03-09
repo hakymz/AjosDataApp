@@ -1,12 +1,15 @@
 import React from 'react';
 import {SafeAreaView} from 'react-native';
-import {COLORS} from '../../../../conts';
 
-export const CustomSafeAreaView = ({style, scrollable, children, ...props}) => {
+export const CustomSafeAreaView = ({
+  style,
+  backgroundColor = '#F5F5F5',
+  scrollable,
+  children,
+  ...props
+}) => {
   return (
-    <SafeAreaView
-      style={{backgroundColor: COLORS.white, flex: 1, ...style}}
-      {...props}>
+    <SafeAreaView style={{backgroundColor, flex: 1, ...style}} {...props}>
       {children}
     </SafeAreaView>
   );

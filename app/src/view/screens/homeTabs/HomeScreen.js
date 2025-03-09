@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, RefreshControl, AppState} from 'react-native';
+import {ScrollView, RefreshControl, AppState, View} from 'react-native';
 import {COLORS, GENERAL} from '../../../conts';
 import {
   BottomSheets,
@@ -33,6 +33,7 @@ import {
   CreatePin,
   openClipboardNumberModal,
 } from '../../components/bottomSheetModal/contents';
+
 // import Intercom from '@intercom/intercom-react-native';
 
 export const HomeScreen = ({navigation}) => {
@@ -59,11 +60,11 @@ export const HomeScreen = ({navigation}) => {
   }, [isFocused]);
 
   React.useEffect(() => {
-    Intercom.loginUserWithUserAttributes({
-      email: data?.user?.email,
-      userId: data?.user?._id,
-    });
-    pushNotificationHelper();
+    // Intercom.loginUserWithUserAttributes({
+    //   email: data?.user?.email,
+    //   userId: data?.user?._id,
+    // });
+    // pushNotificationHelper();
   }, []);
 
   React.useEffect(() => {
@@ -89,8 +90,6 @@ export const HomeScreen = ({navigation}) => {
             component: <Biometric />,
             customSnapPoints: [600, 600],
           });
-        } else if (hasValidclipboardNumber && tour) {
-          BottomSheets.show({component: <CopyNumberFromClipboard />});
         }
       }, 500);
     })();
@@ -145,7 +144,7 @@ export const HomeScreen = ({navigation}) => {
 
   return (
     <CustomSafeAreaView>
-      <TourGuide />
+      {/* <TourGuide /> */}
       <MainHeader />
       <ScrollView
         bouncesZoom={false}
@@ -161,14 +160,14 @@ export const HomeScreen = ({navigation}) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: GENERAL.platform == 'ios' ? 80 : 100,
-          paddingHorizontal: 20,
           paddingTop: 20,
         }}
         onMomentumScrollEnd={({nativeEvent}) => {}}>
-        <AccountBalance />
-        <MenuButtons />
+        <View style={{paddingHorizontal: 20}}>
+          <AccountBalance />
+        </View>
 
-        <QuickBuyData />
+        <MenuButtons />
 
         <Services />
       </ScrollView>

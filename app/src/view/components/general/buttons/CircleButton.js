@@ -9,17 +9,18 @@ export const CircleButton = ({style, onPress, icon}) => {
   return (
     <TouchableOpacity
       onPress={onPress || navigation.goBack}
-      activeOpacity={0.7}
       style={{
-        height: s(46),
-        width: s(46),
-        backgroundColor: COLORS.black,
-        borderRadius: 100,
+        height: 44,
+        width: 44,
+        borderColor: '#E9F1FF',
+        borderWidth: 1,
+        borderRadius: 44,
+        marginTop: 20,
         justifyContent: 'center',
         alignItems: 'center',
         ...style,
       }}>
-      {icon || <Icons.CircleArrowLeftBlue />}
+      {icon || <Icons.BackArrowGrey size={20} />}
     </TouchableOpacity>
   );
 };

@@ -7,12 +7,12 @@ import {
   EmailSentSuccessScreen,
   SignInScreen,
   SignInWithBiometricScreen,
-  ForgotPasswordOtpScreen,
   ChangePasswordScreen,
   PasswordSuccessScreen,
   SignUpEmailScreen,
   OtpScreen,
   ForgotPasswordScreen,
+  ChangePasswordSuccessScreen,
 } from '../../screens/auth';
 
 const Stack = createStackNavigator();
@@ -37,6 +37,10 @@ const AuthStack = () => {
 
       <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
       <Stack.Screen name="SignUpEmailScreen" component={SignUpEmailScreen} />
+      <Stack.Screen
+        name="ChangePasswordSuccessScreen"
+        component={ChangePasswordSuccessScreen}
+      />
       <Stack.Screen name="OtpScreen" component={OtpScreen} />
       <Stack.Screen
         name="ForgotPasswordScreen"

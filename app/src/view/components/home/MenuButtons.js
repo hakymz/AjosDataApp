@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, ScrollView} from 'react-native';
 import {s} from 'react-native-size-matters';
 import {BottomSheets, Icons, MyIcons} from '../general';
 import {Text} from '../general';
@@ -20,35 +20,29 @@ import {TopupWallet} from '../bottomSheetModal/contents';
 
 const menus = [
   {
-    name: 'Fund wallet',
-    Icon: <Icons.PlusCircle size={22} />,
+    name: 'Receipts',
+    Icon: <Icons.Clipboard size={24} />,
     onPress: () => {
       BottomSheets.show({
         component: <TopupWallet />,
         customSnapPoints: [580, 580],
       });
     },
+    backgroundColor: '#CBDB31',
+    textColor: COLORS.darkBlue,
   },
   {
-    name: 'Customers',
-    Icon: <Icons.DoublePerson size={22} />,
-    onPress: navigation => {
-      navigation.navigate('CustomersScreen');
-    },
-  },
-
-  {
-    name: 'Refer | Earn',
-    Icon: <Icons.Share size={22} />,
+    name: 'Refer + Earn',
+    Icon: <Icons.BombEmoji size={24} />,
     onPress: navigation => {
       navigation.navigate('ShareScreen');
     },
   },
   {
-    name: 'Live Chat',
-    Icon: <Icons.LiveChat size={22} />,
-    onPress: () => {
-      Intercom.present();
+    name: 'Customers',
+    Icon: <Icons.ChatRound size={24} />,
+    onPress: navigation => {
+      navigation.navigate('CustomersScreen');
     },
   },
 ];
@@ -57,24 +51,32 @@ const Button = ({item}) => {
   const {width} = useLayouts();
   const navigation = useNavigation();
   return (
-    <View style={{flex: 1}}>
-      <TouchableOpacity
-        onPress={() => item?.onPress?.(navigation)}
-        style={style.btn}>
-        <View activeOpacity={0.7} style={style.iconCon}>
-          {item.Icon}
-        </View>
-      </TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => item?.onPress?.(navigation)}
+      style={{
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginRight: 10,
+        backgroundColor: item?.backgroundColor || '#E9E6F7',
+        height: 50,
+        borderRadius: 30,
+        paddingHorizontal: 15,
+      }}>
+      <View activeOpacity={0.7} style={{marginRight: 10}}>
+        {item.Icon}
+      </View>
+
       <Text
         textAlign={'center'}
         numberOfLines={2}
-        color={COLORS.black}
+        color={item?.textColor || '#151521'}
         size={12}
-        fontWeight={'700'}
-        style={{flex: 1, marginTop: 10}}>
+        bold
+        style={{flex: 1}}>
         {item.name}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 export const MenuButtons = () => {
@@ -83,16 +85,20 @@ export const MenuButtons = () => {
       style={{
         ...style.con,
       }}>
-      {menus.map(item => (
-        <Button item={item} />
-      ))}
+      <ScrollView
+        contentContainerStyle={{paddingHorizontal: 20}}
+        showsHorizontalScrollIndicator={false}
+        horizontal>
+        {menus.map(item => (
+          <Button item={item} />
+        ))}
+      </ScrollView>
     </View>
   );
 };
 
 const style = StyleSheet.create({
   con: {
-    backgroundColor: COLORS.white,
     borderRadius: 30,
     justifyContent: 'space-between',
     marginTop: 20,

@@ -1,0 +1,49 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "app/src/assets/fonts/AirbnbCereal_W_Bd.otf",
+      "sha1": "8f29435a16c1fa2fac116f9f26bbda068103ee1b"
+    },
+    {
+      "path": "app/src/assets/fonts/AirbnbCereal_W_Bk.otf",
+      "sha1": "22d5eb3bfb8578c0291c71b9b7c8d509f1dbb04a"
+    },
+    {
+      "path": "app/src/assets/fonts/AirbnbCereal_W_Blk.otf",
+      "sha1": "30cc1d592b9e34052cbc66c2b58e6bd702baac3b"
+    },
+    {
+      "path": "app/src/assets/fonts/AirbnbCereal_W_Lt.otf",
+      "sha1": "f746f590bc39817d508a839910e15d9a5f04f3c4"
+    },
+    {
+      "path": "app/src/assets/fonts/AirbnbCereal_W_Md.otf",
+      "sha1": "74bfcb77657f123d55c1a319f8f4dd354bf83da4"
+    },
+    {
+      "path": "app/src/assets/fonts/AirbnbCereal_W_XBd.otf",
+      "sha1": "8f0a449eabb15871663306d8ffccc8d795dde2ce"
+    },
+    {
+      "path": "app/src/assets/fonts/PlusJakartaSans-Bold.ttf",
+      "sha1": "65d4478e92a9ff9298b748f8088e05972cd18697"
+    },
+    {
+      "path": "app/src/assets/fonts/PlusJakartaSans-ExtraBold.ttf",
+      "sha1": "91df94a9ed290d7aebbc5f5118d91fda38f9c109"
+    },
+    {
+      "path": "app/src/assets/fonts/PlusJakartaSans-Medium.ttf",
+      "sha1": "07f54b7e503556eb04ec994341f8ce13e697f431"
+    },
+    {
+      "path": "app/src/assets/fonts/PlusJakartaSans-Regular.ttf",
+      "sha1": "25ba6345e577fa516ad5f89405933171a8d81eb0"
+    },
+    {
+      "path": "app/src/assets/fonts/PlusJakartaSans-SemiBold.ttf",
+      "sha1": "93ab83dcdba88999dfb5844e285229c5da6ae63f"
+    }
+  ]
+}

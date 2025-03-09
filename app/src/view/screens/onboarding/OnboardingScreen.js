@@ -1,9 +1,11 @@
 import React from 'react';
 import {
+  FlatList,
   SafeAreaView,
   ScrollView,
   StatusBar,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import {COLORS} from '../../../conts';
@@ -15,6 +17,7 @@ import {Image} from '../../components/general/image';
 import onboardingScreens from '../../../conts/onboardingScreens';
 
 export const OnboardingScreen = ({navigation}) => {
+  const {width} = useWindowDimensions();
   const {updateUserData} = useUser();
   const [state, setState] = React.useState({
     indicatorIndex: 0,
@@ -49,49 +52,68 @@ export const OnboardingScreen = ({navigation}) => {
         <View
           style={{
             flex: 1,
-            paddingHorizontal: 20,
           }}>
-          <View
-            style={{
-              overflow: 'hidden',
-              marginBottom: 20,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              paddingVertical: 20,
-            }}>
-            <Text md>
-              {state?.indicatorIndex + 1}/{onboardingScreens.length}
-            </Text>
-            {state.indicatorIndex < 2 && (
-              <Text
-                onPress={() => {
-                  setAppIsOpened();
-                }}
-                style={{textDecorationLine: 'underline'}}
-                md>
-                SKIP
-              </Text>
+          <FlatList
+            data={onboardingScreens}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={event => {
+              const x = event?.nativeEvent?.contentOffset?.x;
+              const currentIndex = Math.round(x / (width - 48));
+              if (state.indicatorIndex != currentIndex) {
+                setState(prevState => ({
+                  ...prevState,
+                  indicatorIndex: currentIndex,
+                }));
+              }
+            }}
+            renderItem={({item}) => (
+              <View style={{width}}>
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: 50,
+                  }}>
+                  <Image
+                    style={{height: 300, width: 300}}
+                    source={item?.image}
+                  />
+                </View>
+                <View style={{marginTop: 40, paddingHorizontal: 20}}>
+                  <Text color={COLORS.primary} bold size={18}>
+                    {item?.title}
+                  </Text>
+
+                  <Text style={{marginTop: 10}} size={18}>
+                    {item?.message}
+                  </Text>
+                </View>
+              </View>
             )}
-          </View>
+          />
 
           <View
             style={{
-              justifyContent: 'center',
-              alignItems: 'center',
+              flexDirection: 'row',
+              paddingHorizontal: 20,
+              top: 20,
             }}>
-            <Image
-              style={{height: 280, width: 280}}
-              source={onboardingScreens[state.indicatorIndex]?.image}
-            />
-          </View>
-          <View style={{marginTop: 20}}>
-            <Text textAlign={'center'} bd size={40}>
-              {onboardingScreens[state.indicatorIndex]?.title}
-            </Text>
-
-            <Text style={{marginTop: 30}} textAlign={'center'} size={18}>
-              {onboardingScreens[state.indicatorIndex]?.message}
-            </Text>
+            {onboardingScreens?.map((_, index) => (
+              <View
+                style={{
+                  height: 8,
+                  width: index == state?.indicatorIndex ? 20 : 8,
+                  backgroundColor:
+                    index == state?.indicatorIndex
+                      ? COLORS.primary
+                      : '#3580FF36',
+                  borderRadius: 10,
+                  marginRight: 5,
+                }}
+              />
+            ))}
           </View>
 
           <View
@@ -104,28 +126,27 @@ export const OnboardingScreen = ({navigation}) => {
                 flexDirection: 'row',
                 marginBottom: 40,
                 marginTop: 20,
-                justifyContent: 'flex-end',
+                justifyContent: 'space-between',
+                alignItems: 'center',
               }}>
+              <Text
+                onPress={() => {
+                  setAppIsOpened();
+                }}
+                style={{marginLeft: 20}}
+                medium
+                color={'#002055'}>
+                Skip
+              </Text>
               <TouchableOpacity
                 onPress={() => {
                   goNextOrSkip();
                 }}
-                style={{
-                  height: 94,
-                  width: 94,
-                  backgroundColor: COLORS.primary,
-                  borderRadius: 100,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  shadowColor: '#820300',
-                  shadowOpacity: 0.5,
-                  shadowRadius: 15,
-                  elevation: 15,
-                  shadowOffset: {width: 10, height: 10},
-                }}>
-                <Text md size={14} color={COLORS.white}>
-                  NEXT
-                </Text>
+                style={{}}>
+                <Image
+                  style={{width: 129, height: 191, right: -5}}
+                  source={require('../../../assets/images/onboarding/nextButton.png')}
+                />
               </TouchableOpacity>
             </View>
           </View>

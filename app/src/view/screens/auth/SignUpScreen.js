@@ -10,6 +10,7 @@ import {COLORS} from '../../../conts';
 import {
   Button,
   CheckBox,
+  CircleButton,
   Icons,
   OrLine,
   SocialButton,
@@ -97,13 +98,22 @@ export const SignUpScreen = ({navigation}) => {
 
       <KeyboardAvoidingViewWrapper
         contentContainerStyle={{
-          paddingHorizontal: 30,
+          paddingHorizontal: 20,
           minHeight: minHeight - s(95),
           paddingBottom: 20,
         }}>
+        <CircleButton />
         <View>
-          <Text bd size={35} textAlign="left" style={{paddingTop: 30}}>
-            Register
+          <Text
+            color={COLORS.darkBlue}
+            semiBold
+            size={25}
+            textAlign="left"
+            style={{paddingTop: 30}}>
+            Create Account
+          </Text>
+          <Text style={{marginTop: 10}} size={14} color={'#868D95'}>
+            Please Enter your Information and create your account
           </Text>
         </View>
         {/* Inputs Section */}
@@ -151,19 +161,6 @@ export const SignUpScreen = ({navigation}) => {
             />
 
             <Input
-              password
-              placeholder="Type Password again"
-              value={values?.confirmPassword}
-              error={touched?.confirmPassword && errors?.confirmPassword}
-              onChangeText={value => {
-                setFieldValue('confirmPassword', value);
-              }}
-              onBlur={() => setFieldTouched('confirmPassword', true)}
-            />
-
-            <Input
-              textColor="#231F20"
-              backgroundColor="#D7E4FF"
               placeholder="Referral code (optional)"
               value={values?.refCode}
               error={touched?.refCode && errors?.refCode}
@@ -175,7 +172,7 @@ export const SignUpScreen = ({navigation}) => {
 
             <View
               style={{
-                marginTop: 0,
+                marginTop: 20,
                 marginBottom: 30,
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -197,50 +194,37 @@ export const SignUpScreen = ({navigation}) => {
                 fontWeight={'500'}
                 style={{paddingLeft: 10}}
                 size={12}>
-                I’ve read and agree to the{' '}
+                I’ve read and agree to the
                 <Text color={'#314BCE'} fontWeight={'500'} size={12}>
-                  terms{' '}
-                </Text>
-                of{' '}
-                <Text color={'#314BCE'} fontWeight={'500'} size={12}>
-                  privacy policy
+                  terms of use
                 </Text>
               </Text>
             </View>
             <Button
               style={{marginTop: 20}}
-              disabled={state.buttonDisabled}
+              // disabled={state.buttonDisabled}
               titleStyle={{color: COLORS.white}}
-              type={state?.buttonDisabled ? 'grey' : 'primary'}
-              title="Register"
+              type={'primary'}
+              title="Create My Plug"
               onPress={() => {
                 Keyboard.dismiss();
                 submitForm();
-                // navigation.navigate('SignUpEmailScreen');
+                navigation.navigate('SignUpEmailScreen');
               }}
             />
-            <View style={{marginTop: 70}}>
-              <Text fontWeight={'700'} color={'#151940'}>
-                Already have an account?
-              </Text>
-              <TouchableOpacity
+            <View style={{marginTop: 20}}>
+              <Text
                 onPress={() => {
                   navigation.navigate('SignInScreen');
                 }}
-                style={{
-                  marginTop: 10,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{marginRight: 20}}
-                  size={16}
-                  fontWeight={'700'}
-                  color={COLORS.primary}>
-                  LOGIN
+                size={14}
+                textAlign={'center'}
+                color={'#848A94'}>
+                Have an Account?{' '}
+                <Text size={14} color={COLORS.primary}>
+                  Sign In
                 </Text>
-                <Icons.ArrowRed size={15} />
-              </TouchableOpacity>
+              </Text>
             </View>
           </View>
         </View>

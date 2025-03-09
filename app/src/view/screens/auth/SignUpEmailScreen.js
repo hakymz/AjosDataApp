@@ -1,10 +1,11 @@
 import React from 'react';
-import {View, StatusBar, SafeAreaView, Keyboard} from 'react-native';
+import {View, StatusBar, SafeAreaView, Keyboard, Image} from 'react-native';
 import {COLORS} from '../../../conts';
 import {
   BottomSheets,
   Button,
   CheckBox,
+  CircleButton,
   Icons,
   OrLine,
   SocialButton,
@@ -111,40 +112,28 @@ export const SignUpEmailScreen = ({navigation, route}) => {
 
       <KeyboardAvoidingViewWrapper
         contentContainerStyle={{
-          paddingHorizontal: 30,
+          paddingHorizontal: 20,
           minHeight: '100%',
           paddingBottom: 20,
         }}>
         <View>
-          <Text bd size={35} textAlign="left" style={{paddingTop: 30}}>
-            Register
-          </Text>
+          <CircleButton />
           <Text
-            lineHeight={'22'}
-            style={{marginTop: 30}}
-            color={'#3D3A3B'}
-            size={16}>
-            Please enter a valid{' '}
-            <Text
-              lineHeight={'22'}
-              color={'#3D3A3B'}
-              size={16}
-              fontWeight={'700'}>
-              {' '}
-              Email Address
-            </Text>{' '}
-            so we can verify you.
+            semiBold
+            color={COLORS.darkBlue}
+            size={25}
+            style={{paddingTop: 30}}>
+            Validate your Email
+          </Text>
+          <Text style={{marginTop: 10}} color={'#868D95'} size={14}>
+            Please enter a valid Email Address so we can verify you.
           </Text>
         </View>
         {/* Inputs Section */}
-        <View style={{marginTop: 30, height: 300}}>
+        <View style={{marginTop: 30}}>
           <View>
-            <Text size={16} fontWeight="700" style={{marginBottom: 12}}>
-              Enter your Email Address
-            </Text>
             <Input
-              backgroundColor="#EFF1FB"
-              placeholder="Enter Email Address"
+              placeholder="Email address"
               value={values.email}
               error={touched?.email && errors?.email}
               onChangeText={value => {
@@ -155,53 +144,40 @@ export const SignUpEmailScreen = ({navigation, route}) => {
           </View>
         </View>
 
-        <View>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 20,
+          }}>
+          <Image
+            style={{height: 222, width: 222}}
+            source={require('../../../assets/images/others/validateEmail.png')}
+          />
+        </View>
+
+        <View style={{flex: 1, justifyContent: 'flex-end'}}>
           <Button
-            // disabled={state.buttonDisabled}
-            titleStyle={{color: COLORS.white}}
-            type={state?.buttonDisabled ? 'grey' : 'primary'}
-            title="Register"
+            title="Continue"
             onPress={() => {
               submitForm();
               Keyboard.dismiss();
+              navigation.navigate('OtpScreen');
             }}
           />
-          <View style={{marginTop: 10}}>
-            <OrLine />
-          </View>
-          <View
-            style={{
-              marginTop: 10,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-            }}>
-            <SocialButton title={'GOOGLE'} />
-            <View style={{width: 15}} />
-            <SocialButton
-              title={'FACEBOOK'}
-              style={{backgroundColor: '#F5F6FA'}}
-            />
-          </View>
-
-          <View style={{marginTop: 70}}>
-            <Text fontWeight={'700'} color={'#151940'}>
-              Already have an account?
-            </Text>
-            <View
-              style={{
-                marginTop: 10,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <Text
-                style={{marginRight: 20}}
-                size={16}
-                fontWeight={'700'}
-                color={COLORS.primary}>
-                LOGIN
+          <View style={{marginTop: 30}}>
+            <Text
+              onPress={() => {
+                navigation.navigate('SignInScreen');
+              }}
+              size={14}
+              textAlign={'center'}
+              color={'#848A94'}>
+              Have an Account?{' '}
+              <Text size={14} color={COLORS.primary}>
+                Sign In
               </Text>
-              <Icons.ArrowRed size={15} />
-            </View>
+            </Text>
           </View>
         </View>
       </KeyboardAvoidingViewWrapper>

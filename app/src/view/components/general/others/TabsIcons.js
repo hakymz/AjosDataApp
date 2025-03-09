@@ -11,6 +11,9 @@ import WalletActive from '../../../../assets/svgs/icons/homeBottomTabIcons/walle
 import Flayer from '../../../../assets/svgs/icons/homeBottomTabIcons/flayer.svg';
 import FlayerActive from '../../../../assets/svgs/icons/homeBottomTabIcons/flayerActive.svg';
 
+import Search from '../../../../assets/svgs/icons/homeBottomTabIcons/search.svg';
+import SearchActive from '../../../../assets/svgs/icons/homeBottomTabIcons/searchActive.svg';
+
 const width = 30;
 const height = 30;
 
@@ -24,6 +27,12 @@ const customStyle = props => {
   };
 };
 export const TabsIcons = {
+  Search: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Search} />;
+  },
+  SearchActive: ({...props}) => {
+    return <Svg {...customStyle(props)} file={SearchActive} />;
+  },
   Home: ({...props}) => {
     return <Svg {...customStyle(props)} file={Home} />;
   },

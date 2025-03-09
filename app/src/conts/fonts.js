@@ -14,6 +14,14 @@ const WORKSANS_FONTS = {
   bold: 'WorkSans-Bold',
 };
 
+const PLUS_JAKARTA_SANS_FONTS = {
+  light: 'PlusJakartaSans-Light',
+  regular: 'PlusJakartaSans-Regular',
+  medium: 'PlusJakartaSans-Medium',
+  semiBold: 'PlusJakartaSans-SemiBold',
+  bold: 'PlusJakartaSans-Bold',
+};
+
 const AIRBNBCEREAL_FONTS = {
   XBd: 'AirbnbCereal_W_XBd',
   Md: 'AirbnbCereal_W_Md',
@@ -26,8 +34,10 @@ const AIRBNBCEREAL_FONTS = {
 export default {
   WORKSANS: 'worksans',
   AIRBNBCEREAL: 'AirbnbCereal',
+  PLUS_JAKARTA_SANS: 'jakarta',
   EINA04: 'eina04',
   EINA04_FONTS,
   WORKSANS_FONTS,
   AIRBNBCEREAL_FONTS,
+  PLUS_JAKARTA_SANS_FONTS,
 };

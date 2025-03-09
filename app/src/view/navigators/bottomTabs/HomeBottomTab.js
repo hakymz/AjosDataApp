@@ -20,72 +20,94 @@ const MyTabBar = ({state, descriptors, navigation}) => {
   return (
     <View
       style={{
-        flexDirection: 'row',
-        paddingBottom: GENERAL.platform == 'ios' ? 40 : 20,
-        paddingTop: 20,
-        justifyContent: 'space-evenly',
-        backgroundColor: COLORS.white,
         paddingHorizontal: 20,
+        position: 'absolute',
+        bottom: 20,
+        width: '100%',
       }}>
-      {state.routes.map((route, index) => {
-        const {options} = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name;
-        let isFocused = state.index === index;
-        //Force focus on some screen
-        if (state.index == 4 && index == 1) {
-          isFocused = true;
-        }
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          backgroundColor: COLORS.white,
+          paddingHorizontal: 20,
+          height: 64,
+          borderRadius: 24,
+          bottom: 20,
+          shadowColor: 'rgba(0,0,0,0.4)',
+          shadowRadius: 20,
+          shadowOpacity: 1,
+          shadowOffset: {height: 10},
+        }}>
+        {state.routes.map((route, index) => {
+          const {options} = descriptors[route.key];
+          const label =
+            options.tabBarLabel !== undefined
+              ? options.tabBarLabel
+              : options.title !== undefined
+              ? options.title
+              : route.name;
+          let isFocused = state.index === index;
+          //Force focus on some screen
+          if (state.index == 4 && index == 1) {
+            isFocused = true;
+          }
 
-        const Icon = options?.tabBarIcon;
+          const Icon = options?.tabBarIcon;
 
-        const onPress = () => {
-          if (route.name == 'FlyerScreen') {
-            BottomSheets.show({
-              component: <Flyer />,
-              customSnapPoints: [480, 480],
+          const onPress = () => {
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
             });
-          }
-          const event = navigation.emit({
-            type: 'tabPress',
-            target: route.key,
-            canPreventDefault: true,
-          });
 
-          if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
-          }
-        };
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name, route.params);
+            }
+          };
 
-        return (
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={() => onPress()}
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              flex: 1,
-            }}>
-            {Icon && <Icon size={22} focused={isFocused} />}
-            <Text
-              textAlign={'center'}
-              style={{marginTop: 2}}
-              md
-              size={11}
-              color={isFocused ? COLORS.blue : '#B8C6E5'}>
-              {label}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
+          return (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => onPress()}
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                flex: 1,
+              }}>
+              {isFocused ? (
+                <View
+                  style={{
+                    height: 44,
+                    backgroundColor: COLORS.darkBlue,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingHorizontal: 10,
+                    borderRadius: 48,
+                  }}>
+                  {Icon && <Icon size={21} focused={isFocused} />}
+                  <Text
+                    style={{marginLeft: 5}}
+                    size={13}
+                    medium
+                    color={'#F2F4F5'}>
+                    {label}
+                  </Text>
+                </View>
+              ) : (
+                <View
+                  style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                  <Icon size={21} focused={isFocused} />
+                </View>
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 };
-
 const HomeBottomTab = () => {
   return (
     <Tab.Navigator
@@ -105,6 +127,21 @@ const HomeBottomTab = () => {
           },
         }}
       />
+
+      <Tab.Screen
+        name="FlyerScreen"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: 'Finder',
+          tabBarIcon: ({focused, size}) => {
+            return focused ? (
+              <TabsIcons.SearchActive size={size} />
+            ) : (
+              <TabsIcons.Search size={size} />
+            );
+          },
+        }}
+      />
       <Tab.Screen
         name="HistoryNavigation"
         component={HistoryNavigation}
@@ -119,20 +156,7 @@ const HomeBottomTab = () => {
           },
         }}
       />
-      <Tab.Screen
-        name="FlyerScreen"
-        component={HomeScreen}
-        options={{
-          tabBarLabel: 'Flyers',
-          tabBarIcon: ({focused, size}) => {
-            return focused ? (
-              <TabsIcons.FlayerActive size={size} />
-            ) : (
-              <TabsIcons.Flayer size={size} />
-            );
-          },
-        }}
-      />
+
       <Tab.Screen
         name="ProfileScreen"
         component={ProfileScreen}

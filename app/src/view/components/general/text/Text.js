@@ -18,27 +18,25 @@ export const Text = ({
   textAlign,
   lineHeight,
   children,
-  bk,
-  bd,
-  lt,
-  md,
   blk,
   fontWeight,
   ...props
 }) => {
   const getFontFamily = () => {
-    if (bd || fontWeight == '700') {
-      return FONTS.AIRBNBCEREAL_FONTS.Bd;
-    } else if (lt || fontWeight == '300') {
-      return FONTS.AIRBNBCEREAL_FONTS.Lt;
-    } else if (md || fontWeight == '500') {
-      return FONTS.AIRBNBCEREAL_FONTS.Md;
+    if (bold || fontWeight == '700') {
+      return FONTS.PLUS_JAKARTA_SANS_FONTS.bold;
+    } else if (light || fontWeight == '300') {
+      return FONTS.PLUS_JAKARTA_SANS_FONTS.light;
+    } else if (medium || fontWeight == '500') {
+      return FONTS.PLUS_JAKARTA_SANS_FONTS.medium;
+    } else if (semiBold || fontWeight == '600') {
+      return FONTS.PLUS_JAKARTA_SANS_FONTS.semiBold;
     } else if (blk) {
-      return FONTS.AIRBNBCEREAL_FONTS.Blk;
+      return FONTS.PLUS_JAKARTA_SANS_FONTS.Blk;
     } else if (fontWeight == '800') {
-      return FONTS.AIRBNBCEREAL_FONTS.XBd;
+      return FONTS.PLUS_JAKARTA_SANS_FONTS.XBd;
     } else {
-      return FONTS.AIRBNBCEREAL_FONTS.Bk;
+      return FONTS.PLUS_JAKARTA_SANS_FONTS.regular;
     }
   };
   return (

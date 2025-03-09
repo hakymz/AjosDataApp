@@ -18,5 +18,6 @@ const IMAGES = {
   waec: require('../assets/images/others/waec.png'),
   newsPapper: require('../assets/images/others/newsPapper.png'),
   logoIcon: require('../assets/images/others/logoIcon.png'),
+  face: require('../assets/images/others/face.png'),
 };
 export default IMAGES;
