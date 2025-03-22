@@ -180,6 +180,7 @@ export const useUser = location => {
 
   return {
     data,
+    user: data?.user,
     loggedIn,
     sessionOut,
     appHasBeenOpened,

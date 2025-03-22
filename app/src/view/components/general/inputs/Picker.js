@@ -1,10 +1,10 @@
 import React from 'react';
 import {COLORS, FONTS, IMAGES} from '../../../../conts';
 import {View, StyleSheet, Platform, useColorScheme, Image} from 'react-native';
-import {Icons, MyIcons} from '..';
-import {s} from 'react-native-size-matters';
+
 import RNPickerSelect from 'react-native-picker-select';
 import {scaleFont} from '../../../../helper';
+import {Icons} from '../others';
 
 export const CustomPicker = ({
   onValueChange = () => {},
@@ -17,13 +17,14 @@ export const CustomPicker = ({
   value = '',
   defaultValue = '',
   showText = true,
-  fontFamily = FONTS.AIRBNBCEREAL_FONTS.Md,
+  fontFamily = FONTS.PLUS_JAKARTA_SANS_FONTS.regular,
   setTouched = () => {},
   color,
   rightIcon,
   innerStyle,
   disabled,
 }) => {
+  const pickerRef = React.useRef(null);
   const colorScheme = useColorScheme();
   const [selectedValue, setSelectedValue] = React.useState(value);
 
@@ -58,9 +59,9 @@ export const CustomPicker = ({
           styles.inputContainer,
           {
             backgroundColor: COLORS.white,
-            borderRadius: 10,
+            borderRadius: 16,
             borderWidth: 1,
-            borderColor: error ? COLORS.error : COLORS.white,
+            borderColor: error ? COLORS.error : '#E9F1FF',
             ...style,
           },
         ]}>
@@ -73,23 +74,26 @@ export const CustomPicker = ({
             ...innerStyle,
           }}>
           <RNPickerSelect
+            ref={pickerRef}
             disabled={disabled}
             onClose={setTouched}
             useNativeAndroidPickerStyle={false}
             style={
               Platform.OS == 'ios'
                 ? {
+                    inputIOSContainer: {pointerEvents: 'none'},
                     inputIOS: {
                       color: !showText
                         ? 'transparent'
                         : error
                         ? COLORS.error
-                        : color || COLORS.blue,
-                      fontSize: scaleFont(18),
+                        : color || '#848A94',
+                      fontSize: scaleFont(14),
                       fontFamily,
+
                       ...pickerStyle,
 
-                      height: '100%',
+                      // height: '100%',
                       paddingRight: 48,
                     },
                     placeholder: {
@@ -97,7 +101,7 @@ export const CustomPicker = ({
                         ? 'transparent'
                         : error
                         ? COLORS.error
-                        : color || COLORS.blue,
+                        : color || '#848A94',
                     },
                   }
                 : {
@@ -107,7 +111,7 @@ export const CustomPicker = ({
                         : error
                         ? COLORS.error
                         : color || COLORS.blue,
-                      fontSize: scaleFont(18),
+                      fontSize: scaleFont(14),
                       paddingRight: 48,
                       fontFamily,
                       ...pickerStyle,
@@ -138,22 +142,21 @@ export const CustomPicker = ({
         </View>
         <View
           style={{
-            right: 10,
+            right: 15,
             position: 'absolute',
-            zIndex: -1,
           }}>
           {rightIcon || (
             <View
               style={{
-                height: 36,
-                width: 36,
+                height: 32,
+                width: 32,
                 borderWidth: 1,
-                borderColor: '#EAECF0',
-                borderRadius: 12,
+                borderColor: '#E9F1FF',
+                borderRadius: 32,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Image source={IMAGES.chevron} />
+              <Icons.ChevronDown size={15.2} />
             </View>
           )}
         </View>
@@ -168,7 +171,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderColor: COLORS.grey,
     justifyContent: 'space-between',
-    height: s(55),
+    height: 60,
     borderRadius: 0,
     flexDirection: 'row',
     alignItems: 'center',

@@ -19,8 +19,6 @@ import Chevron from '../../../../assets/svgs/icons/chevron.svg';
 import Phone from '../../../../assets/svgs/icons/phone.svg';
 import Upload from '../../../../assets/svgs/icons/upload.svg';
 import Light from '../../../../assets/svgs/icons/light.svg';
-import Lock from '../../../../assets/svgs/icons/lock.svg';
-import Tv from '../../../../assets/svgs/icons/tv.svg';
 import Person from '../../../../assets/svgs/icons/person.svg';
 import Settings from '../../../../assets/svgs/icons/settings.svg';
 import Biometrics from '../../../../assets/svgs/icons/biometrics.svg';
@@ -64,6 +62,37 @@ import Plus from '../../../../assets/svgs/icons/plus.svg';
 import Clipboard from '../../../../assets/svgs/icons/clipboard.svg';
 import ChatRound from '../../../../assets/svgs/icons/chatRound.svg';
 import BombEmoji from '../../../../assets/svgs/icons/bombEmoji.svg';
+import Data from '../../../../assets/svgs/icons/data.svg';
+import Airtime from '../../../../assets/svgs/icons/airtime.svg';
+import Bill from '../../../../assets/svgs/icons/bill.svg';
+import Sms from '../../../../assets/svgs/icons/sms.svg';
+import DollarCard from '../../../../assets/svgs/icons/dollarCard.svg';
+import Giftcard from '../../../../assets/svgs/icons/giftcard.svg';
+import ChevronDown from '../../../../assets/svgs/icons/chevronDown.svg';
+import Plug from '../../../../assets/svgs/icons/plug.svg';
+import Tv from '../../../../assets/svgs/icons/tv.svg';
+import Book1 from '../../../../assets/svgs/icons/book1.svg';
+import Book2 from '../../../../assets/svgs/icons/book2.svg';
+import Book3 from '../../../../assets/svgs/icons/book3.svg';
+import Paste from '../../../../assets/svgs/icons/paste.svg';
+import ChevronRight from '../../../../assets/svgs/icons/chevronRight.svg';
+import UserTag from '../../../../assets/svgs/icons/userTag.svg';
+import Scan from '../../../../assets/svgs/icons/scan.svg';
+import AddCategory from '../../../../assets/svgs/icons/addCategory.svg';
+import Unlock from '../../../../assets/svgs/icons/unlock.svg';
+import Like from '../../../../assets/svgs/icons/like.svg';
+import SMS2 from '../../../../assets/svgs/icons/SMS2.svg';
+import Delete from '../../../../assets/svgs/icons/delete.svg';
+import Logout from '../../../../assets/svgs/icons/logout.svg';
+import PenCircle from '../../../../assets/svgs/icons/penCircle.svg';
+import Lock from '../../../../assets/svgs/icons/lock.svg';
+import Key from '../../../../assets/svgs/icons/key.svg';
+import Scan2 from '../../../../assets/svgs/icons/scan2.svg';
+import Call from '../../../../assets/svgs/icons/call.svg';
+import Message2 from '../../../../assets/svgs/icons/message2.svg';
+import Message3 from '../../../../assets/svgs/icons/message3.svg';
+import Message4 from '../../../../assets/svgs/icons/message4.svg';
+import Message5 from '../../../../assets/svgs/icons/message5.svg';
 
 const width = 30;
 const height = 30;
@@ -78,6 +107,93 @@ const customStyle = props => {
   };
 };
 export const Icons = {
+  Message2: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Message2} />;
+  },
+  Message3: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Message3} />;
+  },
+  Message4: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Message4} />;
+  },
+  Message5: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Message5} />;
+  },
+  Call: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Call} />;
+  },
+  Scan2: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Scan2} />;
+  },
+  Key: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Key} />;
+  },
+  PenCircle: ({...props}) => {
+    return <Svg {...customStyle(props)} file={PenCircle} />;
+  },
+  Logout: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Logout} />;
+  },
+  Delete: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Delete} />;
+  },
+  SMS2: ({...props}) => {
+    return <Svg {...customStyle(props)} file={SMS2} />;
+  },
+  Like: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Like} />;
+  },
+  Unlock: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Unlock} />;
+  },
+  AddCategory: ({...props}) => {
+    return <Svg {...customStyle(props)} file={AddCategory} />;
+  },
+  Scan: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Scan} />;
+  },
+  UserTag: ({...props}) => {
+    return <Svg {...customStyle(props)} file={UserTag} />;
+  },
+  ChevronRight: ({...props}) => {
+    return <Svg {...customStyle(props)} file={ChevronRight} />;
+  },
+  Paste: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Paste} />;
+  },
+  Plug: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Plug} />;
+  },
+  Book1: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Book1} />;
+  },
+  Book2: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Book2} />;
+  },
+  Book3: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Book3} />;
+  },
+  Data: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Data} />;
+  },
+  ChevronDown: ({...props}) => {
+    return <Svg {...customStyle(props)} file={ChevronDown} />;
+  },
+  Airtime: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Airtime} />;
+  },
+  DollarCard: ({...props}) => {
+    return <Svg {...customStyle(props)} file={DollarCard} />;
+  },
+  Giftcard: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Giftcard} />;
+  },
+  Bill: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Bill} />;
+  },
+  Sms: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Sms} />;
+  },
   ChatRound: ({...props}) => {
     return <Svg {...customStyle(props)} file={ChatRound} />;
   },
@@ -101,6 +217,10 @@ export const Icons = {
   },
   BackArrowGrey: ({...props}) => {
     return <Svg {...customStyle(props)} file={BackArrowGrey} />;
+  },
+
+  Lock: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Lock} />;
   },
 
   // old Icons
@@ -251,9 +371,7 @@ export const Icons = {
   Light: ({...props}) => {
     return <Svg {...customStyle(props)} file={Light} />;
   },
-  Lock: ({...props}) => {
-    return <Svg {...customStyle(props)} file={Lock} />;
-  },
+
   DeleteGrey: ({...props}) => {
     return <Svg {...customStyle(props)} file={DeleteGrey} />;
   },

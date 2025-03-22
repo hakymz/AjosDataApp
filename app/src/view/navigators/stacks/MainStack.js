@@ -16,6 +16,9 @@ import {
   ResetPinPasswordScreen,
   BulkSmsRuleScreen,
   EditTransactionHistoryScreen,
+  SecurityScreen,
+  UpdatePasswordScreen,
+  ResetPasswordScreen,
 } from '../../screens/general';
 
 import {BottomSheets} from '../../components/general';
@@ -33,6 +36,8 @@ import {
   NewFlyers2Screen,
   NewFlyersScreen,
 } from '../../screens/general/flyer';
+import {ContactScreen, ProfileDetailsScreen} from '../../screens/profile';
+import {UpdateProfileScreen} from '../../screens/profile/UpdateProfileScreen';
 
 const Stack = createStackNavigator();
 const MainStack = () => {
@@ -49,6 +54,7 @@ const MainStack = () => {
         <Stack.Screen name="PinScreen" component={PinScreen} />
         <Stack.Screen name="TopUpAmountScreen" component={TopUpAmountScreen} />
         <Stack.Screen name="BulkSmsRuleScreen" component={BulkSmsRuleScreen} />
+
         <Stack.Screen
           name="ProductPricingScreen"
           component={ProductPricingScreen}
@@ -97,6 +103,24 @@ const MainStack = () => {
           name="CreateFlyersScreen"
           component={CreateFlyersScreen}
         />
+        <Stack.Screen
+          name="ProfileDetailsScreen"
+          component={ProfileDetailsScreen}
+        />
+        <Stack.Screen
+          name="UpdateProfileScreen"
+          component={UpdateProfileScreen}
+        />
+        <Stack.Screen name="SecurityScreen" component={SecurityScreen} />
+        <Stack.Screen
+          name="UpdatePasswordScreen"
+          component={UpdatePasswordScreen}
+        />
+        <Stack.Screen
+          name="ResetPasswordScreen"
+          component={ResetPasswordScreen}
+        />
+        <Stack.Screen name="ContactScreen" component={ContactScreen} />
       </Stack.Navigator>
     </>
   );

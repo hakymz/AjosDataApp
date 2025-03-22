@@ -6,31 +6,36 @@ import {useUser} from '../../../hooks';
 import {} from '../../components/bottomSheetModal/content';
 import {
   BottomSheets,
+  CheckBox,
   CustomSafeAreaView,
   Icons,
   Text,
+  ToggleInput,
 } from '../../components/general';
 import {MainHeader} from '../../components/layouts';
 import {PageList} from '../../components/lists';
 
 import {
-  UserDetails,
-  Settings,
   ContactUs,
   UpdateNotification,
 } from '../../components/bottomSheetModal/contents';
 
-import {BioMetricSettings} from '../../components/bottomSheetModal/contents/BioMetricSettings';
-import {launchImageLibrary} from 'react-native-image-picker';
-import {openLink} from '../../../helper';
+import {enableBiometric, openLink} from '../../../helper';
+import Toast from '../../components/toast/Toast';
 
 const List = ({title, icon, ...props}) => {
   return (
     <PageList {...props}>
-      <Text size={18} color={COLORS.blue} fontWeight={'500'}>
-        {title}
-      </Text>
-      {icon}
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        {icon}
+        <Text
+          style={{marginLeft: 10}}
+          size={16}
+          color={COLORS.darkBlue}
+          semiBold>
+          {title}
+        </Text>
+      </View>
     </PageList>
   );
 };
@@ -39,36 +44,59 @@ export const ProfileScreen = ({navigation, route}) => {
 
   return (
     <CustomSafeAreaView>
-      <MainHeader imageLink={null} editPhoto />
+      <MainHeader nav title={'Profile'} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingHorizontal: 20,
           paddingTop: 20,
-          paddingBottom: 40,
+          paddingBottom: 100,
         }}>
-        <Text style={{marginBottom: 25}} size={18} fontWeight={'700'}>
-          Profile
+        <Text color={'#898A8D'} style={{marginBottom: 25}} size={12}>
+          You can personalize your Ajebo experience.
         </Text>
         <List
           onPress={() => {
-            BottomSheets.show({
-              component: <UserDetails />,
-              customSnapPoints: [500, 500],
-            });
+            navigation.navigate('ProfileDetailsScreen');
           }}
-          title={'User details'}
-          icon={<Icons.Person size={24} />}
+          title={'Account Details'}
+          icon={<Icons.UserTag size={24} />}
         />
         <List
-          onPress={() => {
-            BottomSheets.show({
-              component: <Settings />,
-              customSnapPoints: [450, 450],
-            });
-          }}
-          title={'Settings'}
-          icon={<Icons.Settings size={24} />}
+          onPress={() => {}}
+          title={'Biometrics'}
+          icon={<Icons.Scan size={24} />}
+          rightIcon={
+            <ToggleInput
+              onValueChange={() => {}}
+              click={async () => {
+                try {
+                  if (!settings?.biometric) {
+                    const res = await enableBiometric();
+                    if (res) {
+                      updateUserData({
+                        data: data,
+                        settings: {...settings, biometric: true},
+                      });
+                    } else {
+                      Toast.show(
+                        'error',
+                        'Please enable your device biometric to continue',
+                      );
+                    }
+                  } else {
+                    updateUserData({
+                      data: data,
+                      settings: {...settings, biometric: false},
+                    });
+                  }
+                } catch (error) {
+                  console.log(error);
+                }
+              }}
+              enableSwitch={settings?.biometric}
+            />
+          }
         />
         <List
           onPress={() => {
@@ -77,23 +105,20 @@ export const ProfileScreen = ({navigation, route}) => {
               customSnapPoints: [450, 450],
             });
           }}
-          title={'Turn off Alerts'}
-          icon={<Icons.BellOff size={24} />}
+          title={'Use PIN login'}
+          icon={<Icons.AddCategory size={24} />}
         />
         <List
           onPress={() => {
-            BottomSheets.show({
-              component: <BioMetricSettings />,
-              customSnapPoints: [450, 450],
-            });
+            navigation.navigate('SecurityScreen');
           }}
-          title={'Biometrics'}
-          icon={<Icons.Biometrics size={24} />}
+          title={'Security'}
+          icon={<Icons.Unlock size={24} />}
         />
 
         <List
           title={'Rate Us'}
-          icon={<Icons.Emojis size={75} />}
+          icon={<Icons.Like size={25} />}
           onPress={() => {
             openLink(
               Platform.OS == 'ios'
@@ -104,41 +129,29 @@ export const ProfileScreen = ({navigation, route}) => {
         />
         <List
           onPress={() => {
-            BottomSheets.show({
-              component: <ContactUs />,
-            });
+            navigation.navigate('ContactScreen');
           }}
           title={'Contact us'}
-          icon={<Icons.Chat size={24} />}
+          icon={<Icons.SMS2 size={24} />}
         />
-        <List
-          onPress={() => {
-            navigation.navigate('ProductPricingScreen');
-          }}
-          title={'All Products + Pricing'}
-          icon={<Icons.DollarCoin size={24} />}
-        />
+
         <List
           onPress={() => {
             navigation.navigate('DeleteScreen');
           }}
           title={
-            <Text size={18} color={'#898A8D'} fontWeight={'500'}>
+            <Text size={16} color={'#D12431'} fontWeight={'600'}>
               Delete Profile
             </Text>
           }
-          icon={<Icons.DeleteGrey size={22} />}
+          icon={<Icons.Delete size={24} />}
         />
         <List
           onPress={() => {
             logoutUser();
           }}
-          title={
-            <Text size={18} color={'#D12431'} fontWeight={'500'}>
-              Log-out
-            </Text>
-          }
-          icon={<Icons.UserRight size={22} />}
+          title={'Log-out'}
+          icon={<Icons.Logout size={24} />}
         />
       </ScrollView>
     </CustomSafeAreaView>

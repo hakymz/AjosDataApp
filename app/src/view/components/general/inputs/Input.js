@@ -9,6 +9,12 @@ import {
 import {COLORS, FONTS} from '../../../../conts';
 import {TouchableOpacity} from '@gorhom/bottom-sheet';
 import {Icons} from '../others';
+import Clipboard from '@react-native-clipboard/clipboard';
+
+const fetchCopiedText = async () => {
+  const text = await Clipboard.getString();
+  return text;
+};
 
 export const Input = React.forwardRef(
   (
@@ -37,6 +43,8 @@ export const Input = React.forwardRef(
       loading,
       showTextError = true,
       handleScroll,
+      paste = true,
+      onPaste,
       ...props
     },
     ref,
@@ -47,7 +55,7 @@ export const Input = React.forwardRef(
       white: {
         backgroundColor: {
           active: COLORS.white,
-          blur: 'rgba(255, 255, 255, 0.1)',
+          blur: COLORS.white,
         },
         textColor: {active: COLORS.darkBlue, blur: '#848A94'},
       },
@@ -160,7 +168,8 @@ export const Input = React.forwardRef(
                   ...styles.input,
                   color: getTextColor(),
                   textAlign: centerText ? 'center' : 'left',
-                  fontFamily: FONTS.PLUS_JAKARTA_SANS_FONTS.regular,
+                  fontFamily:
+                    fontFamily || FONTS.PLUS_JAKARTA_SANS_FONTS.regular,
                   ...inputStyle,
                 }}
                 ref={ref}
@@ -170,21 +179,23 @@ export const Input = React.forwardRef(
               />
 
               {rightIcon ? (
-                <View style={{right: 0}}>{rightIcon}</View>
+                <View style={{right: -10}}>{rightIcon}</View>
+              ) : onPaste ? (
+                <TouchableOpacity
+                  onPress={async () => {
+                    const text = await fetchCopiedText();
+                    onPaste(text);
+                  }}>
+                  <Icons.Paste size={22} />
+                </TouchableOpacity>
               ) : (
                 password && (
-                  <View>
-                    {password ? (
-                      <TouchableOpacity
-                        onPress={() => {
-                          setShowPassword(!showPassword);
-                        }}>
-                        <Icons.EyeLash size={22} />
-                      </TouchableOpacity>
-                    ) : (
-                      <View style={{right: -20}}>{rightIcon}</View>
-                    )}
-                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowPassword(!showPassword);
+                    }}>
+                    <Icons.EyeLash size={22} />
+                  </TouchableOpacity>
                 )
               )}
             </>

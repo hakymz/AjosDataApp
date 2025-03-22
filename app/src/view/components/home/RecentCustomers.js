@@ -5,6 +5,7 @@ import {Text} from '../general';
 import {useQuery} from 'react-query';
 import {COLORS} from '../../../conts';
 import {useNavigation} from '@react-navigation/native';
+import {Image} from '../general/image';
 
 const List = ({item, onPress, value}) => {
   let customerNumber = item?.customerNumber?.split('+234');
@@ -60,9 +61,44 @@ export const RecentCustomers = ({onPress, value}) => {
     error,
   } = useQuery('getCustomersAirtimeCom', getCustomers);
   const navigation = useNavigation();
+
+  const list = [
+    {
+      name: 'James',
+      image: require('../../../assets/images/avatars/avatar.png'),
+    },
+    {
+      name: 'Chioma',
+      image: require('../../../assets/images/avatars/avatar2.png'),
+    },
+    {
+      name: 'Shaggy',
+      image: require('../../../assets/images/avatars/avatar3.png'),
+    },
+    {
+      name: 'Bimbota',
+      image: require('../../../assets/images/avatars/avatar4.png'),
+    },
+  ];
   return (
-    <View>
-      {customersData?.length > 0 && (
+    <View
+      style={{
+        height: 202,
+        backgroundColor: COLORS.white,
+        borderRadius: 24,
+        paddingVertical: 20,
+        justifyContent: 'space-between',
+      }}>
+      <View style={{paddingHorizontal: 20}}>
+        <Text size={16} semiBold>
+          Recent Beneficiaries 😎
+        </Text>
+        <Text size={12} medium color={'#898A8D'}>
+          You can select any of these to perform a new transaction
+        </Text>
+      </View>
+
+      {/* {customersData?.length > 0 && (
         <View style={{marginTop: 25}}>
           <View
             style={{
@@ -96,7 +132,25 @@ export const RecentCustomers = ({onPress, value}) => {
             ))}
           </ScrollView>
         </View>
-      )}
+      )} */}
+      <ScrollView
+        contentContainerStyle={{flex: 0, paddingHorizontal: 20}}
+        style={{flexGrow: 0}}
+        horizontal>
+        {list.map(item => (
+          <TouchableOpacity style={{width: 70, marginRight: 10}}>
+            <Image style={{width: 64, height: 64}} source={item?.image} />
+            <Text
+              style={{marginTop: 5}}
+              textAlign={'center'}
+              medium
+              color={COLORS.primary}
+              size={11}>
+              {item?.name}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     </View>
   );
 };

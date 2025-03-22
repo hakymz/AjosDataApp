@@ -46,7 +46,7 @@ export const Text = ({
           ? [
               {
                 fontFamily: getFontFamily(),
-                color: color || COLORS.black,
+                color: color || COLORS.darkBlue,
                 lineHeight: s(lineHeight) || s(size * 1.25),
                 fontSize: scaleFont(size),
                 textAlign,
@@ -55,7 +55,7 @@ export const Text = ({
             ]
           : {
               fontFamily: getFontFamily(),
-              color: color || COLORS.black,
+              color: color || COLORS.darkBlue,
               lineHeight: s(lineHeight) || s(size * 1.25),
               fontSize: scaleFont(size),
               textAlign,

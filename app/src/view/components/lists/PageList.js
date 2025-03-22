@@ -10,6 +10,7 @@ export const PageList = ({
   onPress,
   children,
   style,
+  rightIcon,
 }) => {
   return (
     <TouchableOpacity
@@ -17,23 +18,34 @@ export const PageList = ({
       onPress={onPress}
       style={{
         backgroundColor: backgroundColor || COLORS.white,
-        height: 68,
+        height: 62,
         borderRadius: 16,
-        paddingHorizontal: 20,
+        paddingHorizontal: 15,
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: '#EAECF0',
-        shadowColor: '#7F8192',
-        shadowOpacity: 0.12,
-        shadowRadius: 15,
-        elevation: 20,
-        shadowOffset: {height: 10},
+        borderColor: '#E9F1FF',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         ...style,
       }}>
       {children}
+      {rightIcon ? (
+        rightIcon
+      ) : (
+        <View
+          style={{
+            height: 32,
+            width: 32,
+            borderWidth: 1,
+            borderColor: '#E9F1FF',
+            borderRadius: 40,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Icons.ChevronRight size={16} />
+        </View>
+      )}
     </TouchableOpacity>
   );
 };

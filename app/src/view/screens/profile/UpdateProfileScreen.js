@@ -1,233 +1,116 @@
-import {useFormik} from 'formik';
 import React from 'react';
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
-import {s} from 'react-native-size-matters';
-import * as yup from 'yup';
-import {COLORS, GENERAL} from '../../../conts';
-import {
-  fetchRequest,
-  getImageFromDevice,
-  openSuccessScreen,
-  uploadImage,
-} from '../../../helper';
-import {useLayouts, useUser} from '../../../hooks';
 import {
   Button,
   CustomSafeAreaView,
+  Icons,
   Input,
   KeyboardAvoidingViewWrapper,
   Text,
 } from '../../components/general';
-import {Image} from '../../components/general/image';
-import {AppNav} from '../../components/layouts';
-import {useQueryClient} from 'react-query';
-import {Preloader} from '../../components/loaders';
+import {MainHeader} from '../../components/layouts';
+import {AVATAR, COLORS} from '../../../conts';
+import {Image, TouchableOpacity, View} from 'react-native';
+import {useUser} from '../../../hooks';
+import moment from 'moment';
+import {useFormik} from 'formik';
+import * as yup from 'yup';
 
-const validationSchema = yup.object().shape({
-  phoneNumber: yup.string().required('Please enter phone number'),
+let validationSchema = yup.object().shape({
+  network: yup.object().required('Please choose network'),
+  phone: yup
+    .string()
+    .required('Please input phone no')
+    .max(11, 'Max length of 11 digits'),
+  amount: yup.number().required('Please input amount'),
 });
-export const UpdateProfileScreen = ({navigation}) => {
-  const {minHeight} = useLayouts();
-  const {data, getUserImage} = useUser();
-  const {user} = data || {};
-  const [pickedImage, setPickedImage] = React.useState();
-  const [profileImageTouch, setProfileImageTouch] = React.useState();
-  const queryClient = useQueryClient();
-  console.log(user?.country);
 
+const Edit = () => {
+  return <View></View>;
+};
+export const UpdateProfileScreen = () => {
+  const {data, user} = useUser();
   const {
     values,
     errors,
     touched,
     setFieldValue,
     setFieldTouched,
+    setFieldError,
+    handleChange,
+    validateField,
+    setValues,
     submitForm,
-    handleSubmit,
+    resetForm,
     isValid,
+    validateForm,
   } = useFormik({
-    initialValues: {
-      phoneNumber: user?.phoneNumber,
-      fullname: user?.firstName + ' ' + user?.lastName,
-      username: user?.userTag,
-      country: user?.country,
-    },
+    initialValues: {phoneNumber: user?.phoneNumber, email: user?.email},
     validationSchema: validationSchema,
-
-    onSubmit: values => {
-      updateProfile(values);
-    },
+    onSubmit: values => {},
   });
 
-  const updateProfile = async values => {
-    Preloader.show();
-    const firstName = values?.fullname?.split(' ')[0]?.trim?.();
-    const lastName = values?.fullname?.split(' ')[1]?.trim?.();
-    let imagesLink;
-
-    try {
-      if (values?.avatar) {
-        imagesLink = await uploadImage([values?.avatar]);
-      }
-
-      const response = await fetchRequest({
-        path: 'settings/profile-update',
-        data: imagesLink
-          ? {
-              firstName,
-              lastName,
-              country: values?.country,
-              phoneNumber: values?.phoneNumber,
-              avatar: imagesLink?.[0],
-            }
-          : {
-              firstName,
-              lastName,
-              country: values?.country,
-              phoneNumber: values?.phoneNumber,
-            },
-        method: 'PATCH',
-      });
-      queryClient.invalidateQueries({queryKey: ['userData']});
-      openSuccessScreen({
-        navigation,
-        btnTitle: 'Head back to Settings',
-        title: 'Saved successfully',
-        indicatorWidth: null,
-        subTitle: 'Your Profile has been updated on our end!',
-        proceed: () => navigation.navigate('SettingsScreen'),
-      });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      Preloader.hide();
-    }
-  };
-
-  const getImage = async () => {
-    try {
-      const result = await getImageFromDevice();
-
-      const {fileName, type} = result?.[0] || {};
-
-      setPickedImage(result?.[0]?.uri);
-      const uri =
-        GENERAL.platform == 'ios'
-          ? result?.[0]?.uri?.replace?.('file://', '')
-          : result?.[0]?.uri;
-
-      if (uri) {
-        updateProfile({...values, avatar: {uri, name: fileName, type}});
-      }
-    } catch (error) {
-      console.log(error, 'err,,,');
-      throw error;
-    }
-  };
-
   return (
-    <CustomSafeAreaView>
-      <AppNav line title={'Profile'} />
+    <CustomSafeAreaView backgroundColor={COLORS.white}>
+      <MainHeader
+        backgroundColor={COLORS.white}
+        nav
+        title={<></>}
+        icon={<Icons.UserTag size={30} />}
+      />
       <KeyboardAvoidingViewWrapper
-        contentContainerStyle={{
-          paddingHorizontal: 20,
-          paddingTop: 20,
-          minHeight: minHeight - 80,
-          paddingBottom: GENERAL.platform == 'ios' ? 40 : 20,
-        }}>
-        <TouchableOpacity
-          onPress={() => setProfileImageTouch(!profileImageTouch)}
-          style={{alignItems: 'center', marginTop: 20}}>
-          {profileImageTouch && (
-            <TouchableOpacity
-              onPress={() => {
-                getImage();
-                setProfileImageTouch(!profileImageTouch);
-              }}
-              style={style.overLay}>
-              <Text semiBold color={COLORS.white}>
-                Edit
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          <Image
-            source={pickedImage ? {uri: pickedImage} : getUserImage()}
-            style={{
-              height: s(85),
-              width: s(85),
-              borderRadius: 100,
-            }}
-          />
-        </TouchableOpacity>
-        <Text
-          textAlign={'center'}
-          style={{paddingHorizontal: 10, marginTop: 20}}
-          size={13}>
-          You can change your Avatar and phone number
+        addMinHeight
+        contentContainerStyle={{paddingHorizontal: 20, paddingTop: 20}}>
+        <Text size={18} bold color={COLORS.darkBlue}>
+          Account Details
         </Text>
-        <View style={{paddingHorizontal: 20, marginTop: 30}}>
+        <Text style={{marginTop: 5}} size={12} medium color={'#979797'}>
+          These are the hottest deals at the moment. A lower “%” means the deal
+          has little attention on it.
+        </Text>
+
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 30,
+          }}>
+          <View style={{}}>
+            <Image style={{height: 100, width: 100}} source={AVATAR.avatar3} />
+            <View style={{position: 'absolute', right: -35, bottom: 10}}>
+              <Icons.PenCircle size={37} />
+            </View>
+          </View>
+        </View>
+
+        <View style={{marginTop: 30}}>
+          <Input editable={false} value={user?.firstName} />
+
+          <Input editable={false} value={user?.lastName} />
+
           <Input
-            placeholder="Enter phone number"
+            keyboardType="numeric"
+            value={values.email}
+            error={touched?.email && errors?.email}
+            onChangeText={handleChange('email')}
+            onBlur={() => setFieldTouched('email', true)}
+            placeholder="Email"
+            rightIcon={<Icons.PenCircle size={30} />}
+          />
+          <Input
+            keyboardType="numeric"
             value={values.phoneNumber}
             error={touched?.phoneNumber && errors?.phoneNumber}
-            onChangeText={value => {
-              setFieldValue('phoneNumber', value);
-            }}
-            onFocus={() => {}}
+            onChangeText={handleChange('phoneNumber')}
             onBlur={() => setFieldTouched('phoneNumber', true)}
-          />
-          <Input
-            editable={false}
-            placeholder="Enter full name"
-            value={values.fullname}
-            error={touched?.fullname && errors?.fullname}
-            onChangeText={value => {
-              setFieldValue('fullname', value);
-            }}
-            onFocus={() => {}}
-            onBlur={() => setFieldTouched('fullname', true)}
-          />
-
-          <Input
-            editable={false}
-            placeholder="Enter username"
-            value={values.username}
-            error={touched?.username && errors?.username}
-            onChangeText={value => {
-              setFieldValue('username', value);
-            }}
-            onFocus={() => {}}
-            onBlur={() => setFieldTouched('username', true)}
+            placeholder="Phone Number"
+            rightIcon={<Icons.PenCircle size={30} />}
           />
         </View>
-        <View
-          style={{paddingHorizontal: 30, flex: 1, justifyContent: 'flex-end'}}>
-          <Button
-            title={'Save'}
-            disabled={!isValid || !values?.phoneNumber}
-            textColor={'white'}
-            type={values.phoneNumber && isValid ? 'black' : 'grey'}
-            onPress={() => {
-              // Keyboard.dismiss();
-              // submitForm.current();
-              handleSubmit();
-            }}
-          />
+
+        <View style={{flex: 1, justifyContent: 'flex-end'}}>
+          <Button title={'Save Details'} />
         </View>
       </KeyboardAvoidingViewWrapper>
     </CustomSafeAreaView>
   );
 };
-
-const style = StyleSheet.create({
-  overLay: {
-    height: s(85),
-    width: s(85),
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    position: 'absolute',
-    zIndex: 100,
-    borderRadius: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

@@ -13,7 +13,7 @@ export const Switch = ({
   enabled,
   onValueChange = () => {},
   onPress,
-  backgroundColors = ['#17A07F', 'rgba(150, 150, 150, 1)'],
+  backgroundColors = [COLORS.primary, 'rgba(150, 150, 150, 1)'],
 }) => {
   const thumbPostion = useSharedValue(20);
   // const backgroundColor = useSharedValue('rgb(183, 198, 226)');

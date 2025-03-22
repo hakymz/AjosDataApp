@@ -9,7 +9,13 @@ import {useNavigation} from '@react-navigation/native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {fetchRequest} from '../../../../helper';
 
-export const MainHeader = ({conStyle, editPhoto}) => {
+export const MainHeader = ({
+  title,
+  conStyle,
+  nav,
+  icon,
+  backgroundColor = COLORS.backgroundColor,
+}) => {
   const {data} = useUser();
   const image = data?.user?.avatar;
 
@@ -79,41 +85,58 @@ export const MainHeader = ({conStyle, editPhoto}) => {
       <View
         style={{
           ...styles.con,
+          backgroundColor: backgroundColor,
           ...conStyle,
         }}>
+        {nav && (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.goBack();
+            }}
+            style={{...styles.headerBtn, borderColor: '#B8D2FF'}}>
+            <Icons.ArrowLeft
+              size={17}
+              onPress={() => {
+                navigation.goBack();
+              }}
+            />
+          </TouchableOpacity>
+        )}
+
         <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
           <Text
             semiBold
             numberOfLines={1}
             style={{paddingLeft: 10, flex: 1}}
             size={18}>
-            Hi, {data?.user?.firstName}
+            {title || `Hi, ${data?.user?.firstName}`}
           </Text>
         </View>
 
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <View style={{...styles.headerBtn, marginRight: 5}}>
-            <Icons.NoteRedDot
-              size={17}
-              onPress={() => {
-                navigation.navigate('NotificationScreen');
-              }}
-            />
-          </View>
+        {icon ? (
+          icon
+        ) : (
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{...styles.headerBtn, marginRight: 5}}>
+              <Icons.NoteRedDot
+                size={17}
+                onPress={() => {
+                  navigation.navigate('NotificationScreen');
+                }}
+              />
+            </View>
 
-          <View style={{...styles.headerBtn}}>
-            <Icons.Bell
-              size={17}
-              onPress={() => {
-                navigation.navigate('NotificationScreen');
-              }}
-            />
+            <View style={{...styles.headerBtn}}>
+              <Icons.Bell
+                size={17}
+                onPress={() => {
+                  navigation.navigate('NotificationScreen');
+                }}
+              />
+            </View>
           </View>
-        </View>
+        )}
       </View>
-      {/* <View style={{alignItems: 'center', marginTop: 10}}>
-        <View style={{height: 1, backgroundColor: '#F4F5F9', width: 235}} />
-      </View> */}
     </View>
   );
 };
@@ -143,7 +166,7 @@ const styles = StyleSheet.create({
   headerBtn: {
     height: 45,
     width: 45,
-    backgroundColor: COLORS.white,
+    // backgroundColor: COLORS.white,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',

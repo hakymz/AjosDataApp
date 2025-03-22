@@ -2,6 +2,7 @@ import React from 'react';
 import {
   BottomSheets,
   Button,
+  CustomPicker,
   CustomSafeAreaView,
   Icons,
   Input,
@@ -12,7 +13,7 @@ import {
 } from '../../../components/general';
 import {BillsBalance, MainHeader} from '../../../components/layouts';
 import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
-import {COLORS, ELECTRICITY} from '../../../../conts';
+import {COLORS, ELECTRICITY, FONTS} from '../../../../conts';
 
 import {useBillsData, useLayouts, useUser} from '../../../../hooks';
 import {
@@ -30,10 +31,11 @@ import {
 } from '../../../../helper';
 import Toast from '../../../components/toast/Toast';
 import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
+import {RecentCustomers} from '../../../components/home';
 
 const validationSchema = yup.object().shape({
   billersCode: yup.string().required('Please enter Meter Number'),
-  name: yup.string().required('Please enter customer name'),
+  name: yup.object().required('Please enter customer name'),
   variation_code: yup.object().required('Please select meter type'),
   provider: yup.object().required('Please select provider'),
   amount: yup
@@ -69,7 +71,7 @@ export const ElectricityScreen = ({navigation}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      billersCode: __DEV__ ? '1111111111111' : '',
+      billersCode: __DEV__ ? '0159004775551' : '',
       amount: '',
       variation_code: '',
       provider: '',
@@ -228,8 +230,9 @@ export const ElectricityScreen = ({navigation}) => {
           Toast.show('error', response?.data?.content?.error);
         }
 
+        console.log(response?.data, 'Customer_Name Customer_Name');
         if (response?.status == 'success' && response?.data) {
-          setFieldValue('name', response?.data?.content?.Customer_Name);
+          setFieldValue('name', response?.data?.content);
         } else {
         }
         setState(prevState => ({...prevState, loading: false}));
@@ -237,7 +240,6 @@ export const ElectricityScreen = ({navigation}) => {
         console.log(error, 'error');
         setState(prevState => ({...prevState, loading: false}));
       } finally {
-        console.log('yesss');
         setState(prevState => ({...prevState, loading: false}));
       }
     } else {
@@ -262,24 +264,25 @@ export const ElectricityScreen = ({navigation}) => {
   }, [values, isValid]);
 
   React.useEffect(() => {}, []);
+  console.log(errors);
   return (
     <CustomSafeAreaView>
-      <MainHeader />
+      <MainHeader nav title={'Electricity'} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingTop: 20,
-          paddingBottom: 70,
+          paddingTop: 30,
+          paddingBottom: 100,
           paddingHorizontal: 20,
           minHeight: minHeight - 70,
         }}>
-        <BillsBalance />
-        <View style={{marginTop: 30, flex: 1}}>
-          <Text fontWeight={800} size={18}>
-            Sell Electricity Token
-          </Text>
-          <View style={{marginTop: 20}}>
-            <PagePicker
+        <Text size={12} color={'#898A8D'}>
+          We will find the network provider for you,😌 we gatchu
+        </Text>
+
+        <View style={{marginTop: 20}}>
+          <View style={{flexDirection: 'row'}}>
+            <CustomPicker
               error={touched?.provider && errors?.provider}
               value={values.provider}
               data={electricityData}
@@ -291,7 +294,8 @@ export const ElectricityScreen = ({navigation}) => {
               }}
               placeholder="Select Provider"
             />
-            <PagePicker
+            <View width={5} />
+            <CustomPicker
               error={touched?.variation_code && errors?.variation_code}
               value={values.variation_code}
               data={[
@@ -312,97 +316,109 @@ export const ElectricityScreen = ({navigation}) => {
               }}
               placeholder="Meter Type"
             />
-            <PageInput
-              value={values.amount}
-              error={touched?.amount && errors?.amount}
-              onChangeText={handleChange('amount')}
-              onBlur={() => setFieldTouched('amount', true)}
-              fontSize={18}
-              placeholder="0.00"
-              rightIcon={
-                <Text
-                  color={errors?.amount ? COLORS.errorRed : '#9A9A9A'}
-                  fontWeight={'500'}
-                  size={12}>
-                  {errors?.amount ? errors?.amount : 'Amount'}
-                </Text>
-              }
+          </View>
+
+          <Input
+            value={values.amount}
+            error={touched?.amount && errors?.amount}
+            onChangeText={handleChange('amount')}
+            onBlur={() => setFieldTouched('amount', true)}
+            fontSize={16}
+            fontFamily={FONTS.PLUS_JAKARTA_SANS_FONTS.bold}
+            placeholder="Amount"
+            textColor={COLORS.darkBlue}
+            rightIcon={null}
+          />
+
+          <View style={{}}>
+            <Input
+              onPaste={() => {}}
+              value={values.billersCode}
+              error={touched?.billersCode && errors?.billersCode}
+              onChangeText={value => {
+                verifyMeterNumber(value, values?.variation_code, setFieldValue);
+                setFieldValue('billersCode', value);
+              }}
+              onBlur={() => {
+                setFieldTouched('billersCode', true);
+              }}
+              placeholder="Meter number"
             />
-            <SuccessRateDisplay type="electricity" />
-            <View style={{paddingHorizontal: 10}}>
-              <Text
-                fontWeight={'500'}
-                color={COLORS.dark}
-                size={14}
-                style={{
-                  marginTop: 20,
-                  marginBottom: 10,
-                  paddingHorizontal: 10,
-                }}>
-                Customer’s Meter Number
-              </Text>
-              <Input
-                value={values.billersCode}
-                error={touched?.billersCode && errors?.billersCode}
-                onChangeText={value => {
-                  verifyMeterNumber(
-                    value,
-                    values?.variation_code,
-                    setFieldValue,
-                  );
-                  setFieldValue('billersCode', value);
-                }}
-                onBlur={() => {
-                  setFieldTouched('billersCode', true);
-                }}
-                textColor={COLORS.blue}
-                placeholder="Meter Number"
-                backgroundColor="#EFF1FB"
-              />
-              {state?.loading && (
-                <View style={{marginTop: 10}}>
+
+            <View
+              style={{
+                minHeight: 60,
+                backgroundColor: '#E9E6F7',
+                borderRadius: 16,
+                paddingHorizontal: 20,
+                paddingVertical: 15,
+                justifyContent: 'center',
+              }}>
+              {state?.loading ? (
+                <View style={{}}>
                   <ActivityIndicator color={COLORS.primary} />
                 </View>
-              )}
+              ) : (
+                <>
+                  {!values?.name && (
+                    <Text size={14} medium color={'#848A94'}>
+                      Name + Address
+                    </Text>
+                  )}
 
-              {values?.name && (
-                <Input
-                  inputStyle={{fontSize: 20}}
-                  editable={false}
-                  value={values.name}
-                  error={touched?.name && errors?.name}
-                  onChangeText={value => {
-                    setFieldValue('name', value);
-                  }}
-                  onBlur={() => {
-                    setFieldTouched('name', true);
-                  }}
-                  textColor={'#7F8192'}
-                  placeholder="Meter Name"
-                  backgroundColor="#F8F8F8"
-                />
+                  {values?.name && (
+                    <View>
+                      <Text medium color={'#5D55E0'}>
+                        {values?.name?.Customer_Name}
+                      </Text>
+                      <Text size={14} bold color={'#5D55E0'}>
+                        {values?.name?.Address}
+                      </Text>
+                    </View>
+                  )}
+                </>
               )}
             </View>
           </View>
           <View
             style={{
-              justifyContent: 'flex-end',
-              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              marginBottom: 40,
+              marginTop: 20,
             }}>
-            <Button
-              titleStyle={{color: COLORS.white}}
-              type={state?.buttonDisabled ? 'grey' : 'primary'}
-              onPress={() => {
-                if (!values?.name) {
-                  Toast.show('error', 'Enter valid Meter number');
-                } else {
-                  submitForm();
-                }
-              }}
-              style={{marginTop: 40}}
-              title={'Purchase'}
-            />
+            <BillsBalance />
           </View>
+        </View>
+
+        <View style={{marginBottom: 20}}>
+          <RecentCustomers
+            value={values?.phone}
+            onPress={phone => {
+              const network = getNumberNetwork(phone);
+              const selectedNetworkData = getNumberNetwork(network);
+              setValues({
+                ...values,
+                phone: phone,
+                network: state?.bypass ? null : selectedNetworkData,
+              });
+            }}
+          />
+        </View>
+        <View style={{}}>
+          <Button
+            titleStyle={{color: COLORS.white}}
+            type={state?.buttonDisabled ? 'grey' : 'primary'}
+            onPress={() => {
+              if (!values?.name) {
+                Toast.show('error', 'Enter valid Meter number');
+              } else {
+                submitForm();
+              }
+            }}
+            style={{marginTop: 40}}
+            title={'Purchase'}
+          />
         </View>
       </ScrollView>
     </CustomSafeAreaView>

@@ -5,67 +5,73 @@ import {COLORS} from '../../../../conts';
 import {useUser} from '../../../../hooks';
 import {
   CustomSafeAreaView,
+  Icons,
   KeyboardAvoidingViewWrapper,
-  MyIcons,
   Text,
 } from '../../../components/general';
-import Line from '../../../components/general/others/Line';
-import {AppNav} from '../../../components/layouts';
+import {MainHeader} from '../../../components/layouts';
+import {PageList} from '../../../components/lists';
 
-const List = ({icon, name, ...props}) => {
+const List = ({title, icon, ...props}) => {
   return (
-    <TouchableOpacity {...props}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingVertical: 20,
-          paddingHorizontal: 10,
-        }}>
-        <View
-          style={{
-            height: s(40),
-            width: s(40),
-            backgroundColor: COLORS.light,
-            borderRadius: 100,
-            marginRight: 15,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          {icon}
-        </View>
-        <Text semiBold>{name}</Text>
+    <PageList {...props}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        {icon}
+        <Text
+          style={{marginLeft: 10}}
+          size={16}
+          color={COLORS.darkBlue}
+          semiBold>
+          {title}
+        </Text>
       </View>
-    </TouchableOpacity>
+    </PageList>
   );
 };
+
 export const SecurityScreen = ({navigation}) => {
   const {data} = useUser();
-  console.log(data?.user?.transactionPin, 'Pinn nnn');
+
   return (
-    <CustomSafeAreaView>
-      <AppNav title={'Security'} line />
+    <CustomSafeAreaView backgroundColor={COLORS.white}>
+      <MainHeader
+        backgroundColor={COLORS.white}
+        nav
+        title={<></>}
+        icon={<Icons.Unlock size={30} />}
+      />
       <KeyboardAvoidingViewWrapper
-        contentContainerStyle={{paddingTop: 0, paddingHorizontal: 20}}>
+        contentContainerStyle={{
+          paddingHorizontal: 20,
+          paddingTop: 20,
+        }}>
+        <Text size={18} bold color={COLORS.darkBlue}>
+          Security
+        </Text>
+        <Text
+          style={{marginTop: 5, marginBottom: 25}}
+          size={12}
+          medium
+          color={'#979797'}>
+          You can change or reset your password or PIN to enable a safer app
+          experience
+        </Text>
         <List
-          onPress={() => navigation.navigate('UpdatePasswordScreen')}
-          icon={<MyIcons.LockCardGreen size={22} />}
-          name={'Change Password'}
+          icon={<Icons.Lock size={24} />}
+          title={'Change Password'}
+          onPress={() => {
+            navigation.navigate('UpdatePasswordScreen');
+          }}
         />
-        <Line style={{marginVertical: 0}} />
         <List
-          onPress={() =>
-            navigation.navigate('SetPinScreen', {
-              type: data?.user?.transactionPin == 'NULL' ? 'set' : 'change',
-            })
-          }
-          icon={<MyIcons.Pin size={22} />}
-          name={
-            data?.user?.transactionPin == 'NULL'
-              ? 'Set Transaction Pin'
-              : 'Change Transaction Pin'
-          }
+          icon={<Icons.Key size={24} />}
+          title={'Reset Password'}
+          onPress={() => {
+            navigation.navigate('ResetPasswordScreen');
+          }}
         />
+        <List icon={<Icons.AddCategory size={24} />} title={'Change PIN'} />
+        <List icon={<Icons.Scan2 size={24} />} title={'Reset PIN'} />
       </KeyboardAvoidingViewWrapper>
     </CustomSafeAreaView>
   );

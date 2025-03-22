@@ -23,6 +23,7 @@ import {
   AccountBalance,
   MenuButtons,
   QuickBuyData,
+  RecentCustomers,
   Services,
   TourGuide,
 } from '../../components/home';
@@ -170,6 +171,9 @@ export const HomeScreen = ({navigation}) => {
         <MenuButtons />
 
         <Services />
+        <View style={{paddingHorizontal: 20}}>
+          <RecentCustomers />
+        </View>
       </ScrollView>
       <LiveChatButton />
     </CustomSafeAreaView>

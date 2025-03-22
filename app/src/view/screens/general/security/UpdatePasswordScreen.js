@@ -6,14 +6,16 @@ import {COLORS} from '../../../../conts';
 import {
   Button,
   CustomSafeAreaView,
+  Icons,
   Input,
   KeyboardAvoidingViewWrapper,
   MyIcons,
   Text,
 } from '../../../components/general';
-import {AppNav} from '../../../components/layouts';
+import {AppNav, MainHeader} from '../../../components/layouts';
 import * as yup from 'yup';
 import {fetchRequest, openSuccessScreen} from '../../../../helper';
+import {PageList} from '../../../components/lists';
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -77,26 +79,44 @@ export const UpdatePasswordScreen = ({navigation}) => {
     }
   };
   return (
-    <CustomSafeAreaView>
-      <AppNav title={'Security'} line />
+    <CustomSafeAreaView backgroundColor={COLORS.white}>
+      <MainHeader
+        backgroundColor={COLORS.white}
+        nav
+        title={<></>}
+        icon={<Icons.Unlock size={30} />}
+      />
       <KeyboardAvoidingViewWrapper
         addMinHeight
-        contentContainerStyle={{paddingTop: 30}}>
-        <View
-          style={{
-            paddingHorizontal: 20,
-            flexDirection: 'row',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-          }}>
-          <View style={style.iconCon}>
-            <MyIcons.LockCardGreen size={22} />
+        contentContainerStyle={{paddingTop: 20, paddingHorizontal: 20}}>
+        <Text size={18} bold color={COLORS.darkBlue}>
+          Security
+        </Text>
+        <Text
+          style={{marginTop: 5, marginBottom: 25}}
+          size={12}
+          medium
+          color={'#979797'}>
+          You can change or reset your password or PIN to enable a safer app
+          experience
+        </Text>
+        <PageList rightIcon={<></>}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Icons.Lock />
+            <Text style={{marginLeft: 8}} size={14} semiBold>
+              Change Password
+            </Text>
           </View>
-          <Text semiBold>Change Password</Text>
-        </View>
-        <View style={{paddingHorizontal: 30, marginTop: 30}}>
+        </PageList>
+        <View style={{marginTop: 30}}>
+          <Text
+            style={{marginTop: 5, marginBottom: 16}}
+            size={12}
+            medium
+            color={'#898A8D'}>
+            Please use a strong password you can remember
+          </Text>
           <Input
-            style={{marginBottom: 20}}
             password
             placeholder="Enter Current Password"
             value={values.password}
@@ -131,10 +151,9 @@ export const UpdatePasswordScreen = ({navigation}) => {
           />
         </View>
 
-        <View
-          style={{paddingHorizontal: 30, flex: 1, justifyContent: 'flex-end'}}>
+        <View style={{flex: 1, justifyContent: 'flex-end'}}>
           <Button
-            title={'Save'}
+            title={'Save New Password'}
             disabled={!isValid || !values}
             textColor={'white'}
             type={

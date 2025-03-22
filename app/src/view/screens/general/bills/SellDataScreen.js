@@ -3,6 +3,7 @@ import {
   BottomSheets,
   Button,
   CheckBox,
+  CustomPicker,
   CustomSafeAreaView,
   Icons,
   Input,
@@ -19,7 +20,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {COLORS, GENERAL, NETWORKS} from '../../../../conts';
+import {COLORS, FONTS, GENERAL, NETWORKS} from '../../../../conts';
 import * as yup from 'yup';
 import {useBillsData, useLayouts, useUser} from '../../../../hooks';
 import {
@@ -371,103 +372,47 @@ export const SellDataScreen = ({navigation, route}) => {
 
   return (
     <CustomSafeAreaView>
-      <MainHeader />
+      <MainHeader nav title={'Data Purchase'} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingTop: 20,
+          paddingTop: 30,
           paddingBottom: 40,
           paddingHorizontal: 20,
           minHeight: minHeight - 70,
         }}>
-        <BillsBalance />
-        <View style={{marginTop: 30}}>
-          <Text fontWeight={800} size={18}>
-            Sell Data
-          </Text>
-          <View style={{marginTop: 20}}>
-            <Text
-              fontWeight={'500'}
-              color={COLORS.dark}
-              size={14}
-              style={{
-                marginTop: 0,
-                marginBottom: 10,
-                paddingHorizontal: 10,
-              }}>
-              Customer’s Phone Number
-            </Text>
-            <Input
-              keyboardType="numeric"
-              value={values.phone}
-              error={touched?.phone && errors?.phone}
-              onChangeText={value => {
-                const network = getNumberNetwork(value);
+        <Text size={12} color={'#898A8D'}>
+          We will find the network provider for you,😌 we gatchu
+        </Text>
 
-                setValues({
-                  ...values,
-                  phone: value,
-                  network: state?.bypass ? null : network,
-                });
-              }}
-              onBlur={() => setFieldTouched('phone', true)}
-              textColor={COLORS.blue}
-              placeholder="Phone Number"
-              backgroundColor="#EFF1FB"
-              rightIcon={
-                <TouchableOpacity
-                  onPress={() => {
-                    pickerPhoneNo(phone => {
-                      const network = getNumberNetwork(phone);
-                      setValues({
-                        ...values,
-                        phone: phone,
-                        network: state?.bypass ? null : network,
-                      });
-                    });
-                  }}
-                  style={{
-                    height: 36,
-                    width: 36,
-                    borderRadius: 12,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: '#fff',
-                    right: -5,
-                  }}>
-                  <Icons.Phone size={20} />
-                </TouchableOpacity>
-              }
-            />
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <CheckBox
-                isChecked={state?.bypass}
-                onPress={() => {
-                  setState(prevState => ({
-                    ...prevState,
-                    bypass: !prevState?.bypass,
-                  }));
-                }}
-              />
-              <Text style={{marginLeft: 5}} fontWeight={'500'}>
-                Bypass network check
-              </Text>
-            </View>
-            <View style={{marginBottom: 20}}>
-              <RecentCustomers
-                value={values?.phone}
-                onPress={phone => {
-                  const network = getNumberNetwork(phone);
-                  setValues({
-                    ...values,
-                    phone: phone,
-                    network: state?.bypass ? null : network,
-                  });
-                }}
-              />
-            </View>
+        <View style={{marginTop: 20}}>
+          <Input
+            onPaste={value => {
+              const network = getNumberNetwork(value);
+              setValues({
+                ...values,
+                phone: value,
+                network: network,
+              });
+            }}
+            keyboardType="numeric"
+            value={values.phone}
+            error={touched?.phone && errors?.phone}
+            onChangeText={value => {
+              const network = getNumberNetwork(value);
 
-            <PagePicker
+              setValues({
+                ...values,
+                phone: value,
+                network: network,
+              });
+            }}
+            onBlur={() => setFieldTouched('phone', true)}
+            placeholder="Phone Number"
+          />
+
+          <View style={{flexDirection: 'row'}}>
+            <CustomPicker
               error={touched?.network && errors?.network}
               data={NETWORKS}
               value={values?.network}
@@ -479,7 +424,8 @@ export const SellDataScreen = ({navigation, route}) => {
                 setFieldTouched('network', true);
               }}
             />
-            <PagePicker
+            <View style={{width: 5}} />
+            <CustomPicker
               data={dataRes}
               onValueChange={value => {
                 setFieldValue('type', value);
@@ -491,82 +437,79 @@ export const SellDataScreen = ({navigation, route}) => {
                 setFieldTouched('type', true);
               }}
             />
-            <PagePicker
-              loading={isFetching}
-              value={values?.variation_code}
-              error={touched?.variation_code && errors?.variation_code}
-              onValueChange={value => {
-                if (values?.variation_code?.name != value?.name) {
-                  setValues({
-                    ...values,
-                    variation_code: value,
-                    amount: value?.amount || value?.variation_amount,
-                  });
-                }
-              }}
-              data={
-                (values?.type?.name == 'GIFTING'
-                  ? mainGiftingDataPlans
-                  : mainDataPlans) ?? []
-              }
-              onBlur={() => {
-                setFieldTouched('variation_code', true);
-              }}
-              placeholder="Select Data plan"
-            />
-            <SuccessRateDisplay
-              type={
-                values?.type?.name?.toLowerCase() == 'gifting'
-                  ? 'data'
-                  : 'dataResell'
-              }
-              network={
-                values?.type?.name?.toLowerCase() == 'gifting'
-                  ? values?.network?.name?.toLowerCase()
-                  : values?.type?.name?.toLowerCase()
-              }
-            />
-            <View style={{paddingHorizontal: 10, marginTop: 15}}>
-              <Input
-                showTextError={false}
-                error={touched?.amount && errors?.amount}
-                editable={false}
-                textColor={COLORS.blue}
-                placeholder="0.00"
-                backgroundColor="#EFF1FB"
-                value={formatAmount(values?.amount)}
-                rightIcon={
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text fontWeight={'500'} color={COLORS.green} size={11}>
-                      Cashback{' '}
-                      {GENERAL.nairaSign +
-                        formatAmount(
-                          (values?.amount * values?.variation_code?.cashback) /
-                            100,
-                        )}{' '}
-                    </Text>
-                    {/* <Text
-                      color={errors?.amount ? COLORS.errorRed : '#9A9A9A'}
-                      fontWeight={'500'}
-                      size={12}>
-                      {errors?.amount ? errors?.amount : 'Amount'}
-                    </Text> */}
-                  </View>
-                }
-              />
-            </View>
           </View>
-          <Button
-            titleStyle={{color: COLORS.white}}
-            type={state?.buttonDisabled ? 'grey' : 'primary'}
-            onPress={() => {
-              Keyboard.dismiss();
-              submitForm();
+
+          <CustomPicker
+            loading={isFetching}
+            value={values?.variation_code}
+            error={touched?.variation_code && errors?.variation_code}
+            onValueChange={value => {
+              if (values?.variation_code?.name != value?.name) {
+                setValues({
+                  ...values,
+                  variation_code: value,
+                  amount: value?.amount || value?.variation_amount,
+                });
+              }
             }}
-            style={{marginTop: 40}}
-            title={'Purchase'}
+            data={
+              (values?.type?.name == 'GIFTING'
+                ? mainGiftingDataPlans
+                : mainDataPlans) ?? []
+            }
+            onBlur={() => {
+              setFieldTouched('variation_code', true);
+            }}
+            placeholder="Select Data plan"
+          />
+
+          <Input
+            fontSize={16}
+            fontFamily={FONTS.PLUS_JAKARTA_SANS_FONTS.bold}
+            showTextError={false}
+            error={touched?.amount && errors?.amount}
+            editable={false}
+            textColor={COLORS.blue}
+            placeholder="Amount"
+            backgroundColor="#EFF1FB"
+            value={formatAmount(values?.amount)}
           />
         </View>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginBottom: 40,
+            marginTop: 10,
+          }}>
+          <BillsBalance />
+        </View>
+
+        <View style={{marginBottom: 20}}>
+          <RecentCustomers
+            value={values?.phone}
+            onPress={phone => {
+              const network = getNumberNetwork(phone);
+              const selectedNetworkData = getNumberNetwork(network);
+              setValues({
+                ...values,
+                phone: phone,
+                network: state?.bypass ? null : selectedNetworkData,
+              });
+            }}
+          />
+        </View>
+        <Button
+          titleStyle={{color: COLORS.white}}
+          type={state?.buttonDisabled ? 'grey' : 'primary'}
+          onPress={() => {
+            Keyboard.dismiss();
+            submitForm();
+          }}
+          style={{marginTop: 40}}
+          title={'Purchase'}
+        />
       </ScrollView>
     </CustomSafeAreaView>
   );

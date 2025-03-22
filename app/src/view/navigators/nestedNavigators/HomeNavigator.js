@@ -3,6 +3,7 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {
+  BillsScreen,
   BulkSmsScreen,
   EPinScreen,
   ElectricityScreen,
@@ -26,6 +27,7 @@ export const HomeNavigator = () => {
       <Stack.Screen name="TvScreen" component={TvScreen} />
       <Stack.Screen name="EPinScreen" component={EPinScreen} />
       <Stack.Screen name="DataToCashScreen" component={DataToCashScreen} />
+      <Stack.Screen name="BillsScreen" component={BillsScreen} />
     </Stack.Navigator>
   );
 };

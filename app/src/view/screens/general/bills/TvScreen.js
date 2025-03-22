@@ -2,9 +2,11 @@ import React from 'react';
 import {
   BottomSheets,
   Button,
+  CustomPicker,
   CustomSafeAreaView,
   Icons,
   Input,
+  KeyboardAvoidingViewWrapper,
   OutlineButton,
   PageInput,
   PagePicker,
@@ -13,7 +15,7 @@ import {
 } from '../../../components/general';
 import {BillsBalance, MainHeader} from '../../../components/layouts';
 import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
-import {COLORS, ELECTRICITY} from '../../../../conts';
+import {COLORS, ELECTRICITY, FONTS, GENERAL} from '../../../../conts';
 import * as yup from 'yup';
 
 import {useBillsData, useLayouts, useUser} from '../../../../hooks';
@@ -26,6 +28,7 @@ import {useQuery} from 'react-query';
 import {fetchRequest, openSuccessScreen} from '../../../../helper';
 import Toast from '../../../components/toast/Toast';
 import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
+import {RecentCustomers} from '../../../components/home';
 
 const List = ({item}) => {
   return (
@@ -238,22 +241,22 @@ export const TvScreen = ({navigation}) => {
   }, [values, isValid]);
   return (
     <CustomSafeAreaView>
-      <MainHeader />
-      <ScrollView
+      <MainHeader nav title={'Tv-Subscriptions'} />
+      <KeyboardAvoidingViewWrapper
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: 20,
-          paddingBottom: 70,
+          paddingBottom: 100,
           paddingHorizontal: 20,
           minHeight: minHeight - 70,
         }}>
-        <BillsBalance />
-        <View style={{marginTop: 30, flex: 1}}>
-          <Text fontWeight={800} size={18}>
-            Sell TV Subscription
-          </Text>
-          <View style={{marginTop: 20}}>
-            <PagePicker
+        <Text size={12} color={'#898A8D'}>
+          We will find the network provider for you,😌 we gatchu
+        </Text>
+
+        <View style={{marginTop: 20}}>
+          <View style={{flexDirection: 'row'}}>
+            <CustomPicker
               error={touched?.provider && errors?.provider}
               value={values.provider}
               data={tvData}
@@ -265,7 +268,8 @@ export const TvScreen = ({navigation}) => {
               }}
               placeholder="Select Provider"
             />
-            <PagePicker
+            <View width={5} />
+            <CustomPicker
               error={touched?.variation_code && errors?.variation_code}
               value={values.variation_code}
               data={tvVariationCodes?.variations}
@@ -278,84 +282,103 @@ export const TvScreen = ({navigation}) => {
               }}
               placeholder="Select Type"
             />
-            <SuccessRateDisplay type="tv" />
-
-            <View style={{paddingHorizontal: 10}}>
-              <Text
-                fontWeight={'500'}
-                color={COLORS.dark}
-                size={14}
-                style={{
-                  marginTop: 20,
-                  marginBottom: 10,
-                  paddingHorizontal: 10,
-                }}>
-                Customer’s User-ID
-              </Text>
-              <Input
-                textColor={COLORS.blue}
-                placeholder="User-ID number"
-                backgroundColor="#EFF1FB"
-                value={values.billersCode}
-                error={touched?.billersCode && errors?.billersCode}
-                onChangeText={value => {
-                  verifySmartCard(
-                    value,
-                    setFieldValue,
-                    values?.provider.serviceID,
-                  );
-                  setFieldValue('billersCode', value);
-                }}
-                onBlur={() => {
-                  setFieldTouched('billersCode', true);
-                }}
-              />
-
-              {state?.loading && (
-                <View style={{marginTop: 10}}>
-                  <ActivityIndicator color={COLORS.primary} />
-                </View>
-              )}
-              {values?.name && (
-                <Input
-                  inputStyle={{fontSize: 20}}
-                  editable={false}
-                  value={values.name}
-                  error={touched?.name && errors?.name}
-                  onChangeText={value => {
-                    setFieldValue('name', value);
-                  }}
-                  onBlur={() => {
-                    setFieldTouched('name', true);
-                  }}
-                  textColor={'#7F8192'}
-                  placeholder="Customer Name"
-                  backgroundColor="#F8F8F8"
-                />
-              )}
-            </View>
           </View>
+
+          <Input
+            fontFamily={
+              values.variation_code?.variation_amount
+                ? FONTS.PLUS_JAKARTA_SANS_FONTS.bold
+                : FONTS.PLUS_JAKARTA_SANS_FONTS.regular
+            }
+            textColor={
+              values?.variation_code?.variation_amount
+                ? COLORS.darkBlue
+                : '#848A94'
+            }
+            placeholder="Subscription price"
+            backgroundColor="#E9E6F7"
+            value={`${GENERAL.nairaSign}${values.variation_code?.variation_amount}`}
+          />
+
+          <Input
+            placeholder="Unique Number"
+            value={values.billersCode}
+            error={touched?.billersCode && errors?.billersCode}
+            onChangeText={value => {
+              verifySmartCard(value, setFieldValue, values?.provider.serviceID);
+              setFieldValue('billersCode', value);
+            }}
+            onBlur={() => {
+              setFieldTouched('billersCode', true);
+            }}
+          />
+
+          {state?.loading && (
+            <View style={{marginTop: 10}}>
+              <ActivityIndicator color={COLORS.primary} />
+            </View>
+          )}
+
+          <Input
+            editable={false}
+            value={values.name}
+            error={touched?.name && errors?.name}
+            onChangeText={value => {
+              setFieldValue('name', value);
+            }}
+            onBlur={() => {
+              setFieldTouched('name', true);
+            }}
+            textColor={'#848A94'}
+            placeholder="Full Name"
+            backgroundColor="#EFF1FB"
+          />
           <View
             style={{
-              justifyContent: 'flex-end',
-              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              marginBottom: 40,
+              marginTop: 10,
             }}>
-            <Button
-              titleStyle={{color: COLORS.white}}
-              type={state?.buttonDisabled ? 'grey' : 'primary'}
-              onPress={() => {
-                if (values?.provider?.name != 'ShowMax' && !values?.name) {
-                  Toast.show('error', 'Enter a valid Smart card');
-                } else {
-                  submitForm();
-                }
-              }}
-              style={{marginTop: 40}}
-              title={'Purchase'}
-            />
+            <BillsBalance />
           </View>
         </View>
-      </ScrollView>
+
+        <View style={{marginBottom: 20}}>
+          <RecentCustomers
+            value={values?.phone}
+            onPress={phone => {
+              const network = getNumberNetwork(phone);
+              const selectedNetworkData = getNumberNetwork(network);
+              setValues({
+                ...values,
+                phone: phone,
+                network: state?.bypass ? null : selectedNetworkData,
+              });
+            }}
+          />
+        </View>
+
+        <View
+          style={{
+            justifyContent: 'flex-end',
+            flex: 1,
+          }}>
+          <Button
+            titleStyle={{color: COLORS.white}}
+            type={state?.buttonDisabled ? 'grey' : 'primary'}
+            onPress={() => {
+              if (values?.provider?.name != 'ShowMax' && !values?.name) {
+                Toast.show('error', 'Enter a valid Smart card');
+              } else {
+                submitForm();
+              }
+            }}
+            style={{marginTop: 40}}
+            title={'Purchase'}
+          />
+        </View>
+      </KeyboardAvoidingViewWrapper>
     </CustomSafeAreaView>
   );
 };
