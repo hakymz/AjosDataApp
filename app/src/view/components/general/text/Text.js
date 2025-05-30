@@ -11,7 +11,7 @@ export const Text = ({
   bold,
   boldItalic,
   semiBold,
-  fontType = 'AirbnbCereal',
+  fontType = 'Jakarta',
   size = 14,
   color,
   style,
@@ -24,13 +24,21 @@ export const Text = ({
 }) => {
   const getFontFamily = () => {
     if (bold || fontWeight == '700') {
-      return FONTS.PLUS_JAKARTA_SANS_FONTS.bold;
+      return fontType == 'Montserrat'
+        ? FONTS.MONTSERRAT_FONTS.bold
+        : FONTS.PLUS_JAKARTA_SANS_FONTS.bold;
     } else if (light || fontWeight == '300') {
-      return FONTS.PLUS_JAKARTA_SANS_FONTS.light;
+      return fontType == 'Montserrat'
+        ? FONTS.MONTSERRAT_FONTS.light
+        : FONTS.PLUS_JAKARTA_SANS_FONTS.light;
     } else if (medium || fontWeight == '500') {
-      return FONTS.PLUS_JAKARTA_SANS_FONTS.medium;
+      return fontType == 'Montserrat'
+        ? FONTS.MONTSERRAT_FONTS.medium
+        : FONTS.PLUS_JAKARTA_SANS_FONTS.medium;
     } else if (semiBold || fontWeight == '600') {
-      return FONTS.PLUS_JAKARTA_SANS_FONTS.semiBold;
+      return fontType == 'Montserrat'
+        ? FONTS.MONTSERRAT_FONTS.semiBold
+        : FONTS.PLUS_JAKARTA_SANS_FONTS.semiBold;
     } else if (blk) {
       return FONTS.PLUS_JAKARTA_SANS_FONTS.Blk;
     } else if (fontWeight == '800') {

@@ -22,7 +22,8 @@ const Btn = ({icon, title, style}) => {
           justifyContent: 'center',
           alignItems: 'center',
         }}>
-        {icon}
+        {' '}
+         {icon}
       </View>
       <Text medium size={13} color={'#151521'}>
         {title}

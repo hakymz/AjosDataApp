@@ -70,6 +70,7 @@ import DollarCard from '../../../../assets/svgs/icons/dollarCard.svg';
 import Giftcard from '../../../../assets/svgs/icons/giftcard.svg';
 import ChevronDown from '../../../../assets/svgs/icons/chevronDown.svg';
 import Plug from '../../../../assets/svgs/icons/plug.svg';
+import PlugActive from '../../../../assets/svgs/icons/plugActive.svg';
 import Tv from '../../../../assets/svgs/icons/tv.svg';
 import Book1 from '../../../../assets/svgs/icons/book1.svg';
 import Book2 from '../../../../assets/svgs/icons/book2.svg';
@@ -93,6 +94,11 @@ import Message2 from '../../../../assets/svgs/icons/message2.svg';
 import Message3 from '../../../../assets/svgs/icons/message3.svg';
 import Message4 from '../../../../assets/svgs/icons/message4.svg';
 import Message5 from '../../../../assets/svgs/icons/message5.svg';
+import EditPenCircle from '../../../../assets/svgs/icons/editPenCircle.svg';
+import DeletePen from '../../../../assets/svgs/icons/deletePen.svg';
+import Close from '../../../../assets/svgs/icons/close.svg';
+import Notes from '../../../../assets/svgs/icons/notes.svg';
+import AddNumber from '../../../../assets/svgs/icons/addNumber.svg';
 
 const width = 30;
 const height = 30;
@@ -107,6 +113,21 @@ const customStyle = props => {
   };
 };
 export const Icons = {
+  AddNumber: ({...props}) => {
+    return <Svg {...customStyle(props)} file={AddNumber} />;
+  },
+  Notes: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Notes} />;
+  },
+  Close: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Close} />;
+  },
+  EditPenCircle: ({...props}) => {
+    return <Svg {...customStyle(props)} file={EditPenCircle} />;
+  },
+  DeletePen: ({...props}) => {
+    return <Svg {...customStyle(props)} file={DeletePen} />;
+  },
   Message2: ({...props}) => {
     return <Svg {...customStyle(props)} file={Message2} />;
   },
@@ -163,6 +184,9 @@ export const Icons = {
   },
   Plug: ({...props}) => {
     return <Svg {...customStyle(props)} file={Plug} />;
+  },
+  PlugActive: ({...props}) => {
+    return <Svg {...customStyle(props)} file={PlugActive} />;
   },
   Book1: ({...props}) => {
     return <Svg {...customStyle(props)} file={Book1} />;
@@ -221,6 +245,9 @@ export const Icons = {
 
   Lock: ({...props}) => {
     return <Svg {...customStyle(props)} file={Lock} />;
+  },
+  PlusCircle: ({...props}) => {
+    return <Svg {...customStyle(props)} file={PlusCircle} />;
   },
 
   // old Icons
@@ -308,9 +335,7 @@ export const Icons = {
   Settings: ({...props}) => {
     return <Svg {...customStyle(props)} file={Settings} />;
   },
-  PlusCircle: ({...props}) => {
-    return <Svg {...customStyle(props)} file={PlusCircle} />;
-  },
+
   Person: ({...props}) => {
     return <Svg {...customStyle(props)} file={Person} />;
   },

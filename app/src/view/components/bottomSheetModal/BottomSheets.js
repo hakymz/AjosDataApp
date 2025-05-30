@@ -8,7 +8,7 @@ import {
   Image,
   Keyboard,
 } from 'react-native';
-import {Icons, Text} from '../general';
+import {CloseButton, Icons, Text} from '../general';
 import BottomSheet, {BottomSheetScrollView} from '@gorhom/bottom-sheet';
 import {COLORS, FONTS, GENERAL} from '../../../conts';
 import {s} from 'react-native-size-matters';
@@ -141,6 +141,18 @@ const BottomSheetContent = ({
             ...containerStyle,
           }}>
           {component}
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: 0,
+            }}>
+            <CloseButton
+              onPress={() => {
+                hide();
+              }}
+            />
+          </View>
         </View>
       </View>
     </Modalize>

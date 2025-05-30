@@ -1,17 +1,10 @@
-const EINA04_FONTS = {
-  light: 'Eina04-Light',
-  regular: 'Eina04-Regular',
-  medium: 'Eina04-Medium',
-  semiBold: 'Eina04-SemiBold',
-  bold: 'Eina04-Bold',
-  boldItalic: 'Eina04-BoldItalic',
-};
-const WORKSANS_FONTS = {
-  light: 'WorkSans-Light',
-  regular: 'WorkSans-Regular',
-  medium: 'WorkSans-Medium',
-  semiBold: 'WorkSans-SemiBold',
-  bold: 'WorkSans-Bold',
+const MONTSERRAT_FONTS = {
+  light: 'Montserrat-Light',
+  regular: 'Montserrat-Regular',
+  medium: 'Montserrat-Medium',
+  semiBold: 'Montserrat SemiBold',
+  bold: 'Montserrat-Bold',
+  boldItalic: 'Montserrat-BoldItalic',
 };
 
 const PLUS_JAKARTA_SANS_FONTS = {
@@ -22,22 +15,9 @@ const PLUS_JAKARTA_SANS_FONTS = {
   bold: 'PlusJakartaSans-Bold',
 };
 
-const AIRBNBCEREAL_FONTS = {
-  XBd: 'AirbnbCereal_W_XBd',
-  Md: 'AirbnbCereal_W_Md',
-  Lt: 'AirbnbCereal_W_Lt',
-  Blk: 'AirbnbCereal_W_Blk',
-  Bk: 'AirbnbCereal_W_Bk',
-  Bd: 'AirbnbCereal_W_Bd',
-};
-
 export default {
-  WORKSANS: 'worksans',
-  AIRBNBCEREAL: 'AirbnbCereal',
-  PLUS_JAKARTA_SANS: 'jakarta',
-  EINA04: 'eina04',
-  EINA04_FONTS,
-  WORKSANS_FONTS,
-  AIRBNBCEREAL_FONTS,
+  PLUS_JAKARTA_SANS: 'Jakarta',
+  MONTSERRAT: 'Montserrat',
+  MONTSERRAT_FONTS,
   PLUS_JAKARTA_SANS_FONTS,
 };

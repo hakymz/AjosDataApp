@@ -13,6 +13,7 @@ import {
   BottomSheets,
   CustomSafeAreaView,
   InfiniteFlatList,
+  SearchInput,
   Text,
 } from '../../components/general';
 import {MainHeader} from '../../components/layouts';
@@ -41,19 +42,17 @@ const List = ({item}) => {
         });
       }}
       style={{
-        height: 70,
-        backgroundColor: '#EFF1FB',
-        marginBottom: 10,
-        borderRadius: 8,
+        height: 80,
+        backgroundColor: COLORS.white,
+        marginBottom: 15,
+        borderRadius: 16,
         paddingHorizontal: 20,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        borderWidth: 1,
+        borderColor: '#E9F1FF',
       }}>
-      <Image
-        source={{uri: item?.imageUrl || item?.image}}
-        style={{height: 40, width: 40, borderRadius: 40, marginRight: 10}}
-      />
       <View style={{flex: 1}}>
         <Text fontWeight={700} size={14} color={'#4961AC'}>
           {item?.receiptDetails?.info == 'Data Transfer'
@@ -79,6 +78,10 @@ const List = ({item}) => {
           {formatAmount(item?.amount)}
         </Text>
       </View>
+      <Image
+        source={{uri: item?.imageUrl || item?.image}}
+        style={{height: 43, width: 43, borderRadius: 40}}
+      />
     </TouchableOpacity>
   );
 };
@@ -101,7 +104,13 @@ export const HistoryScreen = ({navigation}) => {
 
   return (
     <CustomSafeAreaView>
-      <MainHeader text={'Transaction History'} />
+      <MainHeader title={'History'} nav />
+      <View style={{paddingHorizontal: 20, marginTop: 20}}>
+        <Text size={12} color={'#898A8D'}>
+          Here are all your transactions done on the app.
+        </Text>
+        <SearchInput style={{marginTop: 10, backgroundColor: COLORS.white}} />
+      </View>
       <InfiniteFlatList
         renderItem={({item}) => <List item={item} />}
         request={getWalletHistory}

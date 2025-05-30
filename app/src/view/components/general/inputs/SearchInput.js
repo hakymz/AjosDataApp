@@ -3,34 +3,35 @@ import {FONTS} from '../../../../conts';
 import {s} from 'react-native-size-matters';
 import {MyIcons} from '../others';
 
-export const SearchInput = ({style, onChangeText, title = 'Search Bank'}) => {
+export const SearchInput = ({style, onChangeText, title = 'Search'}) => {
   return (
     <View style={{...styles.search, ...style}}>
+      <MyIcons.Search size={20} />
       <TextInput
         placeholderTextColor={'#969696'}
         onChangeText={onChangeText}
         style={{
           fontSize: s(14),
-          fontFamily: FONTS.EINA04_FONTS.regular,
-          color: '#969696',
+          fontFamily: FONTS.PLUS_JAKARTA_SANS_FONTS.semiBold,
+          color: '#848A94',
+          marginHorizontal: 15,
         }}
         placeholder={title}
       />
-      <MyIcons.Search size={20} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   search: {
-    height: s(55),
+    height: 48,
     backgroundColor: '#F8F8F8',
-    borderRadius: 30,
+    borderRadius: 12,
     flexDirection: 'row',
-    paddingHorizontal: 30,
-    justifyContent: 'space-between',
+    paddingHorizontal: 15,
     alignItems: 'center',
-    marginHorizontal: 30,
     marginTop: 20,
+    borderWidth: 1,
+    borderColor: '#E9F1FF',
   },
 });

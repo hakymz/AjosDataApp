@@ -16,7 +16,7 @@ export const TextArea = React.forwardRef(
       error = null,
       type = 'grey',
       fontFamily,
-      fontSize = 16,
+      fontSize = 14,
       name,
       style,
       conStyle,
@@ -86,8 +86,15 @@ export const TextArea = React.forwardRef(
 
     return (
       <View>
-        <PageList
-          style={{height: 236, flexDirection: 'colunm', paddingVertical: 20}}>
+        <View
+          style={{
+            height: 236,
+            flexDirection: 'colunm',
+            paddingVertical: 20,
+            backgroundColor: COLORS.white,
+            paddingHorizontal: 20,
+            borderRadius: 16,
+          }}>
           <View
             style={{
               flexDirection: 'row',
@@ -95,13 +102,13 @@ export const TextArea = React.forwardRef(
               justifyContent: 'space-between',
               width: '100%',
             }}>
-            <Text color={COLORS.blue} fontWeight="500" size={18}>
+            <Text color={'#5D55E0'} semiBold size={16}>
               Message
             </Text>
             <Text
-              size={12}
-              fontWeight="500"
-              color={totalWords >= maxWords ? COLORS.red : '#9A9A9A'}>
+              size={10}
+              bold
+              color={totalWords >= maxWords ? COLORS.red : '#303437'}>
               {totalWords}/{maxWords}
             </Text>
           </View>
@@ -138,13 +145,13 @@ export const TextArea = React.forwardRef(
                   onChangeText(value);
                 }
               }}
-              placeholderTextColor={getTextColor()}
+              placeholderTextColor={'#303437'}
               style={{
                 fontSize,
                 ...styles.input,
-                color: getTextColor(),
+                color: '#303437',
                 textAlign: centerText ? 'center' : 'left',
-                fontFamily: FONTS.AIRBNBCEREAL_FONTS.Md,
+                fontFamily: FONTS.PLUS_JAKARTA_SANS_FONTS.medium,
 
                 ...inputStyle,
               }}
@@ -154,9 +161,9 @@ export const TextArea = React.forwardRef(
               {...props}
             />
           </View>
-        </PageList>
+        </View>
         {error && (
-          <Text md color={COLORS.primary} style={{top: -5}}>
+          <Text md color={COLORS.red} style={{top: 5}}>
             {error}
           </Text>
         )}

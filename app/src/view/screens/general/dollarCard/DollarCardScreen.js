@@ -1,134 +1,127 @@
 import React from 'react';
-import {
-  Image,
-  ScrollView,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import {Image, ScrollView, View, StyleSheet} from 'react-native';
 import {s} from 'react-native-size-matters';
-import {COLORS} from '../../../../conts';
-import {CreditCard} from '../../../components/creditCard';
-import {CustomSafeAreaView, MyIcons, Text} from '../../../components/general';
-import {AppNav} from '../../../components/layouts';
-import {SectionList} from '../../../components/lists';
+import {COLORS, FONTS} from '../../../../conts';
+import {
+  Button,
+  CheckBox,
+  CustomSafeAreaView,
+  KeyboardAvoidingViewWrapper,
+  Text,
+} from '../../../components/general';
+import {BillsBalance, MainHeader} from '../../../components/layouts';
 
-const MenuBtn = ({item}) => {
-  return (
-    <View style={{alignItems: 'center'}}>
-      <TouchableOpacity
-        onPress={() => {
-          item?.onPress?.();
-        }}
-        style={style.iconCon}>
-        {item?.icon}
-      </TouchableOpacity>
-      <Text semiBold size={12} color={COLORS.primary}>
-        {item?.name}
-      </Text>
-    </View>
-  );
-};
-const MenuList = () => {
-  const menuList = [
-    {
-      name: 'Top-up',
-      icon: <MyIcons.TopupBlack size={32} />,
-      onPress: () => {},
-    },
-    {name: 'Withdraw', icon: <MyIcons.Minus size={19} />, onPress: null},
-    {name: 'Lock card', icon: <MyIcons.LockCard size={19} />, onPress: null},
-  ];
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        paddingHorizontal: 10,
-        marginTop: 25,
-      }}>
-      {menuList.map(item => (
-        <MenuBtn item={item} />
-      ))}
-    </View>
-  );
-};
-
-export const DollarCardScreen = () => {
-  const CopyIcon = ({text}) => (
-    <MyIcons.Copy size={18} onPress={() => Copy(text)} />
-  );
-  const sectionListData = [
-    {
-      title: 'Bola Ahmed Tinubu',
-      des: 'Name on Card',
-      right: <CopyIcon />,
-    },
-    {title: '4236 4775 3884 3774', des: 'Card Number', right: <CopyIcon />},
-    {title: '10/2025', des: 'Expiry Date', right: <CopyIcon />},
-    {title: '634', des: 'CVC', right: <CopyIcon />},
-    {
-      title: '256 Chapman Road STE 105-4',
-      des: 'Billing Address',
-      right: <CopyIcon />,
-    },
-    {
-      title: 'Newark',
-      des: 'City',
-      right: <CopyIcon />,
-    },
-    {
-      title: 'Delaware',
-      des: 'State',
-      right: <CopyIcon />,
-    },
-    {
-      title: '19702',
-      des: 'Zip Code',
-      right: <CopyIcon />,
-    },
-  ];
+export const DollarCardScreen = ({navigation}) => {
+  const [state, setState] = React.useState({isChecked: false});
   return (
     <CustomSafeAreaView style={{backgroundColor: COLORS.background}}>
-      <AppNav
-        title={'Virtual Dollar Card'}
-        backgroundColor={COLORS.background}
-      />
-      <ScrollView
+      <MainHeader nav title={'Dollar Card'} />
+      <KeyboardAvoidingViewWrapper
+        addMinHeight
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           backgroundColor: COLORS.background,
           paddingHorizontal: 20,
           marginTop: 10,
-          paddingBottom: 40,
+          paddingBottom: 80,
         }}>
-        <CreditCard />
+        <Text
+          style={{marginBottom: 20}}
+          size={25}
+          semiBold
+          textAlign={'center'}
+          color={COLORS.darkBlue}>
+          Create your first Card
+        </Text>
+
         <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'flex-end',
-            marginTop: 10,
-          }}>
-          <View
+          style={{height: 183, justifyContent: 'center', alignItems: 'center'}}>
+          <Image
             style={{
-              backgroundColor: '#F1F1F1',
-              paddingHorizontal: 15,
-              padding: 3,
-              borderRadius: 20,
-            }}>
-            <Text semiBold size={12} color={'#9C9C9C'}>
-              Virtual Card
+              height: 183,
+              width: 287,
+              borderRadius: 18,
+              position: 'absolute',
+            }}
+            source={require('../../../../assets/images/others/cardBg.png')}
+          />
+          <View style={{flex: 1, paddingHorizontal: 20, paddingVertical: 20}}>
+            <Text
+              textAlign={'center'}
+              fontType={FONTS.MONTSERRAT}
+              semiBold
+              size={12}
+              color={'#111B21'}>
+              Bankole Ajanlekoko
+            </Text>
+            <Text medium style={{marginTop: 20}} textAlign={'center'} size={20}>
+              **** 5652 3356 3447
+            </Text>
+
+            <Text size={11} style={{marginTop: 60}} textAlign={'center'}>
+              Exp{' '}
+              <Text semiBold size={11} textAlign={'center'}>
+                **/**
+              </Text>
             </Text>
           </View>
         </View>
-        <MenuList />
-        <View style={{marginTop: 30}}>
-          <SectionList
-            style={{backgroundColor: COLORS.white}}
-            item={sectionListData}
+
+        <View style={{marginTop: 20}}>
+          <Text medium size={14} color={'#979797'}>
+            We will be charging a creation fee for this card.
+          </Text>
+          <Text style={{marginTop: 5}} size={25} semiBold>
+            $3 - ₦5,235.00
+          </Text>
+          <View style={{alignItems: 'flex-start', marginTop: 10}}>
+            <BillsBalance style={{marginHorizontal: 0}} />
+          </View>
+        </View>
+
+        <View style={{flex: 1, justifyContent: 'flex-end'}}>
+          <View
+            style={{
+              marginTop: 20,
+              marginBottom: 30,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <CheckBox
+              isChecked={state.isChecked}
+              onPress={() => {
+                setState(prevState => ({
+                  ...prevState,
+                  isChecked: !prevState.isChecked,
+                }));
+              }}
+            />
+            <Text
+              onPress={() => {
+                openLink('https://dataresell.com/privacy-policy');
+              }}
+              color={'#7F8192'}
+              fontWeight={'500'}
+              style={{paddingLeft: 10}}
+              size={12}>
+              I’ve read and agree to the
+              <Text
+                style={{textDecorationLine: 'underline'}}
+                color={'#756EF3'}
+                fontWeight={'500'}
+                size={12}>
+                {' '}
+                terms of use
+              </Text>
+            </Text>
+          </View>
+
+          <Button
+            title={'Proceed'}
+            onPress={() => navigation.navigate('DollarCardDetailsScreen')}
           />
         </View>
-      </ScrollView>
+      </KeyboardAvoidingViewWrapper>
     </CustomSafeAreaView>
   );
 };

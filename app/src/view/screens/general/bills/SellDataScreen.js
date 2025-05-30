@@ -14,10 +14,13 @@ import {
 } from '../../../components/general';
 import {BillsBalance, MainHeader} from '../../../components/layouts';
 import {
+  FlatList,
+  Image,
   Keyboard,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import {COLORS, FONTS, GENERAL, NETWORKS} from '../../../../conts';
@@ -41,6 +44,7 @@ import {
 import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
 import {useIsFocused} from '@react-navigation/native';
 import {RecentCustomers} from '../../../components/home';
+import LinearGradient from 'react-native-linear-gradient';
 
 let validationSchema;
 
@@ -110,11 +114,60 @@ const getGiftingPlans = async (network = 'mtn') => {
   }
 };
 
+const DataCard = ({}) => {
+  const {width} = useWindowDimensions();
+  const currentWidth = width / 3 - 100 / 3;
+  return (
+    <LinearGradient
+      // start={{x: 0, y: 0}}
+      // end={{x: 1, y: 0}}
+      colors={['#FFC849', '#CBDB31']}
+      style={{
+        height: 157,
+        // backgroundColor: '#CBDB31',
+        width: currentWidth,
+        marginBottom: 20,
+        marginHorizontal: 5,
+        borderRadius: 12,
+      }}>
+      <View
+        style={{
+          height: 127,
+          backgroundColor: '#F5F5F5',
+          marginTop: 1,
+          marginHorizontal: 1,
+          borderTopRightRadius: 12,
+          borderTopLeftRadius: 12,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Text size={12} semiBold color={COLORS.primary}>
+          30 Days
+        </Text>
+
+        <Text style={{marginTop: 10}} size={18} bold color={COLORS.darkBlue}>
+          1.8 GB
+        </Text>
+        <Text style={{marginTop: 10}} size={12} semiBold color={COLORS.primary}>
+          ₦1,500
+        </Text>
+      </View>
+      <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+        <Text size={10} bold>
+          ₦30 Cashback
+        </Text>
+      </View>
+    </LinearGradient>
+  );
+};
+
 export const SellDataScreen = ({navigation, route}) => {
   const [state, setState] = React.useState({
     buttonDisabled: false,
     bypass: false,
   });
+
+  const pickerRef = React.useRef(null);
 
   const {minHeight} = useLayouts();
   const {getCustomers} = useBillsData();
@@ -369,6 +422,7 @@ export const SellDataScreen = ({navigation, route}) => {
   React.useEffect(() => {
     refetch();
   }, [isFocused]);
+  console.log(mainDataPlans);
 
   return (
     <CustomSafeAreaView>
@@ -378,52 +432,97 @@ export const SellDataScreen = ({navigation, route}) => {
         contentContainerStyle={{
           paddingTop: 30,
           paddingBottom: 40,
-          paddingHorizontal: 20,
           minHeight: minHeight - 70,
         }}>
-        <Text size={12} color={'#898A8D'}>
-          We will find the network provider for you,😌 we gatchu
-        </Text>
-
-        <View style={{marginTop: 20}}>
-          <Input
-            onPaste={value => {
-              const network = getNumberNetwork(value);
+        <View style={{paddingHorizontal: 20}}>
+          <RecentCustomers
+            value={values?.phone}
+            onPress={phone => {
+              const network = getNumberNetwork(phone);
+              const selectedNetworkData = getNumberNetwork(network);
               setValues({
                 ...values,
-                phone: value,
-                network: network,
+                phone: phone,
+                network: state?.bypass ? null : selectedNetworkData,
               });
             }}
-            keyboardType="numeric"
-            value={values.phone}
-            error={touched?.phone && errors?.phone}
-            onChangeText={value => {
-              const network = getNumberNetwork(value);
-
-              setValues({
-                ...values,
-                phone: value,
-                network: network,
-              });
-            }}
-            onBlur={() => setFieldTouched('phone', true)}
-            placeholder="Phone Number"
           />
+          <View style={{marginTop: 20}}>
+            <View style={{flexDirection: 'row'}}>
+              <Input
+                leftIcon={
+                  <TouchableOpacity
+                    onPress={() => {
+                      pickerRef?.current.focus?.();
+                    }}
+                    style={{
+                      height: 36,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginRight: 8,
+                    }}>
+                    <CustomPicker
+                      ref={pickerRef}
+                      error={touched?.network && errors?.network}
+                      data={NETWORKS}
+                      value={values?.network}
+                      onValueChange={value => {
+                        setValues({...values, network: value, type: ''});
+                      }}
+                      placeholder="Select Network"
+                      onBlur={() => {
+                        setFieldTouched('network', true);
+                      }}
+                      rightIcon={<></>}
+                      innerStyle={{opacity: 1, backgroundColor: 'transparent'}}
+                      conStyle={{
+                        position: 'absolute',
+                        zIndex: 100,
+                        height: '100%',
+                        marginBottom: 0,
+                        marginTop: 0,
+                        backgroundColor: 'transparent',
+                        width: 70,
+                        left: -20,
+                        top: -20,
+                        zIndex: 0,
+                      }}
+                    />
+                    <Image
+                      source={values?.network?.image}
+                      style={{height: 36, width: 36, marginRight: 8}}
+                    />
 
-          <View style={{flexDirection: 'row'}}>
-            <CustomPicker
-              error={touched?.network && errors?.network}
-              data={NETWORKS}
-              value={values?.network}
-              onValueChange={value => {
-                setValues({...values, network: value, type: ''});
-              }}
-              placeholder="Select Network"
-              onBlur={() => {
-                setFieldTouched('network', true);
-              }}
-            />
+                    <Icons.ChevronDown size={15} />
+                  </TouchableOpacity>
+                }
+                onPaste={value => {
+                  const network = getNumberNetwork(value);
+                  setValues({
+                    ...values,
+                    phone: value,
+                    network: network,
+                  });
+                }}
+                keyboardType="numeric"
+                value={values.phone}
+                error={touched?.phone && errors?.phone}
+                onChangeText={value => {
+                  const network = getNumberNetwork(value);
+
+                  setValues({
+                    ...values,
+                    phone: value,
+                    network: network,
+                  });
+                }}
+                onBlur={() => setFieldTouched('phone', true)}
+                placeholder="Phone Number"
+              />
+            </View>
+          </View>
+
+          {/* <View style={{flexDirection: 'row'}}>
             <View style={{width: 5}} />
             <CustomPicker
               data={dataRes}
@@ -437,9 +536,9 @@ export const SellDataScreen = ({navigation, route}) => {
                 setFieldTouched('type', true);
               }}
             />
-          </View>
+          </View> */}
 
-          <CustomPicker
+          {/* <CustomPicker
             loading={isFetching}
             value={values?.variation_code}
             error={touched?.variation_code && errors?.variation_code}
@@ -461,9 +560,9 @@ export const SellDataScreen = ({navigation, route}) => {
               setFieldTouched('variation_code', true);
             }}
             placeholder="Select Data plan"
-          />
+          /> */}
 
-          <Input
+          {/* <Input
             fontSize={16}
             fontFamily={FONTS.PLUS_JAKARTA_SANS_FONTS.bold}
             showTextError={false}
@@ -473,7 +572,80 @@ export const SellDataScreen = ({navigation, route}) => {
             placeholder="Amount"
             backgroundColor="#EFF1FB"
             value={formatAmount(values?.amount)}
-          />
+          /> */}
+        </View>
+        <View
+          style={{
+            height: 70,
+            backgroundColor: COLORS.white,
+            marginTop: 15,
+            justifyContent: 'center',
+          }}>
+          <ScrollView
+            contentContainerStyle={{paddingHorizontal: 20}}
+            style={{flexGrow: 0}}
+            horizontal>
+            {dataRes?.map(item => (
+              <TouchableOpacity
+                onPress={() => {
+                  setFieldValue('type', item);
+                }}
+                style={{
+                  height: 42,
+                  backgroundColor: '#F5F5F5',
+                  paddingHorizontal: 15,
+                  marginRight: 10,
+                  justifyContent: 'center',
+                  borderRadius: 32,
+                  borderWidth: 1,
+                  borderColor:
+                    item?.name == values?.type?.name
+                      ? COLORS.primary
+                      : '#F5F5F5',
+                }}>
+                <Text bold size={12} color={'#848A94'}>
+                  {item?.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+        <View style={{paddingHorizontal: 20}}>
+          <View
+            style={{
+              paddingHorizontal: 10,
+              paddingVertical: 10,
+              backgroundColor: COLORS.white,
+              marginTop: 15,
+              borderRadius: 18,
+            }}>
+            <Text></Text>
+
+            <View>
+              {mainDataPlans?.length == 0 && (
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingBottom: 10,
+                  }}>
+                  <Image
+                    style={{height: 128, width: 128}}
+                    source={require('../../../../assets/images/others/fly.png')}
+                  />
+                </View>
+              )}
+
+              <FlatList
+                columnWrapperStyle={{
+                  justifyContent: 'space-evenly',
+                }}
+                numColumns={3}
+                data={mainDataPlans}
+                renderItem={({item}) => <DataCard item={item} />}
+              />
+            </View>
+          </View>
         </View>
 
         <View
@@ -486,30 +658,18 @@ export const SellDataScreen = ({navigation, route}) => {
           <BillsBalance />
         </View>
 
-        <View style={{marginBottom: 20}}>
-          <RecentCustomers
-            value={values?.phone}
-            onPress={phone => {
-              const network = getNumberNetwork(phone);
-              const selectedNetworkData = getNumberNetwork(network);
-              setValues({
-                ...values,
-                phone: phone,
-                network: state?.bypass ? null : selectedNetworkData,
-              });
+        <View style={{marginBottom: 20, paddingHorizontal: 20}}>
+          <Button
+            titleStyle={{color: COLORS.white}}
+            type={state?.buttonDisabled ? 'grey' : 'primary'}
+            onPress={() => {
+              Keyboard.dismiss();
+              submitForm();
             }}
+            style={{marginTop: 40}}
+            title={'Purchase'}
           />
         </View>
-        <Button
-          titleStyle={{color: COLORS.white}}
-          type={state?.buttonDisabled ? 'grey' : 'primary'}
-          onPress={() => {
-            Keyboard.dismiss();
-            submitForm();
-          }}
-          style={{marginTop: 40}}
-          title={'Purchase'}
-        />
       </ScrollView>
     </CustomSafeAreaView>
   );

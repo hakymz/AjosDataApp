@@ -4,6 +4,7 @@ import {
   Button,
   CustomSafeAreaView,
   Icons,
+  Input,
   KeyboardAvoidingViewWrapper,
   PageInput,
   SuccessRateDisplay,
@@ -32,6 +33,10 @@ import {
 import Toast from '../../../components/toast/Toast';
 import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
 import {ScrollView} from 'react-native-gesture-handler';
+import {
+  AddNumberForBulkSms,
+  AddNumberForBulkSmsOption,
+} from '../../../components/bottomSheetModal/modalContents';
 const validationSchema = yup.object().shape({
   message: yup.string().required('Please enter message'),
   sender: yup.string().required('Please add sender'),
@@ -98,6 +103,7 @@ export const BulkSmsScreen = ({navigation}) => {
       phone: '',
       sender: '',
       message: '',
+      contacts: [],
     },
     validationSchema: validationSchema,
     onSubmit: values => {
@@ -190,7 +196,7 @@ export const BulkSmsScreen = ({navigation}) => {
   };
   return (
     <CustomSafeAreaView>
-      <MainHeader />
+      <MainHeader nav title={'Bulk SMS'} />
       <KeyboardAvoidingViewWrapper
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -199,37 +205,13 @@ export const BulkSmsScreen = ({navigation}) => {
           paddingHorizontal: 20,
           minHeight: minHeight - 70,
         }}>
-        <BillsBalance />
-        <View style={{marginTop: 30}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Text fontWeight={800} size={18}>
-              Bulk SMS
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('BulkSmsRuleScreen');
-              }}
-              style={{
-                height: 30,
-                backgroundColor: '#231F20',
-                borderRadius: 5,
-                justifyContent: 'center',
-                alignItems: 'center',
-                paddingHorizontal: 15,
-              }}>
-              <Text size={12} fontWeight={'500'} color={COLORS.white}>
-                Check instructions
-              </Text>
-            </TouchableOpacity>
-          </View>
+        <View style={{marginTop: 10}}>
+          <Text size={12} color={'#898A8D'}>
+            Enter the details for the SMS to be sent in bulk.
+          </Text>
 
           <View style={{marginTop: 20, marginBottom: 10}}>
-            <PageInput
+            <Input
               showTextError={true}
               value={values.sender}
               error={touched?.sender && errors?.sender}
@@ -240,6 +222,7 @@ export const BulkSmsScreen = ({navigation}) => {
               placeholder="Sender Name"
             />
             <TextArea
+              placeholder="Enter text here"
               value={values.message}
               error={touched?.message && errors?.message}
               onChangeText={handleChange('message')}
@@ -247,114 +230,74 @@ export const BulkSmsScreen = ({navigation}) => {
                 setFieldTouched('message', true);
               }}
             />
-            <Text
-              fontWeight={'500'}
-              color={COLORS.dark}
-              size={14}
-              style={{
-                marginTop: 10,
-                marginBottom: 10,
-                paddingHorizontal: 10,
-              }}>
-              Add contacts Manually
-            </Text>
+
             <View
               style={{
-                minHeight: 54,
-                maxHeight: 100,
-                backgroundColor: '#EFF1FB',
-                borderRadius: 8,
+                height: 60,
+                backgroundColor: COLORS.white,
+                borderRadius: 16,
                 flex: 1,
                 paddingVertical: 5,
-                justifyContent: 'center',
+                marginTop: 15,
+                borderWidth: 1,
+                borderColor: '#E9F1FF',
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingHorizontal: 20,
+                justifyContent: 'space-between',
               }}>
-              <ScrollView
-                contentContainerStyle={{
-                  justifyContent: 'center',
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    marginHorizontal: 15,
-                    flexWrap: 'wrap',
-                  }}>
-                  {contacts?.map((number, index) => (
-                    <ContactsList
-                      onPress={() => {
-                        BottomSheets.show({
-                          component: (
-                            <EditNumber
-                              number={number}
-                              index={index}
-                              saveUserNumber={value => {
-                                saveUserNumber(value, index);
-                              }}
-                              deleteNumber={() => {
-                                deleteNumber(index);
-                              }}
-                            />
-                          ),
-                        });
-                      }}
-                      text={number}
-                    />
-                  ))}
-                  <View
-                    style={{
-                      width: '100%',
-                      height: 50,
-                    }}>
-                    <TextInput
-                      onKeyPress={({nativeEvent}) => {
-                        if (
-                          nativeEvent.key == 'Backspace' &&
-                          values?.phone == ''
-                        ) {
-                          let newNumbers = [...contacts];
-                          newNumbers?.pop();
-                          setContacts(newNumbers);
-                        }
-                      }}
-                      value={values?.phone}
-                      keyboardType="default"
-                      onChangeText={value => {
-                        console.log('09036199523 08114142857');
-                        if (!isNaN(value * 1)) {
-                          setFieldValue('phone', value?.trim?.());
-                        }
+              <View>
+                <Text size={16} color={'#848A94'}>
+                  {values?.contacts?.length < 1
+                    ? 'Add Numbers'
+                    : `[${values?.contacts?.length}] added`}
+                </Text>
+              </View>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Icons.PlusCircle
+                  onPress={() => {
+                    BottomSheets.show({
+                      component: (
+                        <AddNumberForBulkSmsOption
+                          onValueChange={value => {
+                            setFieldValue('contacts', value);
+                          }}
+                          currentContacts={values?.contacts}
+                        />
+                      ),
+                    });
+                  }}
+                />
+                {values?.contacts?.length > 0 && (
+                  <Icons.DeletePen
+                    size={27}
+                    onPress={() => {
+                      BottomSheets.show({
+                        component: (
+                          <AddNumberForBulkSms
+                            onValueChange={value => {
+                              setFieldValue('contacts', value);
+                            }}
+                            currentContacts={values?.contacts}
+                          />
+                        ),
+                      });
+                    }}
+                  />
+                )}
 
-                        if (value.includes(' ') && value?.length > 9) {
-                          setFieldValue('phone', '');
-                          let splitNumbers = value?.split(' ');
-                          splitNumbers = splitNumbers?.filter(item => item);
-
-                          setContacts([...contacts, ...splitNumbers]);
-                        }
-                      }}
-                      onEndEditing={({
-                        nativeEvent: {eventCount, target, text},
-                      }) => {
-                        let value = text;
-                        if (value?.length > 9) {
-                          console.log('yesssss');
-                          setFieldValue('phone', '');
-                          setContacts([...contacts, value?.trim?.()]);
-                        }
-                      }}
-                      style={{
-                        flex: 1,
-                        fontSize: 16,
-                        color: COLORS.blue,
-                        fontFamily: FONTS.AIRBNBCEREAL_FONTS.Md,
-                        height: '100%',
-                        // backgroundColor: 'red',
-                      }}
-                    />
-                  </View>
-                </View>
-              </ScrollView>
+                {values?.contacts?.length < 1 && (
+                  <Text
+                    style={{marginLeft: 5}}
+                    medium
+                    size={13}
+                    color={'#151521'}>
+                    Add Contact(s)
+                  </Text>
+                )}
+              </View>
             </View>
-            <Text style={{marginTop: 25}} size={12} color={'#828282'}>
+            <Text style={{marginTop: 20}} size={12} color={'#828282'}>
               You can add singular phone numbers, by typing and pasting or by
               importing a{' '}
               <Text size={12} fontWeight={700} color={'#828282'}>
@@ -362,79 +305,14 @@ export const BulkSmsScreen = ({navigation}) => {
               </Text>{' '}
               file containing your contacts.
             </Text>
-
-            <Text
-              fontWeight={'500'}
-              color={COLORS.dark}
-              size={14}
-              style={{
-                marginTop: 25,
-                marginBottom: 10,
-                paddingHorizontal: 10,
-              }}>
-              Upload Contacts
-            </Text>
-            <TouchableOpacity
-              onPress={pickerDoc}
-              style={{
-                height: 54,
-                backgroundColor: '#EFF1FB',
-                borderRadius: 8,
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingHorizontal: 15,
-                flex: 1,
-                justifyContent: state?.fileName ? 'space-between' : 'center',
-              }}>
-              {state?.fileName && (
-                <ContactsList style={{flex: 0}} text={state?.fileName} />
-              )}
-
-              <Icons.Upload size={24} />
-            </TouchableOpacity>
-            <Text
-              fontWeight={'700'}
-              color={COLORS.primary}
-              size={13}
-              style={{
-                marginTop: 10,
-                marginBottom: 10,
-                paddingHorizontal: 18,
-              }}>
-              {state?.fileNumbers?.length} Contacts detected
-            </Text>
-            <PageInput
-              editable={false}
-              value={`${formatAmount(
-                (state?.fileNumbers?.length + contacts?.length) * 4,
-              )}`}
-              placeholder={'Total Amount'}
-              style={{marginBottom: 0}}
-              rightIcon={
-                <Text size={12} fontWeight={'500'} color={'#9A9A9A'}>
-                  Amount
-                </Text>
-              }
-            />
-            <Text
-              fontWeight={'700'}
-              color={COLORS.primary}
-              size={13}
-              style={{
-                marginTop: 10,
-                marginBottom: 10,
-                paddingHorizontal: 18,
-              }}>
-              4 NGN/SMS
-            </Text>
           </View>
-          <SuccessRateDisplay type="bulksms" />
+
           <Button
             onPress={() => {
               submitForm();
             }}
             style={{marginTop: 40}}
-            title={'Send Message'}
+            title={'Purchase'}
           />
         </View>
       </KeyboardAvoidingViewWrapper>

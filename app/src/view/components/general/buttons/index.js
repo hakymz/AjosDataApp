@@ -8,3 +8,4 @@ export * from './SupportButton';
 export * from './BioButton';
 export * from './OutlineButton';
 export * from './ErrorButton';
+export * from './CloseButton';

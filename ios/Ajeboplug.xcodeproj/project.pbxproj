@@ -14,16 +14,20 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		215DE35071AC4F43AD0A2C9F /* PlusJakartaSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 132BE2DBC68C4A31A299B029 /* PlusJakartaSans-Regular.ttf */; };
+		306B679402CF44D78BB2F27B /* Montserrat-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF707D73D3774631B253EC8A /* Montserrat-SemiBold.ttf */; };
 		3145AF7B6AA0443B968F3115 /* PlusJakartaSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D0490606475B49F5B7E7C651 /* PlusJakartaSans-ExtraBold.ttf */; };
 		35B4E4E89AD84C2C93E1A55B /* AirbnbCereal_W_Lt.otf in Resources */ = {isa = PBXBuildFile; fileRef = FD408C71F1484C19B86A2C46 /* AirbnbCereal_W_Lt.otf */; };
 		4C4DBC485D58420CAF924C69 /* AirbnbCereal_W_Bk.otf in Resources */ = {isa = PBXBuildFile; fileRef = 847D3834059E435C87BA8EF6 /* AirbnbCereal_W_Bk.otf */; };
 		7699B88040F8A987B510C191 /* libPods-Ajeboplug-AjeboplugTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-Ajeboplug-AjeboplugTests.a */; };
 		7706938F67B64E7EA24C141D /* PlusJakartaSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EE1FB4F1E04419DBB6C5F83 /* PlusJakartaSans-Medium.ttf */; };
+		7B9B6704129E49EE9B9B8BA9 /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 826F400F29374B6EAABE6F8C /* Montserrat-Regular.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8B3405223C1A4EF4BBE251F9 /* AirbnbCereal_W_Bd.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1E65DBE556D94503A2BE5D79 /* AirbnbCereal_W_Bd.otf */; };
+		8C9C97B48D8647478EE774A8 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DB5EDA1B4BCE4F4AAFB573F2 /* Montserrat-Bold.ttf */; };
 		95180ABD58434456943313A8 /* PlusJakartaSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 813B18DDB32046B69A973180 /* PlusJakartaSans-SemiBold.ttf */; };
 		BBFFD4D79A8D4AC8954C87BE /* PlusJakartaSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A9D95DB8350D43CCB3CB4A06 /* PlusJakartaSans-Bold.ttf */; };
 		C3BCAB59A87141AEA2B2D719 /* AirbnbCereal_W_Md.otf in Resources */ = {isa = PBXBuildFile; fileRef = 813671A5EBA642A88002FF8D /* AirbnbCereal_W_Md.otf */; };
+		CADDFB67302C4C6986F731CD /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 841D5AB6363C413E96F2907C /* Montserrat-Medium.ttf */; };
 		E64ABB66719A4CF7908F3E36 /* AirbnbCereal_W_XBd.otf in Resources */ = {isa = PBXBuildFile; fileRef = B851A92E659145E9910EF0C0 /* AirbnbCereal_W_XBd.otf */; };
 		F37961F823C6416F94B874F6 /* AirbnbCereal_W_Blk.otf in Resources */ = {isa = PBXBuildFile; fileRef = 53EA23B9F9434E17979D7B56 /* AirbnbCereal_W_Blk.otf */; };
 /* End PBXBuildFile section */
@@ -61,13 +65,17 @@
 		813671A5EBA642A88002FF8D /* AirbnbCereal_W_Md.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AirbnbCereal_W_Md.otf; path = ../app/src/assets/fonts/AirbnbCereal_W_Md.otf; sourceTree = "<group>"; };
 		813B18DDB32046B69A973180 /* PlusJakartaSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PlusJakartaSans-SemiBold.ttf"; path = "../app/src/assets/fonts/PlusJakartaSans-SemiBold.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Ajeboplug/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		826F400F29374B6EAABE6F8C /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Regular.ttf"; path = "../app/src/assets/fonts/Montserrat-Regular.ttf"; sourceTree = "<group>"; };
+		841D5AB6363C413E96F2907C /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Medium.ttf"; path = "../app/src/assets/fonts/Montserrat-Medium.ttf"; sourceTree = "<group>"; };
 		847D3834059E435C87BA8EF6 /* AirbnbCereal_W_Bk.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AirbnbCereal_W_Bk.otf; path = ../app/src/assets/fonts/AirbnbCereal_W_Bk.otf; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-Ajeboplug-AjeboplugTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ajeboplug-AjeboplugTests.release.xcconfig"; path = "Target Support Files/Pods-Ajeboplug-AjeboplugTests/Pods-Ajeboplug-AjeboplugTests.release.xcconfig"; sourceTree = "<group>"; };
 		A9D95DB8350D43CCB3CB4A06 /* PlusJakartaSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PlusJakartaSans-Bold.ttf"; path = "../app/src/assets/fonts/PlusJakartaSans-Bold.ttf"; sourceTree = "<group>"; };
 		B851A92E659145E9910EF0C0 /* AirbnbCereal_W_XBd.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AirbnbCereal_W_XBd.otf; path = ../app/src/assets/fonts/AirbnbCereal_W_XBd.otf; sourceTree = "<group>"; };
 		D0490606475B49F5B7E7C651 /* PlusJakartaSans-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PlusJakartaSans-ExtraBold.ttf"; path = "../app/src/assets/fonts/PlusJakartaSans-ExtraBold.ttf"; sourceTree = "<group>"; };
+		DB5EDA1B4BCE4F4AAFB573F2 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Bold.ttf"; path = "../app/src/assets/fonts/Montserrat-Bold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FD408C71F1484C19B86A2C46 /* AirbnbCereal_W_Lt.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AirbnbCereal_W_Lt.otf; path = ../app/src/assets/fonts/AirbnbCereal_W_Lt.otf; sourceTree = "<group>"; };
+		FF707D73D3774631B253EC8A /* Montserrat-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-SemiBold.ttf"; path = "../app/src/assets/fonts/Montserrat-SemiBold.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +196,10 @@
 				7EE1FB4F1E04419DBB6C5F83 /* PlusJakartaSans-Medium.ttf */,
 				132BE2DBC68C4A31A299B029 /* PlusJakartaSans-Regular.ttf */,
 				813B18DDB32046B69A973180 /* PlusJakartaSans-SemiBold.ttf */,
+				DB5EDA1B4BCE4F4AAFB573F2 /* Montserrat-Bold.ttf */,
+				841D5AB6363C413E96F2907C /* Montserrat-Medium.ttf */,
+				826F400F29374B6EAABE6F8C /* Montserrat-Regular.ttf */,
+				FF707D73D3774631B253EC8A /* Montserrat-SemiBold.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -299,6 +311,10 @@
 				7706938F67B64E7EA24C141D /* PlusJakartaSans-Medium.ttf in Resources */,
 				215DE35071AC4F43AD0A2C9F /* PlusJakartaSans-Regular.ttf in Resources */,
 				95180ABD58434456943313A8 /* PlusJakartaSans-SemiBold.ttf in Resources */,
+				8C9C97B48D8647478EE774A8 /* Montserrat-Bold.ttf in Resources */,
+				CADDFB67302C4C6986F731CD /* Montserrat-Medium.ttf in Resources */,
+				7B9B6704129E49EE9B9B8BA9 /* Montserrat-Regular.ttf in Resources */,
+				306B679402CF44D78BB2F27B /* Montserrat-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

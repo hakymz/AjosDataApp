@@ -70,9 +70,19 @@ export const Services = ({navigation}) => {
       icon: <Icons.Bill size={18} />,
       screen: 'BillsScreen',
     },
-    {name: 'SMS', details: 'Bulk SMS', icon: <Icons.Sms size={18} />},
+    {
+      name: 'SMS',
+      details: 'Bulk SMS',
+      icon: <Icons.Sms size={18} />,
+      screen: 'BulkSmsScreen',
+    },
     {name: 'Giftcard', details: 'Purchase', icon: <Icons.Giftcard size={18} />},
-    {name: 'Dollar', details: 'Card', icon: <Icons.DollarCard size={18} />},
+    {
+      name: 'Dollar',
+      details: 'Card',
+      icon: <Icons.DollarCard size={18} />,
+      screen: 'DollarCardScreen',
+    },
   ];
   return (
     <View style={{marginTop: 20}}>

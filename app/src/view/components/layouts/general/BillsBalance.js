@@ -4,7 +4,7 @@ import {Text} from '../../general';
 import {COLORS, GENERAL} from '../../../../conts';
 import {useUser} from '../../../../hooks';
 import {formatAmount} from '../../../../helper';
-export const BillsBalance = () => {
+export const BillsBalance = ({style}) => {
   const {data} = useUser();
   return (
     <View
@@ -16,6 +16,7 @@ export const BillsBalance = () => {
         alignItems: 'center',
         marginHorizontal: 10,
         justifyContent: 'center',
+        ...style,
       }}>
       <Text
         color={COLORS.darkBlue}

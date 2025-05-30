@@ -3,18 +3,20 @@ import {
   BottomSheets,
   CustomSafeAreaView,
   Icons,
+  SearchInput,
   Text,
 } from '../../../components/general';
-import {AppNav} from '../../../components/layouts';
+import {AppNav, MainHeader} from '../../../components/layouts';
 import {
   FlatList,
+  Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
   useWindowDimensions,
 } from 'react-native';
-import {COLORS} from '../../../../conts';
+import {AVATAR, COLORS, IMAGES} from '../../../../conts';
 import {AddCustomer} from '../../../components/bottomSheetModal/contents';
 import Animated, {
   useAnimatedStyle,
@@ -24,12 +26,9 @@ import Animated, {
 import {useBillsData} from '../../../../hooks';
 import {useQuery} from 'react-query';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
-const List = ({item, deleteCustomers, onPress}) => {
-  const {width} = useWindowDimensions();
-  const [state, setState] = React.useState({showDelete: false});
-  const rightPosition = useSharedValue(25);
+import {DeleteCustomer} from '../../../components/bottomSheetModal/modalContents';
+const List = ({item, deleteCustomers}) => {
   const navigation = useNavigation();
-
   let customerNumber = item?.customerNumber?.split('+234');
   if (customerNumber[1]) {
     customerNumber =
@@ -40,118 +39,56 @@ const List = ({item, deleteCustomers, onPress}) => {
     customerNumber = item?.customerNumber;
   }
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      right: rightPosition.value,
-    };
-  });
-  const slide = async () => {
-    if (!state?.showDelete) {
-      setState(prevState => ({
-        ...prevState,
-        showDelete: !prevState?.showDelete,
-      }));
-      rightPosition.value = withTiming(10, {
-        duration: 200,
-      });
-    } else {
-      rightPosition.value = withTiming(27, {
-        duration: 200,
-      });
-      setTimeout(() => {
-        setState(prevState => ({
-          ...prevState,
-          showDelete: !prevState?.showDelete,
-        }));
-      }, 250);
-    }
-  };
   return (
-    <TouchableOpacity
-      disabled={!onPress}
-      onPress={() => {
-        onPress(customerNumber);
-        navigation.goBack();
-      }}
+    <View
       style={{
         // ...styles.list,
         width: '100%',
       }}>
-      {state?.showDelete && (
-        <Animated.View
-          style={[
-            {
-              height: 72,
-              position: 'absolute',
-              backgroundColor: COLORS.primary,
-              zIndex: 10,
-              width: width - 50,
-              borderRadius: 8,
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingHorizontal: 15,
-              justifyContent: 'space-between',
-            },
-            animatedStyle,
-          ]}>
-          <Icons.CloseCircle
-            onPress={() => {
-              slide();
-            }}
-          />
-          <Text size={12} color={COLORS.white} bk>
-            Are you sure you want to delete?
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              deleteCustomers(item?._id);
-            }}
-            style={{
-              height: 32,
-              width: 32,
-              backgroundColor: COLORS.white,
-              borderRadius: 40,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Icons.DeleteIcon size={15} />
-          </TouchableOpacity>
-        </Animated.View>
-      )}
-
       <View
         style={{
           ...styles.list,
-          marginHorizontal: 20,
         }}>
+        <Image
+          style={{height: 50, width: 50, borderRadius: 100, marginRight: 10}}
+          source={AVATAR.avatar}
+        />
         <View style={{flex: 1}}>
-          <Text size={14} fontWeight={'500'} color={'#7F8192'}>
+          <Text size={14} fontWeight={'700'} color={'#231F20'}>
             {item?.customerName}
           </Text>
           <Text
             style={{marginTop: 3}}
-            size={18}
+            size={12}
             fontWeight={800}
-            color={'#7F8192'}>
+            color={'#231F20'}>
             {item?.customerNumber}
           </Text>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            slide();
-          }}
-          style={{
-            backgroundColor: '#FCDCD3',
-            height: 32,
-            width: 32,
-            borderRadius: 100,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icons.DeleteIcon size={15} />
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Icons.EditPenCircle
+            onPress={() => {
+              navigation.navigate('EditCustomersScreen', {...item});
+            }}
+            style={{marginRight: 5}}
+            size={37}
+          />
+          <Icons.DeletePen
+            onPress={() => {
+              BottomSheets.show({
+                component: (
+                  <DeleteCustomer
+                    deleteCustomers={() => deleteCustomers(item?._id)}
+                    item={item}
+                  />
+                ),
+              });
+            }}
+            size={27}
+          />
+        </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 export const CustomersScreen = ({navigation, route}) => {
@@ -171,8 +108,7 @@ export const CustomersScreen = ({navigation, route}) => {
   const deleteCustomersData = async id => {
     try {
       const response = await deleteCustomers(id);
-      console.log(response, 'response response');
-
+      BottomSheets.hide();
       setTimeout(() => {
         refetch();
       }, 1000);
@@ -183,8 +119,36 @@ export const CustomersScreen = ({navigation, route}) => {
     refetch();
   }, [isFocused]);
   return (
-    <CustomSafeAreaView>
-      <AppNav title="Customers" />
+    <CustomSafeAreaView backgroundColor={COLORS.white}>
+      <MainHeader
+        backgroundColor={COLORS.white}
+        nav
+        title={<></>}
+        icon={
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('AddCustomersScreen');
+            }}
+            style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View
+              style={{
+                height: 30,
+                width: 30,
+                borderWidth: 1,
+                borderRadius: 100,
+                borderColor: COLORS.darkBlue,
+                marginRight: 5,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Icons.Plus size={12} />
+            </View>
+            <Text medium size={14} color={'#5D55E0'}>
+              Add Customer
+            </Text>
+          </TouchableOpacity>
+        }
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -192,40 +156,19 @@ export const CustomersScreen = ({navigation, route}) => {
           paddingBottom: 40,
         }}>
         <View style={{paddingHorizontal: 20}}>
-          <Text
-            size={14}
-            fontWeight={'500'}
-            color={COLORS.dark}
-            textAlign={'center'}>
-            Here is a list of your beneficiaries/Customers
+          <Text size={16} fontWeight={'700'} color={'#002055'}>
+            Customers
           </Text>
-          <TouchableOpacity
-            onPress={() => {
-              BottomSheets.show({
-                component: <AddCustomer />,
-                customSnapPoints: [550, 550],
-              });
-            }}
-            style={{
-              marginTop: 20,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Icons.AddCircle size={18} />
-            <Text
-              style={{textDecorationLine: 'underline', paddingLeft: 10}}
-              textAlign={'center'}
-              size={14}
-              fontWeight={'800'}
-              color={COLORS.dark}>
-              ADD NEW CUSTOMER
-            </Text>
-          </TouchableOpacity>
+          <Text medium style={{marginTop: 5}} size={12} color={'#979797'}>
+            Here is a compilation of all the customers you have saved over time.
+          </Text>
+        </View>
+        <View style={{paddingHorizontal: 20}}>
+          <SearchInput style={{backgroundColor: COLORS.white}} />
         </View>
 
         <FlatList
-          contentContainerStyle={{marginTop: 30}}
+          contentContainerStyle={{marginTop: 10}}
           data={customersData}
           renderItem={({item}) => (
             <List
@@ -242,13 +185,14 @@ export const CustomersScreen = ({navigation, route}) => {
 
 const styles = StyleSheet.create({
   list: {
-    height: 72,
-    backgroundColor: '#F8F8F8',
+    height: 70,
     marginBottom: 10,
     borderRadius: 8,
     paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#F5F5F5',
   },
 });

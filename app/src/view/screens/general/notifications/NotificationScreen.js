@@ -13,7 +13,7 @@ import {
   MyIcons,
   Text,
 } from '../../../components/general';
-import {AppNav} from '../../../components/layouts';
+import {AppNav, MainHeader} from '../../../components/layouts';
 import LottieView from 'lottie-react-native';
 import {s} from 'react-native-size-matters';
 import {COLORS} from '../../../../conts';
@@ -44,14 +44,15 @@ const List = ({item}) => {
         navigation.navigate('NotificationExpandedScreen', {...item});
       }}
       style={{
-        maxHeight: 88,
-        backgroundColor: '#F8F8F8',
+        minHeight: 80,
         marginBottom: 10,
         borderRadius: 8,
         paddingHorizontal: 20,
         paddingVertical: 15,
+        borderWidth: 1,
+        borderColor: '#E9F1FF',
       }}>
-      <Text numberOfLines={2} size={14} fontWeight={500} color={'#7F8192'}>
+      <Text numberOfLines={2} size={14} fontWeight={500} color={'#002055'}>
         {item?.description}
       </Text>
       <Text style={{marginTop: 5}} fontWeight={500} size={12} color={'#B0B0B0'}>
@@ -63,14 +64,11 @@ const List = ({item}) => {
 
 export const NotificationScreen = ({navigation}) => {
   return (
-    <CustomSafeAreaView>
-      <AppNav title={'Notifications'} />
+    <CustomSafeAreaView backgroundColor={COLORS.white}>
+      <MainHeader title={'Notifications'} nav backgroundColor={COLORS.white} />
 
-      <Text
-        size={14}
-        fontWeight={'500'}
-        style={{paddingHorizontal: 20, margin: 10}}>
-        Here are all your Notifications 📢
+      <Text size={18} bold style={{paddingHorizontal: 20, margin: 20}}>
+        Notifications 🔊
       </Text>
 
       <InfiniteFlatList

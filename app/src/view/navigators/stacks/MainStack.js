@@ -19,6 +19,9 @@ import {
   SecurityScreen,
   UpdatePasswordScreen,
   ResetPasswordScreen,
+  DollarCardScreen,
+  AddCustomersScreen,
+  EditCustomersScreen,
 } from '../../screens/general';
 
 import {BottomSheets} from '../../components/general';
@@ -121,6 +124,14 @@ const MainStack = () => {
           component={ResetPasswordScreen}
         />
         <Stack.Screen name="ContactScreen" component={ContactScreen} />
+        <Stack.Screen
+          name="AddCustomersScreen"
+          component={AddCustomersScreen}
+        />
+        <Stack.Screen
+          name="EditCustomersScreen"
+          component={EditCustomersScreen}
+        />
       </Stack.Navigator>
     </>
   );

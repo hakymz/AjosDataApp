@@ -5,6 +5,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {
   BillsScreen,
   BulkSmsScreen,
+  DollarCardDetailsScreen,
+  DollarCardScreen,
   EPinScreen,
   ElectricityScreen,
   SellAirtimeScreen,
@@ -28,6 +30,11 @@ export const HomeNavigator = () => {
       <Stack.Screen name="EPinScreen" component={EPinScreen} />
       <Stack.Screen name="DataToCashScreen" component={DataToCashScreen} />
       <Stack.Screen name="BillsScreen" component={BillsScreen} />
+      <Stack.Screen name="DollarCardScreen" component={DollarCardScreen} />
+      <Stack.Screen
+        name="DollarCardDetailsScreen"
+        component={DollarCardDetailsScreen}
+      />
     </Stack.Navigator>
   );
 };

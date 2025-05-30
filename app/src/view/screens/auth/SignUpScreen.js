@@ -195,7 +195,8 @@ export const SignUpScreen = ({navigation}) => {
                 style={{paddingLeft: 10}}
                 size={12}>
                 I’ve read and agree to the
-                <Text color={'#314BCE'} fontWeight={'500'} size={12}>
+                <Text color={'#756EF3'} fontWeight={'500'} size={12}>
+                  {' '}
                   terms of use
                 </Text>
               </Text>
@@ -221,7 +222,7 @@ export const SignUpScreen = ({navigation}) => {
                 textAlign={'center'}
                 color={'#848A94'}>
                 Have an Account?{' '}
-                <Text size={14} color={COLORS.primary}>
+                <Text semiBold size={14} color={COLORS.primary}>
                   Sign In
                 </Text>
               </Text>

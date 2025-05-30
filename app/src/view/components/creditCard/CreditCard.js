@@ -22,7 +22,7 @@ export const CreditCard = () => {
           left: -10,
           zIndex: 0,
         }}
-        source={require('../../../assets/images/others/cardStripe.png')}
+        source={require('../../../assets/images/others/dolarCard.png')}
       />
       <View style={{padding: 15, flex: 1, justifyContent: 'space-between'}}>
         <View

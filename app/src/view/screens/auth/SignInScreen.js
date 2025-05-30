@@ -187,9 +187,14 @@ export const SignInScreen = ({navigation}) => {
                       alignItems: 'center',
                     }}>
                     <View style={{marginTop: 30}}>
-                      <Text fontWeight={'400'} color={'#848A94'}>
+                      <Text
+                        onPress={() => {
+                          navigation.navigate('SignUpScreen');
+                        }}
+                        fontWeight={'400'}
+                        color={'#848A94'}>
                         Not me?{' '}
-                        <Text fontWeight={'400'} color={COLORS.primary}>
+                        <Text fontWeight={'600'} color={COLORS.primary}>
                           Sign Up
                         </Text>
                       </Text>
