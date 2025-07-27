@@ -1,15 +1,18 @@
 import React from 'react';
 import {Modal, ScrollView, TouchableOpacity, View} from 'react-native';
 import {COLORS, GENERAL, IMAGES} from '../../../conts';
-import {Icons, Text} from '../general';
+import {BottomSheets, Icons, Text} from '../general';
 import {useUser} from '../../../hooks';
 import {fetchRequest, formatAmount} from '../../../helper';
 import {useQuery} from 'react-query';
 import {Image} from '../general/image';
+import {TopupOption} from '../bottomSheetModal/modalContents';
+import {useNavigation} from '@react-navigation/native';
 
-const Btn = ({icon, title, style}) => {
+const Btn = ({icon, title, style, onPress}) => {
   return (
     <TouchableOpacity
+      onPress={onPress}
       style={{flex: 1, flexDirection: 'row', alignItems: 'center', ...style}}>
       <View
         style={{
@@ -33,22 +36,9 @@ const Btn = ({icon, title, style}) => {
 };
 
 export const AccountBalance = () => {
-  const {data, settings, updateUserData} = useUser();
+  const {data} = useUser();
   const [state, setState] = React.useState({showModal: false});
-  const getDetails = async () => {
-    try {
-      const response = await fetchRequest({
-        path: '/customer/app-update',
-        showLoader: false,
-        method: 'GET',
-      });
-      return response?.data;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const {data: details} = useQuery('getDetails', getDetails);
+  const navigation = useNavigation();
 
   return (
     <View
@@ -61,59 +51,6 @@ export const AccountBalance = () => {
 
         justifyContent: 'space-between',
       }}>
-      {state?.showModal && (
-        <Modal transparent>
-          <View
-            style={{
-              height: '100%',
-              width: '100%',
-              backgroundColor: 'rgba(0,0,0,0.7)',
-              paddingHorizontal: 20,
-              justifyContent: 'center',
-            }}>
-            <View
-              style={{
-                backgroundColor: COLORS.white,
-                padding: 20,
-                borderRadius: 10,
-                maxHeight: 500,
-              }}>
-              <ScrollView>
-                <Text textAlign={'center'} color={COLORS.primary} blk size={18}>
-                  {details?.subject}
-                </Text>
-                {details?.image && (
-                  <Image
-                    style={{height: 88, width: '100%', marginTop: 20}}
-                    source={{uri: details?.image}}
-                  />
-                )}
-
-                <Text
-                  style={{marginTop: 20, marginBottom: 10}}
-                  fontWeight={500}
-                  size={12}>
-                  {details?.message}
-                </Text>
-              </ScrollView>
-            </View>
-
-            <View
-              style={{
-                marginTop: 20,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <Icons.CloseCircle
-                onPress={() => {
-                  setState(prevState => ({...prevState, showModal: false}));
-                }}
-              />
-            </View>
-          </View>
-        </Modal>
-      )}
-
       <View
         style={{
           flexDirection: 'row',
@@ -155,47 +92,22 @@ export const AccountBalance = () => {
         </View>
       </View>
 
-      {/* 
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginTop: 10,
-        }}>
-        <View
-          style={{
-            backgroundColor: '#EC2B27',
-            height: 49,
-            width: '80%',
-            borderRadius: 8,
-            justifyContent: 'center',
-            zIndex: 0,
-            overflow: 'hidden',
-          }}>
-          <Text
-            textAlign={'center'}
-            size={28}
-            fontWeight={'800'}
-            color={COLORS.white}>
-            {GENERAL.nairaSign}
-            {formatAmount(data?.wallet?.naira?.balance)}
-          </Text>
-        </View>
-      </View> */}
-
       <View
         style={{
           height: 160,
           backgroundColor: COLORS.white,
           borderRadius: 18,
         }}>
-        <View style={{paddingHorizontal: 10, paddingVertical: 15}}>
+        <View style={{paddingHorizontal: 15, paddingVertical: 15}}>
           <Text size={12} medium color={'#231F20'}>
             Available Funds
           </Text>
           <Text size={34} fontWeight={'500'} color={'#151521'}>
             {GENERAL.nairaSign}
-            {formatAmount(data?.wallet?.naira?.balance)}
+            {formatAmount(data?.wallet?.naira?.balance)?.split('.')[0]}.
+            <Text size={34} fontWeight={'500'} color={'#BBBBBB'}>
+              {formatAmount(data?.wallet?.naira?.balance)?.split('.')[1]}
+            </Text>
           </Text>
         </View>
         <View
@@ -212,7 +124,13 @@ export const AccountBalance = () => {
             flex: 1,
             paddingHorizontal: 20,
           }}>
-          <Btn title={'Add Funds'} icon={<Icons.Plus size={12} />} />
+          <Btn
+            onPress={() => {
+              BottomSheets.show({component: <TopupOption />});
+            }}
+            title={'Add Funds'}
+            icon={<Icons.Plus size={12} />}
+          />
           <View
             style={{
               height: '100%',
@@ -221,6 +139,9 @@ export const AccountBalance = () => {
             }}
           />
           <Btn
+            onPress={() => {
+              navigation.navigate('CustomersScreen');
+            }}
             title={'Customers'}
             style={{marginLeft: 20}}
             icon={<Icons.StickMan size={12} />}

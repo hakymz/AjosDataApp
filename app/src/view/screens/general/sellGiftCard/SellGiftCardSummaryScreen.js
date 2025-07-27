@@ -1,14 +1,21 @@
 import React from 'react';
-import {ScrollView, View, TouchableOpacity} from 'react-native';
+import {
+  ScrollView,
+  View,
+  TouchableOpacity,
+  useWindowDimensions,
+} from 'react-native';
 import {COLORS, FONTS, GENERAL} from '../../../../conts';
 import {useLayouts} from '../../../../hooks';
 import {
   BalanceContainer,
+  BottomSheets,
   Button,
   CustomSafeAreaView,
+  PageIndicator,
   Text,
 } from '../../../components/general';
-import {AppNav} from '../../../components/layouts';
+import {AppNav, MainHeader} from '../../../components/layouts';
 import {SectionList} from '../../../components/lists';
 import {Image} from '../../../components/general/image';
 import {
@@ -19,6 +26,8 @@ import {
 } from '../../../../helper';
 import {s} from 'react-native-size-matters';
 import {Preloader} from '../../../components/loaders';
+import FastImage from 'react-native-fast-image';
+import {GiftcardTradeTerms} from '../../../components/bottomSheetModal/modalContents';
 
 const ImageButton = ({number = 1, item, onPress}) => {
   return (
@@ -28,18 +37,20 @@ const ImageButton = ({number = 1, item, onPress}) => {
       onPress={onPress}>
       <View
         style={{
-          height: s(41),
-          width: s(41),
+          height: 50,
+          width: 50,
           backgroundColor: '#D5EAE0',
-          borderRadius: 50,
+          borderRadius: 12,
           justifyContent: 'center',
           alignItems: 'center',
           marginRight: 5,
-          overflow: 'visible',
+          overflow: 'hidden',
         }}>
-        <Text color={COLORS.primary} semiBold size={14}>
-          {number}
-        </Text>
+        <Image
+          resizeMode={FastImage.resizeMode.cover}
+          style={{height: 50, width: 50}}
+          source={{uri: item?.uri}}
+        />
       </View>
     </TouchableOpacity>
   );
@@ -48,52 +59,54 @@ const ImageButton = ({number = 1, item, onPress}) => {
 export const SellGiftCardSummaryScreen = ({navigation, route}) => {
   const details = route?.params || {};
 
+  const {width} = useWindowDimensions();
+
   const {minHeight} = useLayouts();
 
   const dataList = [
-    {
-      title: details?.name,
-      des: 'Gift Card Brand',
-      right: (
-        <View>
-          <Image
-            style={{height: 38, width: 38, borderRadius: 100}}
-            source={{uri: details?.avatar}}
-          />
-        </View>
-      ),
-    },
     {
       title: details?.cardSubCategory?.name,
       des: 'Gift Card Sub-category',
     },
     {
       title: `${details?.amount}`,
-      des: 'Amount',
-      right: (
-        <Text semiBold lineHeight={24} size={20}>
-          ₦{formatAmount(details?.amount * details?.cardSubCategory?.rate)}
-        </Text>
-      ),
+      des: 'Gift Card Amount - Sell',
     },
     {
-      title: `${details?.note || ''}`,
+      title: `${GENERAL.nairaSign}${formatAmount(
+        details?.amount * details?.cardSubCategory?.rate,
+      )}`,
+      des: 'How much we will pay you',
+      right: (
+        <View
+          style={{
+            height: 34,
+            backgroundColor: '#E9E6F7',
+            justifyContent: 'center',
+            paddingHorizontal: 10,
+            borderRadius: 32,
+          }}>
+          <Text size={12} bold>
+            Rate: ₦{details?.cardSubCategory?.rate}
+          </Text>
+        </View>
+      ),
+    },
+    details?.ecode && {
+      title: `${details?.ecode}`,
+      des: 'Comment/Card E-Code',
+      titleStyle: {color: COLORS.primary},
+    },
+    {
+      title: ``,
       desStyle: {width: '100%'},
       desComponent: (
         <View style={{width: '100%'}}>
-          {details?.note && (
-            <Text color={'#868686'} size={12} numberOfLines={1}>
-              E-Code | Notes
-            </Text>
-          )}
-
           <View
             style={{
-              marginTop: 10,
-              alignItems: 'flex-end',
+              marginTop: 0,
               flex: 1,
               width: '100%',
-              right: -20,
             }}>
             <ScrollView showsHorizontalScrollIndicator={false} horizontal>
               {details?.selectedImages?.map?.((item, index) => (
@@ -153,12 +166,23 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
 
       openSuccessScreen({
         navigation,
-        btnTitle: 'View Transaction History',
-        indicatorWidth: '80%',
-        indicatorText: '80% complete',
-        indicatorTextColor: '#9C9C9C',
+        btnTitle: 'Go To Receipt',
+        titleComponent: (
+          <Text textAlign={'center'} medium size={25}>
+            We are{' '}
+            <Text bold size={25}>
+              Reviewing 📋
+            </Text>{' '}
+          </Text>
+        ),
         subTitle:
-          'We would credit your Naira (NGN) account in a few minutes. Let finish all our checks.',
+          'We have successfully the card details and are currently reviewing it.',
+        image: (
+          <Image
+            style={{height: 285, width: 285}}
+            source={require('../../../../assets/images/others/giftcardSuccess.png')}
+          />
+        ),
         proceed: () => navigation.navigate('HistoryNavigation'),
       });
     } catch (error) {
@@ -168,17 +192,87 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
 
   return (
     <CustomSafeAreaView>
-      <AppNav title={'Summary'} line />
+      <MainHeader title={'Sell Gift Card'} nav />
+
+      <View
+        style={{
+          flexDirection: 'row',
+          width: '100%',
+          marginBottom: 20,
+          marginTop: 0,
+          paddingHorizontal: 20,
+          justifyContent: 'space-between',
+        }}>
+        {['100%', '50%'].map(per => (
+          <PageIndicator
+            style={{width: width / 2 - 25}}
+            height={2}
+            width={per}
+          />
+        ))}
+      </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingTop: 10,
           paddingBottom: GENERAL.platform == 'ios' ? 40 : 20,
           paddingHorizontal: 20,
           minHeight: minHeight - 80,
         }}>
-        <View style={{marginTop: 10}}>
+        <View style={{marginBottom: 30}}>
+          <Text size={18} bold>
+            Submission for inspection
+          </Text>
+          <Text style={{marginTop: 5}} medium size={12} color={'#979797'}>
+            Please confirm all the details filled to avoid failed transactions
+            or errors.
+          </Text>
+        </View>
+        <View
+          style={{
+            marginTop: 10,
+            backgroundColor: COLORS.white,
+            borderRadius: 18,
+          }}>
+          <View
+            style={{
+              marginTop: 20,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 20,
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <Image
+                style={{height: 40, width: 40}}
+                source={{uri: details?.cardCategory?.avatar}}
+              />
+              <View
+                style={{
+                  height: 34,
+                  backgroundColor: '#E9E6F7',
+                  paddingHorizontal: 10,
+                  justifyContent: 'center',
+                  borderRadius: 32,
+                }}>
+                <Text size={12} bold>
+                  {details?.cardType?.value}
+                </Text>
+              </View>
+            </View>
+            <Text
+              textAlign={'right'}
+              numberOfLines={1}
+              style={{flex: 1}}
+              size={16}
+              bold>
+              {details?.cardCategory?.name}
+            </Text>
+          </View>
           <SectionList item={dataList} />
         </View>
         <View
@@ -187,36 +281,16 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
             paddingHoriontal: 0,
             paddingTop: 5,
           }}>
-          <View
-            style={{
-              padding: 20,
-              backgroundColor: '#F8F8F9',
-              marginBottom: 20,
-              borderRadius: 15,
-            }}>
-            <Text color={COLORS.primary} lineHeight={14} size={12}>
-              <Text
-                color={COLORS.primary}
-                style={{textDecorationLine: 'underline'}}
-                size={12}
-                bold>
-                PURCHASE TERMS:{' '}
-              </Text>
-              This card only works in the currency selected above. And can’t be
-              returned in cases of errors on the users’ part. So check that
-              everything entered is correct, because we would not be liable for
-              <Text color={COLORS.primary} size={12} bold>
-                {' '}
-                negligences{' '}
-              </Text>
-              as these are digital assets.
-            </Text>
-          </View>
-          <View style={{paddingHorizontal: 30}}>
+          <View style={{paddingHorizontal: 0, marginTop: 30}}>
             <Button
-              onPress={sellGiftCard}
-              type="black"
-              title={'Review then click here'}
+              onPress={() => {
+                BottomSheets.show({
+                  component: (
+                    <GiftcardTradeTerms data={details} onPress={() => {}} />
+                  ),
+                });
+              }}
+              title={'Sell Gift-card'}
             />
           </View>
         </View>

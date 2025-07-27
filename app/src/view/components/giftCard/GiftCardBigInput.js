@@ -9,65 +9,6 @@ import CurrencyInput from 'react-native-currency-input';
 import {CustomPicker, MyIcons, Text} from '../general';
 import {scaleFont} from '../../../helper';
 
-const Logos = ({
-  focused,
-  background = {
-    blur: '#1F7D55',
-    active: '#1F7D55',
-  },
-  cardLogo,
-  countryLogo,
-  conutryCode,
-}) => {
-  const image = cardLogo?.uri;
-  return (
-    <View style={{flexDirection: 'row'}}>
-      {image.includes?.('.svg') ? (
-        <SvgUri width={38} height={38} uri={image} />
-      ) : (
-        <Image
-          style={{height: 38, width: 38, borderRadius: 100}}
-          source={{uri: image}}
-        />
-      )}
-
-      {conutryCode && (
-        <View
-          style={{
-            height: 40,
-            backgroundColor: focused ? background.active : background.blur,
-            borderRadius: 30,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: 10,
-            right: -10,
-            width: 78,
-          }}>
-          <View
-            style={{
-              borderRadius: 50,
-              height: s(20),
-              width: s(20),
-              overflow: 'hidden',
-            }}>
-            {typeof countryLogo == 'string' ? (
-              <SvgUri width="100%" height="100%" uri={countryLogo} />
-            ) : (
-              countryLogo
-            )}
-          </View>
-
-          <View style={{width: 5}} />
-          <Text size={13} color={COLORS.white} bold>
-            {conutryCode}
-          </Text>
-        </View>
-      )}
-    </View>
-  );
-};
-
 export const GiftCardBigInput = ({
   title,
   value,
@@ -160,12 +101,10 @@ export const GiftCardBigInput = ({
     <View>
       <View
         style={{
-          height: s(85),
           borderRadius: 20,
           paddingHorizontal: 30,
-          backgroundColor: getBackgroundColor(),
           borderWidth: 1.5,
-          borderColor: !focused && error ? COLORS.red : getBackgroundColor(),
+
           alignItems: 'center',
           flexDirection: 'row',
           ...style,
@@ -240,7 +179,7 @@ export const GiftCardBigInput = ({
               style={{
                 marginTop: 0,
                 fontSize: scaleFont(25),
-                fontFamily: FONTS.EINA04_FONTS.bold,
+                // fontFamily: FONTS.EINA04_FONTS.bold,
                 color: getTextColor(),
                 flex: 1,
               }}
@@ -248,12 +187,6 @@ export const GiftCardBigInput = ({
             />
           </View>
         </View>
-
-        <Logos
-          countryLogo={countryLogo}
-          cardLogo={cardLogo}
-          conutryCode={conutryCode}
-        />
       </View>
       {error && (
         <Text

@@ -40,15 +40,15 @@ const List = ({
           justifyContent: 'center',
         }}>
         {title && (
-          <Text style={{...titleStyle}} semiBold size={13} numberOfLines={1}>
+          <Text style={{...titleStyle}} semiBold size={16} numberOfLines={1}>
             {title}
           </Text>
         )}
 
         {desComponent || (
           <Text
-            color={'#868686'}
-            size={12}
+            color={'#979797'}
+            size={11}
             numberOfLines={1}
             style={{...desStyle}}>
             {des}
@@ -66,7 +66,6 @@ export const SectionList = ({style, item}) => {
   return (
     <View
       style={{
-        borderRadius: 20,
         ...styles.con,
         ...style,
       }}>
@@ -89,9 +88,11 @@ export const SectionList = ({style, item}) => {
 
 const styles = StyleSheet.create({
   con: {
-    backgroundColor: COLORS.background,
+    // backgroundColor: COLORS.white,
     paddingVertical: 20,
     marginBottom: 10,
+    overflow: 'hidden',
+    borderRadius: 18,
   },
   iconCon: {
     height: s(40),

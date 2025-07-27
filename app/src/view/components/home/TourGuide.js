@@ -10,9 +10,10 @@ import {Biometric, CreatePin} from '../bottomSheetModal/contents';
 const Step1 = () => {
   const {top} = useSafeAreaInsets();
   return (
-    <View style={{flex: 1, alignItems: 'center', top: top + 50}}>
+    <View
+      style={{flex: 1, alignItems: 'flex-end', top: top + 20, marginRight: 20}}>
       <Image
-        style={{height: 462, width: 357}}
+        style={{height: 405, width: 299}}
         source={require('../../../assets/images/others/tourStep1.png')}
       />
     </View>
@@ -22,9 +23,9 @@ const Step1 = () => {
 const Step2 = () => {
   const {top} = useSafeAreaInsets();
   return (
-    <View style={{flex: 1, alignItems: 'center', top: top + 50}}>
+    <View style={{flex: 1, alignItems: 'center', top: top + 20}}>
       <Image
-        style={{height: 457, width: 341}}
+        style={{height: 565, width: 344}}
         source={require('../../../assets/images/others/tourStep2.png')}
       />
     </View>
@@ -40,7 +41,7 @@ const Step3 = () => {
         justifyContent: 'center',
       }}>
       <Image
-        style={{height: 200, width: 400, top: -50}}
+        style={{height: 300, width: 399}}
         source={require('../../../assets/images/others/tourStep3.png')}
       />
     </View>
@@ -55,8 +56,23 @@ const Step4 = () => {
         alignItems: 'center',
       }}>
       <Image
-        style={{height: 534, width: 391, bottom: -30, position: 'absolute'}}
+        style={{height: 347, width: 327, bottom: 120, position: 'absolute'}}
         source={require('../../../assets/images/others/tourStep4.png')}
+      />
+    </View>
+  );
+};
+
+const Step5 = () => {
+  return (
+    <View
+      style={{
+        flex: 1,
+        alignItems: 'center',
+      }}>
+      <Image
+        style={{height: 449, width: 327, bottom: 50, position: 'absolute'}}
+        source={require('../../../assets/images/others/tourStep5.png')}
       />
     </View>
   );
@@ -75,6 +91,9 @@ const RenderSteps = ({step}) => {
   if (step == 4) {
     return <Step4 />;
   }
+  if (step == 5) {
+    return <Step5 />;
+  }
 };
 export const TourGuide = () => {
   const {tour, updateUserData, data, settings} = useUser();
@@ -82,11 +101,11 @@ export const TourGuide = () => {
   const {bottom} = useSafeAreaInsets();
 
   React.useEffect(() => {
-    if (!tour) {
-      setTimeout(() => {
-        Intercom.setLauncherVisibility('GONE');
-      }, 500);
-    }
+    // if (!tour) {
+    //   setTimeout(() => {
+    //     Intercom.setLauncherVisibility('GONE');
+    //   }, 500);
+    // }
   }, []);
 
   return (
@@ -98,7 +117,7 @@ export const TourGuide = () => {
 
         <TouchableOpacity
           onPress={() => {
-            if (state?.step < 4) {
+            if (state?.step < 5) {
               setState(prevState => ({
                 ...prevState,
                 step: prevState?.step + 1,
@@ -119,26 +138,17 @@ export const TourGuide = () => {
               }
             }
           }}
-          style={{
-            height: 80,
-            width: 80,
-            backgroundColor: COLORS.primary,
-            borderRadius: 100,
-            justifyContent: 'center',
-            alignItems: 'center',
-            shadowColor: '#820300',
-            shadowOpacity: 0.5,
-            shadowRadius: 15,
-            elevation: 15,
-            shadowOffset: {width: 10, height: 10},
-            position: 'absolute',
-            zIndex: 10,
-            right: 24,
-            bottom: bottom + 24,
-          }}>
-          <Text md size={14} color={COLORS.white}>
-            NEXT
-          </Text>
+          style={{}}>
+          <Image
+            style={{
+              width: 129,
+              height: 191,
+              right: -5,
+              position: 'absolute',
+              bottom: bottom - 30,
+            }}
+            source={require('../../../assets/images/onboarding/nextButton.png')}
+          />
         </TouchableOpacity>
       </Modal>
     )

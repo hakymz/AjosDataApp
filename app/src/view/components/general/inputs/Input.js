@@ -10,6 +10,7 @@ import {COLORS, FONTS} from '../../../../conts';
 import {TouchableOpacity} from '@gorhom/bottom-sheet';
 import {Icons} from '../others';
 import Clipboard from '@react-native-clipboard/clipboard';
+import {Text} from '../text';
 
 const fetchCopiedText = async () => {
   const text = await Clipboard.getString();
@@ -111,13 +112,13 @@ export const Input = React.forwardRef(
     };
 
     const showErrorMessage = !focused && error && showTextError;
+    console.log(showErrorMessage, error, 'showErrorMessage showErrorMessage');
 
     return (
       <View
         style={{
           width: '100%',
           marginBottom: 10,
-          flexDirection: 'row',
           ...conStyle,
         }}>
         <View
@@ -174,7 +175,7 @@ export const Input = React.forwardRef(
                 }}
                 ref={ref}
                 editable={editable}
-                value={showErrorMessage ? error : value?.trimStart?.() ?? ''}
+                value={value?.trimStart?.() ?? ''}
                 {...props}
               />
 
@@ -201,6 +202,11 @@ export const Input = React.forwardRef(
             </>
           )}
         </View>
+        {error && (
+          <Text size={12} medium style={{marginTop: 5}} color={COLORS.error}>
+            {error}
+          </Text>
+        )}
       </View>
     );
   },

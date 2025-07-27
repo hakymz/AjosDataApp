@@ -1,30 +1,16 @@
 import React from 'react';
 import {View, StatusBar, SafeAreaView, Keyboard, Image} from 'react-native';
 import {COLORS} from '../../../conts';
-import {
-  BottomSheets,
-  Button,
-  CheckBox,
-  CircleButton,
-  Icons,
-  OrLine,
-  SocialButton,
-} from '../../components/general';
+import {BottomSheets, Button, CircleButton} from '../../components/general';
 import {
   Input,
   KeyboardAvoidingViewWrapper,
   Text,
 } from '../../components/general';
 
-import {s} from 'react-native-size-matters';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
-import {AppNav} from '../../components/layouts';
-import {useLayouts, useUser} from '../../../hooks';
-import {GenderPopup} from '../../components/auth';
-import Toast from '../../components/toast/Toast';
-import {fetchRequest, openBrowser, openLink} from '../../../helper';
-import {TermsAndCondition} from '../../components/bottomSheetModal/content';
+import {fetchRequest} from '../../../helper';
 
 const validationSchema = yup.object().shape({
   email: yup
@@ -34,43 +20,6 @@ const validationSchema = yup.object().shape({
 });
 export const SignUpEmailScreen = ({navigation, route}) => {
   const data = route?.params || {};
-  console.log(data?.phone);
-
-  const [state, setState] = React.useState({
-    isChecked: true,
-    buttonDisabled: true,
-    gender: 'Male',
-  });
-
-  const signUp = async () => {
-    // Reg user
-    try {
-      const response = await fetchRequest({
-        path: '/auth/register',
-        data: {
-          email: values?.email,
-          ...data,
-          phoneNumber: `+234${data?.phone}`,
-        },
-        pageError: {
-          navigation,
-          proceed: signUp,
-        },
-      });
-
-      if (response.status == 'success' && response?.data) {
-        navigation.navigate('OtpScreen', {
-          ...data,
-          ...values,
-          _id: response?.data?._id,
-        });
-      } else {
-        Toast.show('error', response?.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const {
     values,
@@ -85,26 +34,31 @@ export const SignUpEmailScreen = ({navigation, route}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      email: '',
-      password: '',
-      confirmPassword: '',
-      phone: '',
-      fullName: '',
-      username: '',
+      email: __DEV__ ? 'kyymzy@gmail.com' : '',
     },
+    validateOnMount: true,
     validationSchema,
     onSubmit: values => {
-      signUp();
+      signUp(values);
     },
   });
 
-  React.useEffect(() => {
-    if (values.email && isValid) {
-      setState(prevState => ({...prevState, buttonDisabled: false}));
-    } else {
-      setState(prevState => ({...prevState, buttonDisabled: true}));
+  const signUp = async value => {
+    try {
+      const response = await fetchRequest({
+        path: '/auth/register',
+        data: {...data, phoneNumber: data?.phone, email: value?.email},
+      });
+      console.log(response);
+
+      navigation.navigate('OtpScreen', {
+        email: value?.email,
+        token: response?.data?.signUpToken,
+      });
+    } catch (error) {
+      console.log(error, 'errrss');
     }
-  }, [values, isValid]);
+  };
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
@@ -158,11 +112,11 @@ export const SignUpEmailScreen = ({navigation, route}) => {
 
         <View style={{flex: 1, justifyContent: 'flex-end'}}>
           <Button
+            disabled={!isValid}
             title="Continue"
             onPress={() => {
               submitForm();
               Keyboard.dismiss();
-              navigation.navigate('OtpScreen');
             }}
           />
           <View style={{marginTop: 30}}>

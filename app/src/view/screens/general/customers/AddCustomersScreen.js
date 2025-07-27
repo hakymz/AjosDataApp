@@ -16,8 +16,8 @@ import {useBillsData} from '../../../../hooks';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 const validationSchema = yup.object().shape({
-  customerName: yup.string().required('Please enter customer name'),
-  customerNumber: yup.string().required('Please enter phone number'),
+  fullname: yup.string().required('Please enter customer name'),
+  phoneNumber: yup.string().required('Please enter phone number'),
 });
 export const AddCustomersScreen = ({navigation, route}) => {
   const {addCustomers} = useBillsData();
@@ -36,15 +36,16 @@ export const AddCustomersScreen = ({navigation, route}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      customerNumber: __DEV__ ? '08011111111' : '',
-      customerName: '',
+      phoneNumber: __DEV__ ? '08011111111' : '',
+      fullname: '',
+      email: '',
     },
     validationSchema: validationSchema,
     onSubmit: async values => {
       BottomSheets.hide();
       await addCustomers({
         ...values,
-        customerNumber: '+234' + values?.customerNumber,
+        phoneNumber: '+234' + values?.phoneNumber,
       });
       navigation.goBack();
     },
@@ -75,17 +76,17 @@ export const AddCustomersScreen = ({navigation, route}) => {
             plug. 😎
           </Text>
           <Input
-            value={values.customerName}
-            error={touched?.customerName && errors?.customerName}
-            onChangeText={handleChange('customerName')}
-            onBlur={() => setFieldTouched('customerName', true)}
+            value={values.fullname}
+            error={touched?.fullname && errors?.fullname}
+            onChangeText={handleChange('fullname')}
+            onBlur={() => setFieldTouched('fullname', true)}
             placeholder="Enter Customers Name"
           />
           <Input
-            value={values.customerNumber}
-            error={touched?.customerNumber && errors?.customerNumber}
-            onChangeText={handleChange('customerNumber')}
-            onBlur={() => setFieldTouched('customerNumber', true)}
+            value={values.phoneNumber}
+            error={touched?.phoneNumber && errors?.phoneNumber}
+            onChangeText={handleChange('phoneNumber')}
+            onBlur={() => setFieldTouched('phoneNumber', true)}
             placeholder="Customer’s Number"
           />
           <Input

@@ -21,18 +21,13 @@ export const useBillsData = () => {
   const getAirtimeData = async () => {
     try {
       const response = await fetchRequest({
-        path: '/billpayment/vtpass/service-id?identifier=airtime',
+        path: '/billpayment/airtime/networks',
         method: 'GET',
         displayMessage: false,
         showLoader: false,
       });
 
-      if (
-        response?.status == 'success' &&
-        response?.data?.content?.length > 0
-      ) {
-        return response?.data;
-      }
+      return response?.data;
     } catch (error) {
       throw error;
     }
@@ -61,7 +56,7 @@ export const useBillsData = () => {
   const getCustomers = async () => {
     try {
       const response = await fetchRequest({
-        path: '/customer/list',
+        path: '/customer?page=1&limit=10',
         method: 'GET',
         displayMessage: false,
         showLoader: false,
@@ -78,19 +73,18 @@ export const useBillsData = () => {
   const addCustomers = async values => {
     try {
       const response = await fetchRequest({
-        path: 'customer/add',
+        path: 'customer',
         method: 'POST',
         data: {...values},
       });
       console.log(response);
-      if (response?.status == 'success') {
-        openSuccessScreen({
-          navigation,
-          title: 'Customer successfully saved, Well done!',
-          proceed: () => navigation.navigate('HomeScreen'),
-          btnTitle: 'Go Home',
-        });
-      }
+
+      openSuccessScreen({
+        navigation,
+        title: 'Customer successfully saved, Well done!',
+        proceed: () => navigation.navigate('HomeScreen'),
+        btnTitle: 'Go Home',
+      });
     } catch (error) {
       console.log(error, 'erooor');
       throw error;

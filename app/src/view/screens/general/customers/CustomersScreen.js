@@ -3,6 +3,7 @@ import {
   BottomSheets,
   CustomSafeAreaView,
   Icons,
+  InfiniteFlatList,
   SearchInput,
   Text,
 } from '../../../components/general';
@@ -167,9 +168,9 @@ export const CustomersScreen = ({navigation, route}) => {
           <SearchInput style={{backgroundColor: COLORS.white}} />
         </View>
 
-        <FlatList
+        <InfiniteFlatList
+          request={getCustomers}
           contentContainerStyle={{marginTop: 10}}
-          data={customersData}
           renderItem={({item}) => (
             <List
               onPress={onPress}

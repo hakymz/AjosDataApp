@@ -6,9 +6,10 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native';
-import {Icons, Text} from '../general';
+import {BottomSheets, Icons, Text} from '../general';
 import {useNavigation} from '@react-navigation/native';
 import {COLORS} from '../../../conts';
+import {GiftCardsOptions} from '../bottomSheetModal/modalContents';
 
 const ServiceCard = ({item}) => {
   const {width} = useWindowDimensions();
@@ -16,7 +17,11 @@ const ServiceCard = ({item}) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate(item?.screen);
+        if (item?.onPress) {
+          item?.onPress?.();
+        } else {
+          navigation.navigate(item?.screen);
+        }
       }}
       style={{
         width: width / 3 - 25,
@@ -76,7 +81,14 @@ export const Services = ({navigation}) => {
       icon: <Icons.Sms size={18} />,
       screen: 'BulkSmsScreen',
     },
-    {name: 'Giftcard', details: 'Purchase', icon: <Icons.Giftcard size={18} />},
+    {
+      name: 'Giftcard',
+      details: 'Buy/Sell',
+      icon: <Icons.Giftcard size={18} />,
+      onPress: () => {
+        BottomSheets.show({component: <GiftCardsOptions />});
+      },
+    },
     {
       name: 'Dollar',
       details: 'Card',

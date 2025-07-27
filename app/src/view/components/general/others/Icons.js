@@ -99,6 +99,8 @@ import DeletePen from '../../../../assets/svgs/icons/deletePen.svg';
 import Close from '../../../../assets/svgs/icons/close.svg';
 import Notes from '../../../../assets/svgs/icons/notes.svg';
 import AddNumber from '../../../../assets/svgs/icons/addNumber.svg';
+import DeletePenBlue from '../../../../assets/svgs/icons/deletePenBlue.svg';
+import Check from '../../../../assets/svgs/icons/check.svg';
 
 const width = 30;
 const height = 30;
@@ -113,6 +115,12 @@ const customStyle = props => {
   };
 };
 export const Icons = {
+  Check: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Check} />;
+  },
+  DeletePenBlue: ({...props}) => {
+    return <Svg {...customStyle(props)} file={DeletePenBlue} />;
+  },
   AddNumber: ({...props}) => {
     return <Svg {...customStyle(props)} file={AddNumber} />;
   },

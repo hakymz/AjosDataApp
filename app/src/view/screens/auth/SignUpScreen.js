@@ -31,21 +31,21 @@ import {fetchRequest, openLink} from '../../../helper';
 const validationSchema = yup.object().shape({
   firstName: yup.string().required('Please input first name'),
   lastName: yup.string().required('Please input last name'),
-  confirmPassword: yup
-    .string()
-    .required('Please confirm password')
-    .oneOf([yup.ref('password'), null], 'Passwords must match'),
+  // confirmPassword: yup
+  //   .string()
+  //   .required('Please confirm password')
+  //   .oneOf([yup.ref('password'), null], 'Passwords must match'),
   password: yup
     .string()
     .required('Please input password')
     .min(5, 'Min length of 5'),
   phone: yup.string().required('Please input phone number'),
 });
+
 export const SignUpScreen = ({navigation}) => {
   const [state, setState] = React.useState({
     isChecked: false,
     buttonDisabled: true,
-    gender: 'Male',
   });
   const {minHeight} = useLayouts();
 
@@ -62,35 +62,18 @@ export const SignUpScreen = ({navigation}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      password: '',
-      confirmPassword: '',
-      phone: '',
-      firstName: '',
-      lastName: '',
+      password: __DEV__ ? 'Hakymzco2*' : '',
+      phone: __DEV__ ? '09036199523' : '',
+      firstName: __DEV__ ? 'Hakym' : '',
+      lastName: __DEV__ ? 'Tijani' : '',
       refCode: '',
     },
     validationSchema,
     onSubmit: values => {
       navigation.navigate('SignUpEmailScreen', {...values});
     },
+    validateOnMount: true,
   });
-
-  React.useEffect(() => {
-    if (
-      values.firstName &&
-      values.password &&
-      values.phone &&
-      values.lastName &&
-      state.isChecked &&
-      isValid
-    ) {
-      setState(prevState => ({...prevState, buttonDisabled: false}));
-    } else {
-      setState(prevState => ({...prevState, buttonDisabled: true}));
-    }
-  }, [values, state.isChecked, isValid]);
-
-  React.useEffect(() => {}, []);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
@@ -203,14 +186,13 @@ export const SignUpScreen = ({navigation}) => {
             </View>
             <Button
               style={{marginTop: 20}}
-              // disabled={state.buttonDisabled}
+              disabled={!isValid || !state?.isChecked}
               titleStyle={{color: COLORS.white}}
               type={'primary'}
               title="Create My Plug"
               onPress={() => {
                 Keyboard.dismiss();
                 submitForm();
-                navigation.navigate('SignUpEmailScreen');
               }}
             />
             <View style={{marginTop: 20}}>

@@ -27,13 +27,14 @@ import {
   Services,
   TourGuide,
 } from '../../components/home';
-import {AppUpdate} from '../../components/bottomSheetModal/contents/AppUpdate';
+
 import {
   Biometric,
   CopyNumberFromClipboard,
   CreatePin,
   openClipboardNumberModal,
 } from '../../components/bottomSheetModal/contents';
+import {AppUpdate} from '../../components/bottomSheetModal/modalContents/AppUpdate';
 
 // import Intercom from '@intercom/intercom-react-native';
 
@@ -81,11 +82,7 @@ export const HomeScreen = ({navigation}) => {
             canClose: false,
           });
         } else if (!data?.user?.setTransactionPin && tour) {
-          BottomSheets.show({
-            component: <CreatePin />,
-            customSnapPoints: [600, 600],
-            canClose: false,
-          });
+          navigation.navigate('SetPinScreen');
         } else if (!settings?.biometric && tour) {
           BottomSheets.show({
             component: <Biometric />,
@@ -141,11 +138,9 @@ export const HomeScreen = ({navigation}) => {
     setRefreshing(false);
   };
 
-  React.useEffect(() => {}, []);
-
   return (
     <CustomSafeAreaView>
-      {/* <TourGuide /> */}
+      <TourGuide />
       <MainHeader />
       <ScrollView
         bouncesZoom={false}

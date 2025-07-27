@@ -48,7 +48,7 @@ export const SignInWithBiometricScreen = ({navigation}) => {
   const signIn = async value => {
     try {
       const response = await fetchRequest({
-        path: '/auth/login/',
+        path: '/auth/login',
         data: value,
       });
 
@@ -65,7 +65,7 @@ export const SignInWithBiometricScreen = ({navigation}) => {
       // Login user
       updateUserData({
         loggedIn: true,
-        data: {...response?.data, token: response?.token},
+        data: {...response?.data},
         settings: currentSettings,
       });
     } catch (error) {
@@ -151,7 +151,7 @@ export const SignInWithBiometricScreen = ({navigation}) => {
               innerRef={formikRef}
               initialValues={{
                 email: data?.user?.email,
-                password: __DEV__ ? '12345678' : '',
+                password: __DEV__ ? 'Hakymzco2*' : '',
               }}
               validationSchema={validationSchema}
               onSubmit={values => {
@@ -237,7 +237,15 @@ export const SignInWithBiometricScreen = ({navigation}) => {
                       marginBottom: 20,
                       paddingHorizontal: 10,
                     }}>
-                    <View style={{marginTop: 30}}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        updateUserData({
+                          data: data,
+                          settings: {...settings, biometric: false},
+                        });
+                        navigation.navigate('SignInScreen');
+                      }}
+                      style={{marginTop: 30}}>
                       <Text textAlign={'center'} color={'#848A94'}>
                         Not me?{' '}
                         <Text
@@ -247,7 +255,7 @@ export const SignInWithBiometricScreen = ({navigation}) => {
                           Sign Up
                         </Text>
                       </Text>
-                    </View>
+                    </TouchableOpacity>
                   </View>
                 </View>
               )}

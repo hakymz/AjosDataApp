@@ -27,6 +27,7 @@ import DocumentPicker, {types} from 'react-native-document-picker';
 import {
   fetchRequest,
   formatAmount,
+  openErrorScreen,
   openSuccessScreen,
 } from '../../../../helper';
 
@@ -107,7 +108,7 @@ export const BulkSmsScreen = ({navigation}) => {
     },
     validationSchema: validationSchema,
     onSubmit: values => {
-      if (contacts?.length == 0 && state?.fileNumbers?.length == 0) {
+      if (values.contacts?.length == 0) {
         Toast.show(
           'error',
           'Please add contacts manually or upload contacts to proceed.',
@@ -122,37 +123,15 @@ export const BulkSmsScreen = ({navigation}) => {
     },
   });
 
-  const pickerDoc = async () => {
-    try {
-      const pickerResult = await DocumentPicker.pick({
-        allowMultiSelection: false,
-      });
-
-      const stringFile = await RNFS.readFile(pickerResult?.[0]?.uri);
-      const phoneNumberRegex =
-        /(\+?\d{1,2}\s?)?(\(?\d{3}\)?|\d{3})([-.\s]?\d{3}[-.\s]?\d{4})/g;
-
-      const phoneNumbers = stringFile.match(phoneNumberRegex);
-
-      setState(prevState => ({
-        ...prevState,
-        fileName: pickerResult?.[0]?.name,
-        fileNumbers: phoneNumbers,
-      }));
-
-      console.log(phoneNumbers, 'docesss');
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  console.log(values.contacts);
 
   const sendSms = async transactionPin => {
     try {
       const response = await fetchRequest({
-        path: '/messaging/bulk-sms',
+        path: 'sms/send-bulk',
         data: {
           from: values?.sender,
-          receiver: [...contacts, ...state?.fileNumbers],
+          receiver: [...values.contacts],
           message: values?.message,
           transactionPin,
         },
@@ -164,36 +143,15 @@ export const BulkSmsScreen = ({navigation}) => {
 
       openSuccessScreen({
         navigation,
-        title: (
-          <Text color={'#27A770'} size={18}>
-            Bulk SMS Successfully Sent
-          </Text>
-        ),
-
-        btnComponent: (
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: 80,
-              justifyContent: 'center',
-            }}>
-            <SuccessHomeBtn title={'Go Home'} />
-            <SuccessShadowBtn
-              title={'View Receipt'}
-              onPress={() => {
-                BottomSheets.show({
-                  component: <TransactionSummary details={response?.data} />,
-                });
-              }}
-            />
-          </View>
-        ),
+        btnTitle: 'Go to receipt',
+        proceed: () => {},
       });
       getAndUpdateUserData();
     } catch (error) {
       console.log(error, 'errrss');
     }
   };
+
   return (
     <CustomSafeAreaView>
       <MainHeader nav title={'Bulk SMS'} />

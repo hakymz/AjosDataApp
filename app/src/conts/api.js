@@ -1,7 +1,7 @@
 // const STAGING_API =
 //   'http://snapibackend-env.eba-zstpzc8p.eu-north-1.elasticbeanstalk.com/api/v1/';
 
-const STAGING_API = 'https://prod.dataresell.com';
+const STAGING_API = 'https://business.ajeboplug.com/api/';
 // const LIVE_API = 'https://0e6qi2it6h.execute-api.us-east-2.amazonaws.com/';
 import store from '../redux/store';
 

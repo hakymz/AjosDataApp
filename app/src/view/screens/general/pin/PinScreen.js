@@ -1,301 +1,179 @@
 import React from 'react';
 import {
   View,
+  Image,
   StyleSheet,
-  SafeAreaView,
-  StatusBar,
-  Platform,
+  FlatList,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
 
 import {s} from 'react-native-size-matters';
-import {COLORS, FONTS} from '../../../../conts';
+import {AVATAR, COLORS} from '../../../../conts';
 import {
-  BottomSheets,
+  CustomSafeAreaView,
   Icons,
-  Input,
   KeyboardAvoidingViewWrapper,
   Text,
 } from '../../../components/general';
 
-import {BackNav} from '../../../components/layouts';
-import {useUser} from '../../../../hooks';
-import {authUserWithBiometric} from '../../../../helper';
-import {Biometric} from '../../../components/bottomSheetModal/contents';
-import {BioMetricSettings} from '../../../components/bottomSheetModal/contents/BioMetricSettings';
-import {Preloader} from '../../../components/loaders';
+import {MainHeader} from '../../../components/layouts';
+import {fetchRequest} from '../../../../helper';
+import {useQueryClient} from 'react-query';
 
+const numberList = [
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  '',
+  '0',
+  'Delete',
+];
 export const PinScreen = ({navigation, route}) => {
-  const {proceed = () => {}, type} = route?.params || {};
-  const {settings} = useUser();
+  const {proceed = () => {}} = route?.params || {};
   const [state, setState] = React.useState({
-    showButton: false,
     error: false,
-    resendOtp: false,
-    remainSecond: 60,
-    inputs: ['', '', '', ''],
-    errors: ['', '', '', ''],
-    focusedIndex: null,
+    pin: [],
+    currentPin: [],
   });
 
-  const inputsRef = React.useRef([]);
+  const addOrDeletePin = (number, state, setState) => {
+    let pin = [...state?.pin];
+    let currentPin = state.currentPin;
+    let error = false;
 
-  const handleChange = async (value, index) => {
-    const currentState = {...state};
+    if (number == 'Cancel') {
+      pin = [];
+      currentPin = '';
+    } else if (number == 'Delete') {
+      pin.pop();
+    } else {
+      if (number) {
+        if (state?.pin.length < 4) {
+          pin = [...state.pin, number];
+        }
+        if (pin.length == 4) {
+          navigation.goBack();
 
-    const newInputsValue = currentState.inputs;
-    newInputsValue[index] = value;
-    if (newInputsValue?.[index]) {
-      inputsRef?.current?.[index + 1]?.focus();
+          proceed?.(pin.join(''));
+        }
+      }
     }
 
-    if (currentState?.inputs[3]) {
-      Preloader.show();
-      const response = await proceed(newInputsValue?.join?.(''));
-      navigation.goBack();
-    }
-
-    const errors = currentState.errors;
-    errors[index] = '';
-
-    try {
-      setState(prevState => ({...prevState, inputs: newInputsValue}));
-    } catch (error) {}
+    setState(prevState => ({
+      ...prevState,
+      pin,
+      currentPin,
+      title: '',
+      error,
+    }));
   };
 
-  const goBackInInput = index => {
-    if (state?.inputs[index] == '') {
-      inputsRef?.current?.[index - 1]?.focus?.();
-    }
+  const Btn = ({value}) => {
+    return (
+      <TouchableOpacity
+        disabled={!value}
+        onPress={() => {
+          addOrDeletePin(value, state, setState);
+        }}
+        style={{
+          height: 60,
+          flex: 1,
+          alignItems: 'center',
+          backgroundColor: '#E9E6F7',
+          marginBottom: 10,
+          marginHorizontal: 5,
+          borderRadius: 32,
+          justifyContent: 'center',
+        }}>
+        <Text size={20} semiBold>
+          {value == '' && <Icons.FaceId />}
+          {value == 'Delete' ? <Icons.DeletePenBlue /> : value}
+        </Text>
+      </TouchableOpacity>
+    );
   };
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
+    <CustomSafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
       <StatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
-      <BackNav />
+      <MainHeader
+        backgroundColor={COLORS.white}
+        nav
+        title={<></>}
+        icon={<></>}
+      />
 
       <KeyboardAvoidingViewWrapper
         contentContainerStyle={{
-          paddingHorizontal: 30,
-          minHeight: '100%',
+          paddingHorizontal: 20,
           paddingBottom: 20,
+          marginTop: 20,
         }}>
         <View>
-          <Text bd size={35} textAlign="left" style={{paddingTop: 50}}>
-            Enter PIN
+          <Text size={25} semiBold>
+            Please confirm this transaction
           </Text>
-          {type == 'validate' ? (
-            <Text
-              lineHeight={'22'}
-              style={{marginTop: 30}}
-              color={'#3D3A3B'}
-              size={16}>
-              Please enter your unique{' '}
-              <Text
-                lineHeight={'22'}
-                color={'#3D3A3B'}
-                size={16}
-                fontWeight={'700'}>
-                4-digit PIN
-              </Text>{' '}
-              {''}
-              to enable you activate Biometrics.
-            </Text>
-          ) : (
-            <Text
-              lineHeight={'22'}
-              style={{marginTop: 30}}
-              color={'#3D3A3B'}
-              size={16}>
-              Please enter your{' '}
-              <Text
-                lineHeight={'22'}
-                color={'#3D3A3B'}
-                size={16}
-                fontWeight={'700'}>
-                4-digit PIN
-              </Text>{' '}
-              {''}
-              to complete the transaction.
-            </Text>
-          )}
         </View>
         {/* Inputs Section */}
-        <View style={{marginTop: 30, height: 220}}>
+        <View style={{marginTop: 70}}>
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'space-between',
+              justifyContent: 'center',
             }}>
             {['-', '-', '-', '-']?.map((_, index) => {
               return (
                 <View
                   style={{
-                    width: 70,
-                    height: 70,
-                    borderRadius: 15,
-                    shadowColor:
-                      state?.focusedIndex == index
-                        ? 'rgba(49, 75, 206, 0.4)'
-                        : 'transparent',
-                    shadowOpacity: 0.3,
-                    shadowRadius: 7,
-                    shadowOffset: {height: 20},
-                    borderWidth: 1,
-                    borderColor: state?.error ? '#EC2B27' : 'transparent',
+                    width: 60,
+                    height: 60,
+                    borderRadius: 60,
+                    backgroundColor: '#E9E6F7',
+                    marginHorizontal: 6,
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}>
-                  {state.inputs?.[index] != '' &&
-                    state?.focusedIndex != index && (
-                      <TouchableOpacity
-                        activeOpacity={0}
-                        onPress={() => {
-                          setState(prevState => ({
-                            ...prevState,
-                            focusedIndex: index,
-                          }));
-
-                          inputsRef?.current?.[index]?.focus();
-                        }}
-                        style={{
-                          position: 'absolute',
-                          height: '100%',
-                          width: '100%',
-                          backgroundColor: '#F8F8F8',
-                          zIndex: 10,
-                          borderRadius: 15,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                        }}>
-                        <View
-                          style={{
-                            height: 17,
-                            width: 17,
-                            borderRadius: 20,
-                            backgroundColor: state?.error
-                              ? '#EC2B27'
-                              : '#231F20',
-                          }}
-                        />
-                      </TouchableOpacity>
-                    )}
-
-                  <Input
-                    backgroundColor={{
-                      active: '#4961AC',
-                      blur: state.inputs?.[index] == '' ? '#EFF1FB' : '#F8F8F8',
-                    }}
-                    textColor={{
-                      active: 'white',
-                      blur: COLORS.dark,
-                    }}
-                    error={state.errors?.[index]}
-                    keyboardType="numeric"
-                    maxLength={1}
-                    value={state.inputs?.[index]}
-                    onFocus={() => {
-                      setState(prevState => ({
-                        ...prevState,
-                        focusedIndex: index,
-                      }));
-                    }}
-                    onChangeText={value => {
-                      handleChange(value, index);
-                      // setState(prevState => {
-                      //   const errors = prevState.errors;
-                      //   errors[index] = '';
-                      //   return {...prevState, errors};
-                      // });
-                    }}
-                    onKeyPress={({nativeEvent}) => {
-                      if (nativeEvent.key === 'Backspace') {
-                        goBackInInput(index);
-                      }
-                    }}
-                    ref={ref => inputsRef.current.push(ref)}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: 15,
-                    }}
-                    conStyle={{height: '100%', paddingHorizontal: 0}}
-                    inputStyle={{
-                      textAlign: 'center',
-                      fontSize: 40,
-                      fontFamily: FONTS.AIRBNBCEREAL_FONTS.Bd,
-                      paddingHorizontal: 0,
-                    }}
-                    placeholder=""
-                  />
+                  {state?.pin[index] && (
+                    <View
+                      style={{
+                        height: 7,
+                        width: 7,
+                        backgroundColor: state?.error
+                          ? COLORS.error
+                          : COLORS.darkBlue,
+                        borderRadius: 5,
+                      }}
+                    />
+                  )}
                 </View>
               );
             })}
           </View>
-
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: 20,
-            }}>
-            {type != 'validate' && (
-              <TouchableOpacity
-                onPress={async () => {
-                  if (!settings?.pinBiometric) {
-                    BottomSheets.show({component: <BioMetricSettings />});
-                    return false;
-                  }
-                  try {
-                    const auth = await authUserWithBiometric(
-                      'Your auth is needed to proceed.',
-                    );
-
-                    if (auth) {
-                      settings?.transactionPin
-                        ?.split('')
-                        ?.forEach((element, index) => {
-                          handleChange(element, index);
-                        });
-                    }
-                  } catch (error) {
-                    Toast.show('error', 'Authentication failed.');
-                  }
-                }}
-                style={{
-                  height: 53,
-                  width: 155,
-                  backgroundColor: '#F8F8F8',
-                  borderRadius: 5,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 20,
-                  marginTop: 10,
-                }}>
-                {Platform.OS == 'ios' ? (
-                  <Icons.FaceId size={23} />
-                ) : (
-                  <Icons.Biometrics size={23} />
-                )}
-
-                <Text style={{marginLeft: 10}} size={16} bd>
-                  {Platform.OS == 'ios' ? 'Face-ID' : 'Biometrics'}
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
+        </View>
+        <View style={{flex: 1, justifyContent: 'flex-end'}}>
           <Text
-            onPress={() => {
-              navigation.navigate('ResetPinPasswordScreen');
-            }}
-            style={{textDecorationLine: 'underline'}}
-            textAlign={'center'}
+            bold
+            color={COLORS.primary}
             size={16}
-            fontWeight={'500'}>
-            Reset PIN
+            style={{marginTop: 80, marginBottom: 30}}
+            textAlign={'center'}>
+            Enter your PIN
           </Text>
+          <FlatList
+            data={numberList}
+            renderItem={({item}) => <Btn value={item} />}
+            numColumns={3}
+          />
         </View>
       </KeyboardAvoidingViewWrapper>
-    </SafeAreaView>
+    </CustomSafeAreaView>
   );
 };
 

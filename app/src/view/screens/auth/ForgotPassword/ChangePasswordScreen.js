@@ -25,30 +25,16 @@ const validationSchema = yup.object().shape({
     .oneOf([yup.ref('password'), null], 'Passwords must match'),
 });
 export const ChangePasswordScreen = ({navigation, route}) => {
-  const {userId} = route?.params || {};
-
-  const [state, setState] = React.useState({
-    isChecked: true,
-    buttonDisabled: true,
-  });
+  const {resetToken} = route?.params || {};
 
   const changePassword = async value => {
     try {
       const response = await fetchRequest({
-        path: '/auth/reset-password/',
-        data: {...value, userId},
+        path: '/auth/reset-password',
+        data: {...value, resetToken},
       });
 
-      openSuccessScreen({
-        navigation,
-        title: 'Password Saved successfully',
-        subTitle:
-          'You can go ahead to Login... Take the new password for a spin, it has to work 🤣',
-        btnTitle: 'Log into account',
-        indicatorWidth: '',
-        indicatorText: '',
-        proceed: () => navigation.navigate('SignInScreen'),
-      });
+      navigation.navigate('ChangePasswordSuccessScreen');
     } catch (error) {
       console.log(error);
     }
@@ -67,22 +53,14 @@ export const ChangePasswordScreen = ({navigation, route}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      password: '',
-      confirmPassword: '',
+      password: __DEV__ ? 'Hakymzco2*' : '',
+      confirmPassword: __DEV__ ? 'Hakymzco2*' : '',
     },
     validationSchema,
     onSubmit: values => {
       changePassword(values);
     },
   });
-
-  React.useEffect(() => {
-    if (values.password && isValid && values?.confirmPassword) {
-      setState(prevState => ({...prevState, buttonDisabled: false}));
-    } else {
-      setState(prevState => ({...prevState, buttonDisabled: true}));
-    }
-  }, [values, state.isChecked, isValid]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
@@ -154,10 +132,9 @@ export const ChangePasswordScreen = ({navigation, route}) => {
                   marginTop: 50,
                 }}>
                 <Button
-                  titleStyle={{color: COLORS.white}}
+                  disabled={!isValid}
                   onPress={() => {
                     submitForm();
-                    navigation.navigate('ChangePasswordSuccessScreen');
                   }}
                   title="Save New Password"
                 />

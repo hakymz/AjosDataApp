@@ -10,7 +10,7 @@ import {
 } from '../../../components/general';
 import {BillsBalance, MainHeader} from '../../../components/layouts';
 import {Image, Keyboard, TouchableOpacity, View} from 'react-native';
-import {COLORS, FONTS, GENERAL} from '../../../../conts';
+import {COLORS, FONTS, GENERAL, NETWORKS} from '../../../../conts';
 
 import {useBillsData, useLayouts, useUser} from '../../../../hooks';
 import {
@@ -21,6 +21,7 @@ import {useFormik} from 'formik';
 import * as yup from 'yup';
 import {
   fetchRequest,
+  formatAmount,
   getNumberNetwork,
   openSuccessScreen,
   validateNumberNetwork,
@@ -29,6 +30,7 @@ import {useQuery} from 'react-query';
 import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
 import {useIsFocused} from '@react-navigation/native';
 import {RecentCustomers} from '../../../components/home';
+import {BillsTransactionSummary} from '../../../components/bottomSheetModal/modalContents';
 
 let validationSchema;
 
@@ -48,9 +50,13 @@ export const SellAirtimeScreen = ({navigation, route}) => {
     getAirtimeData,
   );
 
+  const filterAirtimeData = React.useMemo(() => {
+    return airtimeData?.map(item => ({name: item?.network, ...item}));
+  }, [airtimeData]);
+
   const getNetwork = network => {
-    return airtimeData?.content?.filter?.(
-      item => item?.serviceID == network?.name?.toLowerCase?.(),
+    return filterAirtimeData?.filter?.(
+      item => item?.name?.toLowerCase?.() == network?.name?.toLowerCase?.(),
     )?.[0];
   };
 
@@ -79,9 +85,23 @@ export const SellAirtimeScreen = ({navigation, route}) => {
     },
     validationSchema: validationSchema,
     onSubmit: values => {
+      const logo = NETWORKS?.filter?.(
+        item =>
+          item?.name?.toLowerCase?.() == values?.network?.name?.toLowerCase?.(),
+      )?.[0]?.image;
+      const detailsList = [
+        {name: 'Transaction Mobile Number', details: values?.phone},
+        {
+          name: 'Amount',
+          details: `${GENERAL.nairaSign}${formatAmount(values?.amount)}`,
+        },
+        {name: 'Receivable Cash-back', details: '1% - ₦10.00'},
+      ];
       BottomSheets.show({
         component: (
-          <ResellTransactionSummary
+          <BillsTransactionSummary
+            logo={logo}
+            detailsList={detailsList}
             details={{
               ...values,
               cashbackPer,
@@ -90,7 +110,6 @@ export const SellAirtimeScreen = ({navigation, route}) => {
             btnTitle="Airtime"
           />
         ),
-        customSnapPoints: ['85%', '85%'],
       });
     },
   });
@@ -105,11 +124,11 @@ export const SellAirtimeScreen = ({navigation, route}) => {
         'validateNumberNetwork',
         !values?.network?.name
           ? 'Select network'
-          : `Invalid ${values?.network?.serviceID} number`,
+          : `Invalid ${values?.network?.name} number`,
         value =>
           state?.bypass
             ? true
-            : validateNumberNetwork(value, values?.network?.serviceID),
+            : validateNumberNetwork(value, values?.network?.name),
       ),
     amount: yup.number().required('Please input amount'),
   });
@@ -197,9 +216,6 @@ export const SellAirtimeScreen = ({navigation, route}) => {
     refetch();
   }, [isFocused]);
 
-  React.useEffect(() => {
-    validateForm();
-  }, [state?.bypass]);
   return (
     <CustomSafeAreaView>
       <MainHeader nav title={'Airtime Purchase'} />
@@ -218,7 +234,7 @@ export const SellAirtimeScreen = ({navigation, route}) => {
           <View style={{marginTop: 0}}>
             <CustomPicker
               error={touched?.network && errors?.network}
-              data={airtimeData?.content}
+              data={filterAirtimeData ?? []}
               value={values?.network}
               onValueChange={value => {
                 setFieldValue('network', value);
@@ -241,6 +257,7 @@ export const SellAirtimeScreen = ({navigation, route}) => {
               onChangeText={phone => {
                 const network = getNumberNetwork(phone);
                 const selectedNetworkData = getNetwork(network);
+
                 setValues({
                   ...values,
                   phone: phone,
@@ -249,30 +266,6 @@ export const SellAirtimeScreen = ({navigation, route}) => {
               }}
               onBlur={() => setFieldTouched('phone', true)}
               placeholder="Phone Number"
-              // rightIcon={
-              //   <TouchableOpacity
-              //     onPress={() => {
-              //       pickerPhoneNo(phone => {
-              //         const network = getNumberNetwork(phone);
-              //         const selectedNetworkData = getNetwork(network);
-              //         setValues({
-              //           ...values,
-              //           phone: phone,
-              //           network: state?.bypass ? null : selectedNetworkData,
-              //         });
-              //       });
-              //     }}
-              //     style={{
-              //       height: 36,
-              //       width: 36,
-              //       borderRadius: 12,
-              //       justifyContent: 'center',
-              //       alignItems: 'center',
-              //       right: -5,
-              //     }}>
-              //     <Icons.Phone size={20} />
-              //   </TouchableOpacity>
-              // }
             />
 
             <Input

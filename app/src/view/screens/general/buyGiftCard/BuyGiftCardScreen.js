@@ -1,98 +1,141 @@
 import React from 'react';
 import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  useWindowDimensions,
+} from 'react-native';
+
+import {COLORS} from '../../../../conts';
+import {
   CustomSafeAreaView,
+  ErrorButton,
+  PageIndicator,
   SearchInput,
   Text,
 } from '../../../components/general';
-import {AppNav} from '../../../components/layouts';
-import {ActivityIndicator, FlatList, ScrollView, View} from 'react-native';
-import {COLORS, GENERAL} from '../../../../conts';
-import {fetchRequest} from '../../../../helper';
+import {MainHeader} from '../../../components/layouts';
+
 import {useQuery} from 'react-query';
-import {GiftCard} from '../../../components/giftCard';
-import {useOrientation} from '../../../../hooks';
+import {fetchRequest} from '../../../../helper';
+import {ServiceBtn} from '../../../components/general/buttons/ServiceBtn';
+
+const getAllGiftCardData = async countryCode => {
+  try {
+    const response = await fetchRequest({
+      path: `giftcard/countries/${countryCode}/products`,
+      method: 'GET',
+      displayMessage: false,
+      showLoader: false,
+    });
+
+    return response?.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export const BuyGiftCardScreen = ({navigation, route}) => {
-  const selectedCountry = route?.params;
-  const {screenOrientation} = useOrientation();
+  const {width} = useWindowDimensions();
+  const {selectedCountry} = route?.params || {};
 
-  const [search, setSearch] = React.useState('');
+  const [state, setState] = React.useState({
+    selectedGiftCardIndex: 0,
+    showRightArrow: false,
+    searchText: '',
+  });
 
-  const getGiftCardDetails = async () => {
-    try {
-      const response = await fetchRequest({
-        path: `giftcard/countries/${selectedCountry?.isoName}/products`,
-        method: 'GET',
-        displayMessage: false,
-        showLoader: false,
-      });
-
-      if (response?.status == 'success' && response?.data?.length > 0) {
-        return response?.data;
-      }
-    } catch (error) {
-      throw error;
-      //send the request after some seconds
-    }
-  };
-
-  const {data, error, isFetching, isLoading, isRefetching} = useQuery(
-    'getGiftCardDetails',
-    getGiftCardDetails,
+  const {data, error, isLoading, isFetching, refetch} = useQuery(
+    'getAllGiftCardDataBuy',
+    () => getAllGiftCardData(selectedCountry?.isoName),
   );
-
-  const filteredList = React.useMemo(() => {
-    return data?.filter(item =>
-      item?.productName?.toLowerCase?.()?.includes?.(search?.toLowerCase?.()),
+  const giftCardsData = React.useMemo(() => {
+    const filterLists = data?.filter?.(item =>
+      item?.productName
+        ?.toLowerCase?.()
+        ?.includes?.(state?.searchText?.toLowerCase?.()),
     );
-  }, [data, search]);
+
+    return filterLists;
+  }, [state.searchText, data]);
+
+  if (error) {
+    return <ErrorButton isFetching={isFetching} refetch={refetch} />;
+  }
 
   return (
-    <CustomSafeAreaView>
-      <AppNav title={'Buy Gift Cards'} line />
-      {isLoading ? (
-        <View style={{paddingTop: 40}}>
-          <ActivityIndicator size={'large'} />
-        </View>
-      ) : (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingHorizontal: 20,
-            paddingTop: 20,
-            paddingBottom: 60,
-          }}>
-          <Text semiBold color={'#666766'}>
-            Select Gift Card
-          </Text>
-          <SearchInput
-            title={'Search Gift Card'}
-            style={{marginHorizontal: 0}}
-            onChangeText={value => setSearch(value)}
+    <CustomSafeAreaView style={{flex: 1}}>
+      <MainHeader title={'Buy Gift Card'} nav />
+      <View
+        style={{
+          flexDirection: 'row',
+          width: '100%',
+          marginBottom: 20,
+          paddingHorizontal: 20,
+          justifyContent: 'space-between',
+        }}>
+        {['100%', '50%', '0%'].map(per => (
+          <PageIndicator
+            style={{width: width / 3 - 20}}
+            height={4}
+            width={per}
           />
-          <FlatList
-            contentContainerStyle={{paddingTop: 30}}
-            key={screenOrientation == GENERAL.landScape ? 'h' : 'v'}
-            showsVerticalScrollIndicator={false}
-            columnWrapperStyle={{
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-            }}
-            numColumns={screenOrientation == GENERAL.landScape ? 4 : 3}
-            data={filteredList}
-            renderItem={({item}) => (
-              <GiftCard
-                item={{...item}}
-                onPress={() =>
-                  navigation.navigate('BuyGiftCardNextScreen', {
-                    ...item,
-                    ...selectedCountry,
-                  })
-                }
-              />
-            )}
-          />
-        </ScrollView>
-      )}
+        ))}
+      </View>
+
+      <View style={{paddingHorizontal: 20, marginBottom: 20}}>
+        <Text size={14} semiBold textAlign={'center'}>
+          What country do you want to buy from?
+        </Text>
+      </View>
+      <View style={{paddingHorizontal: 20}}>
+        <SearchInput
+          placeholder="Search for gift card"
+          onChangeText={value => {
+            setState(prevState => ({...prevState, searchText: value}));
+          }}
+        />
+      </View>
+
+      <View style={{flex: 1, paddingHorizontal: 20}}>
+        {isLoading && !giftCardsData && (
+          <View style={{height: 50, marginTop: 30}}>
+            <ActivityIndicator color={COLORS.primary} size={'large'} />
+            <Text
+              size={16}
+              color={COLORS.lightBlue}
+              style={{marginTop: 10}}
+              textAlign={'center'}>
+              Loading...
+            </Text>
+          </View>
+        )}
+
+        {giftCardsData?.length > 0 && (
+          <View style={{flex: 1}}>
+            <FlatList
+              contentContainerStyle={{marginTop: 20}}
+              columnWrapperStyle={{justifyContent: 'space-between'}}
+              data={giftCardsData}
+              numColumns={3}
+              renderItem={({item}) => (
+                <ServiceBtn
+                  image={item?.logoUrls?.[0]}
+                  selected={
+                    item?.productName == state?.selectedService?.productName
+                  }
+                  name={item?.productName}
+                  onPress={() => {
+                    navigation.navigate('BuyGiftCardNextScreen', item);
+                  }}
+                  item={item}
+                />
+              )}
+            />
+          </View>
+        )}
+      </View>
     </CustomSafeAreaView>
   );
 };

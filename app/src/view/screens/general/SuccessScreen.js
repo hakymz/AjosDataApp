@@ -1,44 +1,15 @@
 import React from 'react';
-import {ScrollView, StatusBar, TouchableOpacity, View} from 'react-native';
+import {Image, StatusBar, TouchableOpacity, View} from 'react-native';
 import {
-  BottomSheets,
   Button,
+  CircleButton,
+  CloseButton,
   CustomSafeAreaView,
   KeyboardAvoidingViewWrapper,
   Text,
 } from '../../components/general';
-import LottieView from 'lottie-react-native';
-import {AppNav} from '../../components/layouts';
-import {s} from 'react-native-size-matters';
-import {useLayouts} from '../../../hooks';
 import {COLORS, GENERAL} from '../../../conts';
 import {useNavigation} from '@react-navigation/native';
-import {
-  AddCustomer,
-  SavedCustomers,
-} from '../../components/bottomSheetModal/contents';
-
-const Indicator = ({indicatorWidth}) => {
-  return (
-    <View
-      style={{
-        width: s(230),
-        height: 5,
-        backgroundColor: '#E1E1E1',
-        borderRadius: 10,
-        marginTop: 25,
-      }}>
-      <View
-        style={{
-          height: '100%',
-          width: indicatorWidth,
-          backgroundColor: COLORS.primary,
-          borderRadius: 10,
-        }}
-      />
-    </View>
-  );
-};
 
 export const SuccessShadowBtn = ({title, onPress}) => {
   const navigation = useNavigation();
@@ -100,17 +71,18 @@ export const SuccessScreen = ({route, navigation}) => {
     btnTitle = 'Get Started',
     subTitle,
     btnComponent,
-    number,
+    image,
     proceed = () => {
       navigation.goBack();
     },
   } = route?.params || {};
 
-  const {minHeight} = useLayouts();
   return (
-    <CustomSafeAreaView>
+    <CustomSafeAreaView backgroundColor={COLORS.white}>
       <StatusBar barStyle={'dark-content'} />
-      <AppNav />
+      <View style={{paddingHorizontal: 20}}>
+        <CircleButton />
+      </View>
       <KeyboardAvoidingViewWrapper
         addMinHeight
         showsVerticalScrollIndicator={false}>
@@ -120,39 +92,53 @@ export const SuccessScreen = ({route, navigation}) => {
             alignItems: 'center',
             marginTop: 40,
           }}>
-          <LottieView
-            resizeMode="cover"
-            style={{height: s(200), width: s(200)}}
-            autoPlay
-            source={require('../../../assets/lottieFiles/others/successCheck.json')}
-          />
+          {image || (
+            <Image
+              source={require('../../../assets/images/others/successImage.png')}
+              style={{height: 285, width: 285}}
+            />
+          )}
+
           <View style={{paddingHorizontal: 20, marginTop: 40}}>
-            {titleComponent || (
-              <Text
-                bk
-                style={{paddingHorizontal: 20, marginTop: 40}}
-                lineHeight={24}
-                color={'#27A770'}
-                textAlign={'center'}
-                size={18}>
-                {title}
-              </Text>
-            )}
+            {titleComponent ||
+              (!title ? (
+                <Text semiBold size={25}>
+                  You are a sure{' '}
+                  <Text bold size={25}>
+                    Plug🔌
+                  </Text>
+                </Text>
+              ) : (
+                <Text
+                  bold
+                  style={{paddingHorizontal: 20, marginTop: 40}}
+                  textAlign={'center'}
+                  size={25}>
+                  {title}
+                </Text>
+              ))}
+            <Text textAlign={'center'} color={'#868D95'}>
+              {subTitle}
+            </Text>
           </View>
         </View>
-        {btnComponent || (
-          <View
-            style={{
-              paddingHorizontal: 50,
-              marginTop: 50,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <SuccessShadowBtn title={btnTitle} onPress={proceed} />
-          </View>
-        )}
+        <View
+          style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
+          {btnComponent || (
+            <View
+              style={{
+                paddingHorizontal: 20,
+                marginTop: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Button title={btnTitle} onPress={proceed} />
+            </View>
+          )}
+          <CloseButton />
+        </View>
 
-        {number && (
+        {/* {number && (
           <View
             style={{
               paddingHorizontal: 20,
@@ -169,7 +155,7 @@ export const SuccessScreen = ({route, navigation}) => {
               style={{backgroundColor: '#4961AC'}}
             />
           </View>
-        )}
+        )} */}
       </KeyboardAvoidingViewWrapper>
     </CustomSafeAreaView>
   );

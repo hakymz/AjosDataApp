@@ -70,7 +70,13 @@ export const SecurityScreen = ({navigation}) => {
             navigation.navigate('ResetPasswordScreen');
           }}
         />
-        <List icon={<Icons.AddCategory size={24} />} title={'Change PIN'} />
+        <List
+          icon={<Icons.AddCategory size={24} />}
+          title={'Change PIN'}
+          onPress={() => {
+            navigation.navigate('ChangePinScreen');
+          }}
+        />
         <List icon={<Icons.Scan2 size={24} />} title={'Reset PIN'} />
       </KeyboardAvoidingViewWrapper>
     </CustomSafeAreaView>

@@ -41,19 +41,14 @@ export const ForgotPasswordScreen = ({navigation}) => {
 
       console.log(response);
 
-      if (response.status == 'success' && response?.data) {
-        updateUserData({
-          data: data,
-          settings: {...settings, biometric: false},
-        });
+      updateUserData({
+        settings: {...settings, biometric: false},
+      });
 
-        navigation.navigate('OtpScreen', {
-          _id: response?.data?._id,
-          type: 'resetPassword',
-        });
-      } else {
-        Toast.show('error', response?.message);
-      }
+      navigation.navigate('OtpScreen', {
+        token: response?.data?.resetToken,
+        type: 'resetPassword',
+      });
     } catch (error) {
       console.log(error);
     }
@@ -72,21 +67,14 @@ export const ForgotPasswordScreen = ({navigation}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      email: '',
+      email: __DEV__ ? 'kyymzy@gmail.com' : '',
     },
     validationSchema,
+    validateOnMount: true,
     onSubmit: values => {
       sendEmail(values);
     },
   });
-
-  React.useEffect(() => {
-    if (values.email && isValid) {
-      setState(prevState => ({...prevState, buttonDisabled: false}));
-    } else {
-      setState(prevState => ({...prevState, buttonDisabled: true}));
-    }
-  }, [values, state.isChecked, isValid]);
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
@@ -144,11 +132,10 @@ export const ForgotPasswordScreen = ({navigation}) => {
 
         <View style={{flex: 1, justifyContent: 'flex-end'}}>
           <Button
-            // disabled={state.buttonDisabled}
+            disabled={!isValid}
             titleStyle={{color: COLORS.white}}
             title="Send Me An Email"
             onPress={() => {
-              navigation.navigate('ChangePasswordScreen');
               submitForm();
               Keyboard.dismiss();
             }}

@@ -27,6 +27,7 @@ const CustomDatePicker = ({
   conStyle,
   rightIcon,
   border = true,
+  value,
 }) => {
   const [show, setShow] = React.useState(false);
   const [dateIsEmpty, setDateIsEmpty] = React.useState(
@@ -82,12 +83,14 @@ const CustomDatePicker = ({
           styles.inputContainer,
           {
             ...style,
-            borderColor: error && border ? COLORS.error : COLORS.white,
+            borderColor: error && border ? COLORS.error : '#E9F1FF',
             borderWidth: 1,
             backgroundColor: COLORS.white,
           },
         ]}>
-        <Text size={14} md color={error ? COLORS.error : '#4961AC'}>
+        <Text
+          size={16}
+          color={error ? COLORS.error : value ? COLORS.darkBlue : '#848A94'}>
           {dateIsEmpty ? placeholder : dateToString(date)}
         </Text>
         {rightIcon && <View style={{right: -5}}>{rightIcon}</View>}
@@ -113,13 +116,13 @@ const CustomDatePicker = ({
 
 const styles = StyleSheet.create({
   inputContainer: {
-    height: '100%',
+    height: 60,
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 16,
     width: '100%',
     justifyContent: 'center',
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

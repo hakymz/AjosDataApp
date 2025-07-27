@@ -8,82 +8,7 @@ import {
   Text,
 } from '../../../components/general';
 
-import {useFormik} from 'formik';
-import * as yup from 'yup';
-import {Input} from '../../../components/general';
-import {fetchRequest, openSuccessScreen} from '../../../../helper';
-import {BackNav} from '../../../components/layouts';
-
-const validationSchema = yup.object().shape({
-  password: yup
-    .string()
-    .required('Please input password')
-    .min(8, 'Min length of 8'),
-  confirmPassword: yup
-    .string()
-    .required('Please confirm password')
-    .oneOf([yup.ref('password'), null], 'Passwords must match'),
-});
 export const ChangePasswordSuccessScreen = ({navigation, route}) => {
-  const {userId} = route?.params || {};
-
-  const [state, setState] = React.useState({
-    isChecked: true,
-    buttonDisabled: true,
-  });
-
-  const changePassword = async value => {
-    try {
-      const response = await fetchRequest({
-        path: '/auth/reset-password/',
-        data: {...value, userId},
-      });
-
-      openSuccessScreen({
-        navigation,
-        title: 'Password Saved successfully',
-        subTitle:
-          'You can go ahead to Login... Take the new password for a spin, it has to work 🤣',
-        btnTitle: 'Log into account',
-        indicatorWidth: '',
-        indicatorText: '',
-        proceed: () => navigation.navigate('SignInScreen'),
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const {
-    values,
-    errors,
-    touched,
-    setFieldValue,
-    setFieldTouched,
-    setFieldError,
-    handleChange,
-    setValues,
-    submitForm,
-    isValid,
-  } = useFormik({
-    initialValues: {
-      password: '',
-      confirmPassword: '',
-    },
-    validationSchema,
-    onSubmit: values => {
-      changePassword(values);
-    },
-  });
-
-  React.useEffect(() => {
-    if (values.password && isValid && values?.confirmPassword) {
-      setState(prevState => ({...prevState, buttonDisabled: false}));
-    } else {
-      setState(prevState => ({...prevState, buttonDisabled: true}));
-    }
-  }, [values, state.isChecked, isValid]);
-
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: COLORS.white}}>
       <StatusBar backgroundColor={COLORS.white} barStyle="dark-content" />
@@ -101,10 +26,11 @@ export const ChangePasswordSuccessScreen = ({navigation, route}) => {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              marginTop: 60,
+              marginTop: 40,
             }}>
             <Image
-              style={{height: 241, width: 295}}
+              resizeMode="contain"
+              style={{height: 311, width: 311}}
               source={require('../../../../assets/images/others/write.png')}
             />
           </View>
@@ -139,7 +65,7 @@ export const ChangePasswordSuccessScreen = ({navigation, route}) => {
                 <Button
                   titleStyle={{color: COLORS.white}}
                   onPress={() => {
-                    submitForm();
+                    navigation.navigate('SignInScreen');
                   }}
                   title="Log Me in"
                 />

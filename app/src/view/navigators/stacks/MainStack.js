@@ -22,6 +22,15 @@ import {
   DollarCardScreen,
   AddCustomersScreen,
   EditCustomersScreen,
+  VerifyBvnScreen,
+  SellGiftCardScreen,
+  SellGiftCardNextScreen,
+  SellGiftCardSummaryScreen,
+  PinSuccessScreen,
+  ChangePinScreen,
+  BuyGiftCardScreen,
+  BuyGiftCardCountryScreen,
+  BuyGiftCardNextScreen,
 } from '../../screens/general';
 
 import {BottomSheets} from '../../components/general';
@@ -39,8 +48,12 @@ import {
   NewFlyers2Screen,
   NewFlyersScreen,
 } from '../../screens/general/flyer';
-import {ContactScreen, ProfileDetailsScreen} from '../../screens/profile';
-import {UpdateProfileScreen} from '../../screens/profile/UpdateProfileScreen';
+import {
+  ContactScreen,
+  KycScreen,
+  ProfileDetailsScreen,
+  UpdateProfileScreen,
+} from '../../screens/settings';
 
 const Stack = createStackNavigator();
 const MainStack = () => {
@@ -57,7 +70,6 @@ const MainStack = () => {
         <Stack.Screen name="PinScreen" component={PinScreen} />
         <Stack.Screen name="TopUpAmountScreen" component={TopUpAmountScreen} />
         <Stack.Screen name="BulkSmsRuleScreen" component={BulkSmsRuleScreen} />
-
         <Stack.Screen
           name="ProductPricingScreen"
           component={ProductPricingScreen}
@@ -99,7 +111,6 @@ const MainStack = () => {
           name="ShareProfileScreen"
           component={ShareProfileScreen}
         />
-
         <Stack.Screen name="NewFlyersScreen" component={NewFlyersScreen} />
         <Stack.Screen name="NewFlyers2Screen" component={NewFlyers2Screen} />
         <Stack.Screen
@@ -131,6 +142,27 @@ const MainStack = () => {
         <Stack.Screen
           name="EditCustomersScreen"
           component={EditCustomersScreen}
+        />
+        <Stack.Screen
+          name="BuyGiftCardNextScreen"
+          component={BuyGiftCardNextScreen}
+        />
+        <Stack.Screen
+          name="BuyGiftCardCountryScreen"
+          component={BuyGiftCardCountryScreen}
+        />
+        <Stack.Screen
+          name="SellGiftCardScreen"
+          component={SellGiftCardScreen}
+        />
+
+        <Stack.Screen name="KycScreen" component={KycScreen} />
+        <Stack.Screen name="PinSuccessScreen" component={PinSuccessScreen} />
+        <Stack.Screen name="ChangePinScreen" component={ChangePinScreen} />
+        <Stack.Screen name="BuyGiftCardScreen" component={BuyGiftCardScreen} />
+        <Stack.Screen
+          name="SellGiftCardSummaryScreen"
+          component={SellGiftCardSummaryScreen}
         />
       </Stack.Navigator>
     </>

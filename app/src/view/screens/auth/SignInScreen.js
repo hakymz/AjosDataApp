@@ -43,9 +43,11 @@ export const SignInScreen = ({navigation}) => {
   const signIn = async value => {
     try {
       const response = await fetchRequest({
-        path: '/auth/login/',
+        path: '/auth/login',
         data: value,
       });
+
+      console.log(response, 'response response response');
 
       await saveUserDetailsToKeyChain(value);
 
@@ -57,20 +59,12 @@ export const SignInScreen = ({navigation}) => {
         notification: false,
       };
 
-      if (!response?.data?.user?.isVerified?.email) {
-        navigation.navigate('OtpScreen', {
-          email: value?.email,
-          type: 'resend',
-          _id: response?.data?.user?._id,
-        });
-      } else {
-        // Login user
-        updateUserData({
-          loggedIn: true,
-          data: {...response?.data, token: response?.token},
-          settings: currentSettings,
-        });
-      }
+      // Login user
+      updateUserData({
+        loggedIn: true,
+        data: {...response?.data},
+        settings: currentSettings,
+      });
     } catch (error) {
       console.log(error, 'errrss');
     }
@@ -113,7 +107,7 @@ export const SignInScreen = ({navigation}) => {
               innerRef={formikRef}
               initialValues={{
                 email: __DEV__ ? 'kyymzy@gmail.com' : data?.user?.email,
-                password: __DEV__ ? '12345678' : '',
+                password: __DEV__ ? 'Hakymzco2*' : '',
               }}
               validationSchema={validationSchema}
               onSubmit={values => {

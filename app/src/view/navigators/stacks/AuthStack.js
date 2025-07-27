@@ -13,6 +13,7 @@ import {
   OtpScreen,
   ForgotPasswordScreen,
   ChangePasswordSuccessScreen,
+  WelcomeScreen,
 } from '../../screens/auth';
 
 const Stack = createStackNavigator();
@@ -59,6 +60,7 @@ const AuthStack = () => {
         name="PasswordSuccessScreen"
         component={PasswordSuccessScreen}
       />
+      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
     </Stack.Navigator>
   );
 };

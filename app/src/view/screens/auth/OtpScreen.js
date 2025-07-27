@@ -15,7 +15,7 @@ import {fetchRequest, openSuccessScreen} from '../../../helper';
 import {BackNav} from '../../components/layouts/general/BackNav';
 
 export const OtpScreen = ({navigation, route}) => {
-  const {email, type, _id} = route?.params || {};
+  const {email, token, type, _id} = route?.params || {};
 
   const {updateUserData, data, settings} = useUser();
 
@@ -33,14 +33,14 @@ export const OtpScreen = ({navigation, route}) => {
   const countDownSecRef = React.useRef();
 
   const clear = () => {
+    setTimeout(() => {
+      inputsRef?.current?.[0]?.focus();
+    }, 500);
     setState(prevState => ({
       ...prevState,
       inputs: ['', '', '', ''],
       errors: ['', '', '', ''],
     }));
-    setTimeout(() => {
-      inputsRef?.current?.[0]?.focus();
-    }, 100);
   };
 
   const handleChange = (value, index) => {
@@ -65,26 +65,25 @@ export const OtpScreen = ({navigation, route}) => {
   const verifyOtp = async values => {
     try {
       const response = await fetchRequest({
-        path: '/auth/verify-otp',
-        data: {
-          userId: _id,
-          code: values * 1,
-        },
+        path: type == 'resetPassword' ? 'auth/verify-otp' : 'auth/verify-email',
+        data:
+          type == 'resetPassword'
+            ? {
+                resetToken: token,
+                otp: values,
+              }
+            : {
+                signUpToken: token,
+                otp: values,
+              },
         pageError: {
           navigation,
         },
       });
       if (type == 'resetPassword') {
-        navigation.navigate('ChangePasswordScreen', {userId: _id});
+        navigation.navigate('ChangePasswordScreen', {resetToken: token});
       } else {
-        openSuccessScreen({
-          navigation,
-          title: 'It seems everything went well and your app profile is ready.',
-          btnTitle: 'Proceed to login',
-          proceed: () => {
-            navigation.navigate('SignInScreen');
-          },
-        });
+        navigation.navigate('WelcomeScreen');
       }
     } catch (error) {
       console.log(error);
@@ -172,6 +171,7 @@ export const OtpScreen = ({navigation, route}) => {
             size={14}>
             Check your Email inbox, we have sent the code to
             <Text lineHeight={'22'} color={'#868D95'} size={14} bold>
+              {' '}
               {email}
             </Text>{' '}
           </Text>

@@ -1,23 +1,39 @@
 import React from 'react';
 import {
+  BalanceContainer,
   BigInput,
+  BottomSheets,
   Button,
+  CheckBox,
+  CustomPicker,
   CustomSafeAreaView,
+  Input,
   KeyboardAvoidingViewWrapper,
   MyIcons,
+  PageIndicator,
   Text,
 } from '../../../components/general';
-import {AppNav} from '../../../components/layouts';
-import {StyleSheet, View} from 'react-native';
-import {COLORS} from '../../../../conts';
+import {AppNav, BillsBalance, MainHeader} from '../../../components/layouts';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
+import {COLORS, FONTS, GENERAL, IMAGES} from '../../../../conts';
 
-import {GiftCardBigInput} from '../../../components/giftCard';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {Image} from '../../../components/general/image';
+import {
+  fetchRequest,
+  formatAmount,
+  openSuccessScreen,
+} from '../../../../helper';
+import {BuyGiftCardTransactionSummary} from '../../../components/bottomSheetModal/modalContents/BuyGiftCardTransactionSummary';
 
 let validationSchema = yup.object().shape({
-  amount: yup.number().required('Please input amount'),
+  amount: yup.object().required('Please input amount'),
 });
 
 const QuantityInput = ({quantity, onValueChange = () => {}}) => {
@@ -51,6 +67,8 @@ const QuantityInput = ({quantity, onValueChange = () => {}}) => {
 export const BuyGiftCardNextScreen = ({navigation, route}) => {
   const giftData = route?.params;
 
+  const {width} = useWindowDimensions();
+
   const [state, setState] = React.useState({
     selectedDenominationsMap: null,
     quantity: 1,
@@ -73,6 +91,7 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
     values,
     errors,
     touched,
+    isValid,
     setFieldValue,
     setFieldTouched,
     handleSubmit,
@@ -81,16 +100,43 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
     validationSchema: validationSchema,
 
     onSubmit: values => {
-      navigation.navigate('BuyGiftCardSummaryScreen', {
-        ...giftData,
-        quantity: state.quantity,
-        selectedDenominationsMap: state.selectedDenominationsMap,
-        amount: values?.amount,
-        total: values?.total,
+      BottomSheets.show({
+        component: (
+          <BuyGiftCardTransactionSummary
+            proceed={() => {
+              navigation.navigate('PinScreen', {
+                proceed: transactionPin => {
+                  buyGiftCard(transactionPin);
+                },
+              });
+            }}
+            data={{...values, ...state, giftData}}
+          />
+        ),
       });
     },
   });
 
+  const buyGiftCard = async transactionPin => {
+    try {
+      const response = await fetchRequest({
+        path: '/giftcard/buy',
+        data: {
+          countryCode: 'NGN',
+          productId: giftData?.productId,
+          quantity: state?.quantity,
+          unitPrice: values?.amount?.value?.total || values?.amount,
+          transactionPin: transactionPin,
+        },
+        pageError: {navigation},
+      });
+      openSuccessScreen({
+        navigation,
+        subTitle:
+          'We have successfully sent the Gift Card to your default email and to your receipt.',
+      });
+    } catch (error) {}
+  };
   if (giftData?.denominationType != 'FIXED') {
     validationSchema = yup.object().shape({
       amount: yup
@@ -103,10 +149,7 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
 
   React.useEffect(() => {
     if (giftData?.denominationType == 'FIXED') {
-      setFieldValue(
-        'total',
-        state.selectedDenominationsMap?.amount * state.quantity,
-      );
+      setFieldValue('total', values?.amount?.value?.amount * state.quantity);
     } else {
       setFieldValue(
         'total',
@@ -119,11 +162,69 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
 
   return (
     <CustomSafeAreaView>
-      <AppNav title={'Buy Gift Cards'} line />
+      <MainHeader title={'Buy Gift Card'} nav />
+      <View
+        style={{
+          flexDirection: 'row',
+          width: '100%',
+          marginBottom: 20,
+          paddingHorizontal: 20,
+          justifyContent: 'space-between',
+        }}>
+        {['100%', '100%', '50%'].map(per => (
+          <PageIndicator
+            style={{width: width / 3 - 20}}
+            height={4}
+            width={per}
+          />
+        ))}
+      </View>
       <KeyboardAvoidingViewWrapper
         addMinHeight
-        contentContainerStyle={{paddingHorizontal: 20, paddingTop: 30}}>
-        <GiftCardBigInput
+        contentContainerStyle={{paddingHorizontal: 20, paddingTop: 0}}>
+        <Text style={{marginBottom: 20}} bold size={18} color={COLORS.darkBlue}>
+          Fill in the blanks 😎
+        </Text>
+        <View style={{flexDirection: 'row'}}>
+          <View
+            style={{
+              height: 118,
+              width: 98,
+              backgroundColor: COLORS.white,
+              borderRadius: 24,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingHorizontal: 5,
+            }}>
+            <Image
+              style={{height: 50, width: 50}}
+              source={{uri: giftData?.logoUrls?.[0]}}
+            />
+            <Text numberOfLines={1} bold size={14} color={'#303437'}>
+              {giftData?.brand?.brandName}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              paddingLeft: 20,
+              justifyContent: 'center',
+              flex: 1,
+            }}>
+            <Text size={12} medium color={COLORS.black}>
+              {giftData?.productName}
+            </Text>
+            <View style={{marginTop: 20}}>
+              <Text size={12} bold color={COLORS.primary}>
+                Note:
+              </Text>
+              <Text medium size={11} color={'#637381'}>
+                {giftData?.redeemInstruction?.concise}
+              </Text>
+            </View>
+          </View>
+        </View>
+        {/* <GiftCardBigInput
           type={giftData?.denominationType}
           data={fixedRecipientToSenderDenominationsMap}
           onChangeText={value => {
@@ -157,13 +258,49 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
             placeholderTextColor: COLORS.white,
           }}
           backgroundColor={COLORS.black}
-        />
+        /> */}
+
+        <View style={{marginTop: 20}}>
+          {giftData?.denominationType == 'FIXED' ? (
+            <CustomPicker
+              error={touched?.amount && errors?.amount}
+              value={values?.amount}
+              onValueChange={value => {
+                setFieldValue('amount', value);
+              }}
+              placeholder="Select amonut"
+              onBlur={() => {
+                setFieldTouched('amount', true);
+              }}
+              data={fixedRecipientToSenderDenominationsMap}
+            />
+          ) : (
+            <Input
+              keyboardType="numeric"
+              onChangeText={value => {
+                setFieldValue('amount', value);
+              }}
+              value={values?.amount}
+              error={touched?.total && errors?.total}
+              currency="NGN"
+              placeholder={'Amount'}
+              onBlur={() => {
+                setFieldTouched('amount', true);
+              }}
+            />
+          )}
+        </View>
+
         <View
           style={{
             justifyContent: 'space-between',
             paddingHorizontal: 30,
             flexDirection: 'row',
             alignItems: 'center',
+            backgroundColor: '#E9E6F7',
+            height: 60,
+            borderRadius: 16,
+            marginBottom: 10,
           }}>
           <View
             style={{
@@ -171,7 +308,7 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
               flexDirection: 'row',
               alignItems: 'center',
             }}>
-            <Text semiBold size={12}>
+            <Text color={'#848A94'} medium size={14}>
               Quantity
             </Text>
             <QuantityInput
@@ -180,72 +317,82 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
                 setState(prevState => ({...prevState, quantity}));
               }}
             />
-          </View>
-          <View>
-            <View style={style.iconCon}>
-              <MyIcons.DoubleArrow size={18} />
+            <View style={{alignItems: 'flex-end', flex: 1}}>
+              <Text size={16} bold color={COLORS.darkBlue}>
+                $
+                {formatAmount(
+                  (values?.amount?.name || values?.amount) * state?.quantity,
+                )}
+              </Text>
             </View>
-            <View style={{height: 75, width: 2, backgroundColor: '#F1F1F1'}} />
           </View>
         </View>
-
-        <BigInput
+        <Input
           editable={false}
-          currencyLogoBackground={{active: COLORS.black, blur: COLORS.black}}
-          currencyLogoColor={{active: COLORS.white, blur: COLORS.white}}
-          showCurrencyLogo
-          onChangeText={value => {
-            setFieldValue('total', value);
-          }}
-          onBlur={() => setFieldTouched('total', true)}
-          value={values?.total}
+          value={`${GENERAL.nairaSign}${formatAmount(values?.total)}`}
           error={touched?.total && errors?.total}
           currency="NGN"
-          textColor={{
-            active: COLORS.black,
-            blur: COLORS.inputGrey,
-            placeholderTextColor: COLORS.inputGrey,
+          placeholder={'You Pay'}
+          inputStyle={{
+            color: COLORS.darkBlue,
+            fontFamily: FONTS.PLUS_JAKARTA_SANS_FONTS.bold,
           }}
-          backgroundColor={{
-            active: COLORS.background,
-            blur: COLORS.background,
-          }}
-          placeholder="0"
-          title={'You Pay'}
-          type="background"
+          rightIcon={
+            <View
+              style={{
+                height: 36,
+                width: 72,
+                backgroundColor: '#DDDDDD',
+                borderRadius: 18,
+                flexDirection: 'row',
+                paddingHorizontal: 8,
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Image style={{height: 20, width: 20}} source={IMAGES.ngLogo} />
+              <Text size={12} medium color={'#231F20'}>
+                NGN
+              </Text>
+            </View>
+          }
         />
-        <Text semiBold size={12} style={{paddingHorizontal: 20, marginTop: 30}}>
-          The Naira (NGN) equivalent would be deducted from your NGN wallet.
-        </Text>
+
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <BillsBalance />
+        </View>
         <View style={{justifyContent: 'flex-end', flex: 1, paddingTop: 80}}>
           <View
             style={{
-              backgroundColor: COLORS.backgroundColor,
-              marginHorizontal: 20,
-              paddingHorizontal: 20,
-              paddingVertical: 20,
-              justifyContent: 'center',
-              borderRadius: 15,
+              marginTop: 20,
+              marginBottom: 0,
+              flexDirection: 'row',
+              alignItems: 'center',
             }}>
-            <Text lineHeight={16} color={COLORS.primary} size={12}>
-              <Text lineHeight={16} bold size={12} color={COLORS.primary}>
-                PURCHASE TERMS:{' '}
-              </Text>{' '}
-              This card only works in the currency selected above. And can’t be
-              returned in cases of errors on the users’ part. So check that
-              everything entered is correct, because we would not be liable for
-              <Text lineHeight={16} bold size={12} color={COLORS.primary}>
-                {' '}
-                negligences
-              </Text>{' '}
-              as these are digital assets.
+            <CheckBox
+              isChecked={state.isChecked}
+              onPress={() => {
+                setState(prevState => ({
+                  ...prevState,
+                  isChecked: !prevState.isChecked,
+                }));
+              }}
+            />
+            <Text
+              onPress={() => {
+                openLink(CONTACTS.termsLink);
+              }}
+              color={'#7F8192'}
+              fontWeight={'500'}
+              style={{paddingLeft: 10}}
+              size={12}>
+              I’ve read and agree to the Trade Terms
             </Text>
           </View>
-          <View style={{paddingHorizontal: 30, paddingTop: 30}}>
+          <View style={{paddingTop: 30}}>
             <Button
+              disabled={!isValid || !state?.isChecked}
               onPress={handleSubmit}
-              type="black"
-              title={'Review then click here'}
+              title={'Continue'}
             />
           </View>
         </View>
@@ -270,7 +417,6 @@ const style = StyleSheet.create({
   quantityInput: {
     width: 109,
     height: 40,
-    backgroundColor: '#F8F8F9',
     marginLeft: 10,
     borderRadius: 20,
     paddingHorizontal: 10,

@@ -7,6 +7,8 @@ import {PreviewImage} from './PreviewImage';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
 import Toast from '../toast/Toast';
+import {Image} from '../general/image';
+import FastImage from 'react-native-fast-image';
 
 const MAX_IMAGES = 20;
 
@@ -21,42 +23,54 @@ const ImageButton = ({number = 1, onPress, select, removeImage, item}) => {
         alignItems: 'center',
         justifyContent: 'flex-end',
       }}>
-      <MyIcons.Cloud size={30} />
+      <View
+        style={{
+          backgroundColor: '#F2F0FA',
+          height: 50,
+          width: 50,
+          borderRadius: 12,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Image
+          style={{height: 33, width: 33}}
+          source={require('../../../assets/images/others/album.png')}
+        />
+      </View>
     </TouchableOpacity>
   ) : (
     <TouchableOpacity
-      style={{paddingRight: 10}}
+      style={{
+        paddingRight: 10,
+        height: 50,
+        width: 50,
+        alignItems: 'center',
+        marginRight: 7,
+        overflow: 'visible',
+        borderRadius: 12,
+      }}
       activeOpacity={0.7}
       onPress={onPress}>
       <View
         style={{
           position: 'absolute',
-          zIndex: 200,
-          top: -10,
           right: 0,
+          zIndex: 2000,
+          marginTop: -2,
         }}>
-        <MyIcons.CancelRed
+        <Icons.DeletePen
           size={20}
           onPress={() => {
             removeImage(item?.uri);
           }}
         />
       </View>
-      <View
-        style={{
-          height: s(41),
-          width: s(41),
-          backgroundColor: '#D5EAE0',
-          borderRadius: 50,
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginRight: 5,
-          overflow: 'visible',
-        }}>
-        <Text color={COLORS.primary} semiBold size={14}>
-          {number}
-        </Text>
-      </View>
+
+      <Image
+        resizeMode={FastImage.resizeMode.cover}
+        style={{height: 50, width: 50, borderRadius: 12}}
+        source={{uri: item?.uri}}
+      />
     </TouchableOpacity>
   );
 };
@@ -116,16 +130,13 @@ export const UploadImage = ({
   return (
     <View
       style={{
-        height: s(85),
-        backgroundColor: COLORS.backgroundColor,
         borderRadius: 20,
         justifyContent: 'center',
-        marginTop: 12,
       }}>
       <View
         style={{
           // paddingVertical: 20,
-          paddingHorizontal: 30,
+          paddingHorizontal: 0,
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -170,18 +181,21 @@ export const UploadImage = ({
             </ScrollView>
           </View>
         ) : (
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              flex: 1,
-              alignItems: 'center',
-            }}
-            onPress={() => getImages()}>
-            <Text semiBold color={COLORS.primary} style={{}}>
-              {title}
-            </Text>
-            <MyIcons.Cloud size={30} style={{top: 0}} />
+          <TouchableOpacity style={{}} onPress={() => getImages()}>
+            <View
+              style={{
+                backgroundColor: '#F2F0FA',
+                height: 50,
+                width: 50,
+                borderRadius: 12,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Image
+                style={{height: 33, width: 33}}
+                source={require('../../../assets/images/others/album.png')}
+              />
+            </View>
           </TouchableOpacity>
         )}
       </View>

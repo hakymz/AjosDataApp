@@ -13,3 +13,4 @@ export * from './StatusComponent';
 export * from './OrLine';
 export * from './InfiniteFlatList';
 export * from './SuccessRateDisplay';
+export * from './PageIndicator';

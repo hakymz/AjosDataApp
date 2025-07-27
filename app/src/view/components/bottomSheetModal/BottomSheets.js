@@ -99,6 +99,7 @@ const BottomSheetContent = ({
 
   return (
     <Modalize
+      modalStyle={{borderTopRightRadius: 30, borderTopLeftRadius: 30}}
       disableScrollIfPossible={disableScrollIfPossible}
       adjustToContentHeight={snapPoints?.[1] ? false : true}
       avoidKeyboardLikeIOS
@@ -110,34 +111,34 @@ const BottomSheetContent = ({
       HeaderComponent={
         <View
           style={{
-            height: 20,
-            width: '100%',
-            backgroundColor: 'transparent',
+            height: 40,
+            backgroundColor: COLORS.white,
             borderTopRightRadius: 30,
+            borderTopLeftRadius: 30,
+            alignItems: 'center',
+            justifyContent: 'center',
           }}>
-          <Image
+          <View
             style={{
-              height: 50,
-              width: '100%',
-              resizeMode: 'cover',
-              top: -40,
-            }}
-            source={require('../../../assets/images/others/modalHandle.png')}
-          />
+              height: 5.5,
+              width: 42,
+              backgroundColor: '#E9F1FF',
+              borderRadius: 6,
+              marginTop: 15,
+            }}></View>
         </View>
       }
       onClosed={hide}
       modalHeight={snapPoints?.[1] || undefined}
       snapPoint={snapPoints?.[0]}
       ref={bottomSheetRef}>
-      <View style={{backgroundColor: 'white'}}>
+      <View style={{backgroundColor: 'white', borderTopRightRadius: 40}}>
         <View
           style={{
-            marginTop: 20,
+            marginTop: 0,
             backgroundColor: backgroundColor || COLORS.white,
             paddingBottom: 40,
-            paddingTop: 25,
-
+            paddingTop: 20,
             ...containerStyle,
           }}>
           {component}
@@ -185,8 +186,6 @@ const BottomSheetsModal = ({}) => {
     if (typeof customSnapPoints?.[0] == 'string') {
       let snapPoint1 = customSnapPoints?.[0];
       let snapPoint2 = customSnapPoints?.[1];
-      console.log(snapPoint1);
-      console.log(snapPoint2);
 
       snapPoint1 = snapPoint1?.split('%')?.[0];
       snapPoint1 = (snapPoint1 * height) / 100;

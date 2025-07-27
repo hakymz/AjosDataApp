@@ -93,7 +93,7 @@ export const VerifyBvnScreen = ({navigation, route}) => {
   return (
     <CustomSafeAreaView style={{flex: 1}}>
       <View style={{paddingHorizontal: 20, marginTop: 20}}>
-        <CircleButton onPress={() => navigation.goBack()} />
+        {/* <CircleButton onPress={() => navigation.goBack()} /> */}
       </View>
       <View
         style={{
@@ -110,7 +110,7 @@ export const VerifyBvnScreen = ({navigation, route}) => {
         <Text color={COLORS.voodoo} size={14} medium>
           Verification
         </Text>
-        <Icons.PersonBlue size={35} />
+        {/* <Icons.PersonBlue size={35} /> */}
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}

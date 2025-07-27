@@ -1,7 +1,7 @@
 import React from 'react';
 import {Image, ScrollView, View, StyleSheet} from 'react-native';
 import {s} from 'react-native-size-matters';
-import {COLORS, FONTS} from '../../../../conts';
+import {COLORS, CONTACTS, FONTS, GENERAL} from '../../../../conts';
 import {
   Button,
   CheckBox,
@@ -13,6 +13,56 @@ import {BillsBalance, MainHeader} from '../../../components/layouts';
 
 export const DollarCardScreen = ({navigation}) => {
   const [state, setState] = React.useState({isChecked: false});
+
+  const createCard = async (transactionPin, useCashback) => {
+    try {
+      const response = await fetchRequest({
+        path: 'virtual-card/create',
+        data: {},
+        pageError: {
+          navigation,
+        },
+        headers: {debounceToken: new Date().getTime()},
+      });
+
+      openSuccessScreen({
+        number: values?.phone,
+        navigation,
+        title: (
+          <Text color={'#27A770'} size={18}>
+            Airtime Successfully sold to{' '}
+            <Text color={'#27A770'} size={18} fontWeight={'700'}>
+              {values?.phone}
+            </Text>
+          </Text>
+        ),
+        btnTitle: 'Okay',
+        btnComponent: (
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 80,
+              justifyContent: 'center',
+            }}>
+            <SuccessHomeBtn title={'Go Home'} />
+            <SuccessShadowBtn
+              title={'View Receipt'}
+              onPress={() => {
+                // navigation.goBack();
+                BottomSheets.show({
+                  component: <TransactionSummary details={response?.data} />,
+                  customSnapPoints: ['85%', '85%'],
+                });
+              }}
+            />
+          </View>
+        ),
+      });
+      getAndUpdateUserData();
+    } catch (error) {
+      throw error;
+    }
+  };
   return (
     <CustomSafeAreaView style={{backgroundColor: COLORS.background}}>
       <MainHeader nav title={'Dollar Card'} />
@@ -98,7 +148,7 @@ export const DollarCardScreen = ({navigation}) => {
             />
             <Text
               onPress={() => {
-                openLink('https://dataresell.com/privacy-policy');
+                openLink(CONTACTS.termsLink);
               }}
               color={'#7F8192'}
               fontWeight={'500'}
@@ -117,6 +167,7 @@ export const DollarCardScreen = ({navigation}) => {
           </View>
 
           <Button
+            disabled={!state?.isChecked}
             title={'Proceed'}
             onPress={() => navigation.navigate('DollarCardDetailsScreen')}
           />
