@@ -51,7 +51,7 @@ export const BillsScreen = () => {
     {
       name: 'Electricity',
       details: 'All DisCos',
-      icon: <Icons.Plug size={32} />,
+      icon: <Icons.Plug2 size={32} />,
       screen: 'ElectricityScreen',
     },
     {

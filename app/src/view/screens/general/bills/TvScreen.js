@@ -54,11 +54,27 @@ const List = ({item}) => {
 
 let validationSchema;
 
+const getTvVariation = async id => {
+  try {
+    const response = await fetchRequest({
+      path: `/billpayment/tv/services/variation/${id}`,
+      method: 'GET',
+      displayMessage: false,
+      showLoader: false,
+    });
+
+    return response?.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export const TvScreen = ({navigation}) => {
   const {data} = useUser();
   const {minHeight} = useLayouts();
   const [state, setState] = React.useState({loading: false});
-  const {getVariationCodeById, tvVariationCodes, getTvData} = useBillsData();
+  const {getTvData} = useBillsData();
 
   const {data: tvData, error} = useQuery('getTvData', getTvData);
 
@@ -117,7 +133,13 @@ export const TvScreen = ({navigation}) => {
     },
   });
 
-  console.log(values?.provider);
+  const {data: tvVariationCodes} = useQuery(
+    'getTvVariation' + values?.provider?.serviceID,
+    () => getTvVariation(values?.provider?.serviceID),
+  );
+
+  console.log(values?.provider?.serviceID);
+  console.log(tvVariationCodes);
   if (values?.provider?.name == 'ShowMax') {
     validationSchema = yup.object().shape({
       amount: yup.number().required('Please input amount'),
@@ -192,7 +214,7 @@ export const TvScreen = ({navigation}) => {
     if (value.length > 9) {
       try {
         const response = await fetchRequest({
-          path: 'billpayment/vtpass/verify-account',
+          path: 'billpayment/tv/verify-smartcard',
           method: 'POST',
           data: {
             serviceID: serviceID,
@@ -202,6 +224,7 @@ export const TvScreen = ({navigation}) => {
           showLoader: false,
           headers: {debounceToken: new Date().getTime()},
         });
+        console.log(response);
 
         if (
           response?.status == 'success' &&
@@ -222,23 +245,6 @@ export const TvScreen = ({navigation}) => {
     }
   };
 
-  React.useEffect(() => {
-    getVariationCodeById(values?.provider?.serviceID, 'tvVariationCodes');
-  }, [values?.provider]);
-
-  React.useEffect(() => {
-    if (
-      values?.billersCode &&
-      values?.variation_code &&
-      values?.amount &&
-      values?.name &&
-      isValid
-    ) {
-      setState(prevState => ({...prevState, buttonDisabled: false}));
-    } else {
-      setState(prevState => ({...prevState, buttonDisabled: true}));
-    }
-  }, [values, isValid]);
   return (
     <CustomSafeAreaView>
       <MainHeader nav title={'Tv-Subscriptions'} />
@@ -259,7 +265,7 @@ export const TvScreen = ({navigation}) => {
             <CustomPicker
               error={touched?.provider && errors?.provider}
               value={values.provider}
-              data={tvData}
+              data={tvData?.content}
               onValueChange={value => {
                 setFieldValue('provider', value);
               }}
@@ -272,7 +278,7 @@ export const TvScreen = ({navigation}) => {
             <CustomPicker
               error={touched?.variation_code && errors?.variation_code}
               value={values.variation_code}
-              data={tvVariationCodes?.variations}
+              data={tvVariationCodes?.content?.variations}
               onValueChange={value => {
                 setValues({
                   ...values,
@@ -297,7 +303,9 @@ export const TvScreen = ({navigation}) => {
             }
             placeholder="Subscription price"
             backgroundColor="#E9E6F7"
-            value={`${GENERAL.nairaSign}${values.variation_code?.variation_amount}`}
+            value={`${GENERAL.nairaSign}${
+              values.variation_code?.variation_amount || 0
+            }`}
           />
 
           <Input

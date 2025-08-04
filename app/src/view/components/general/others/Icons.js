@@ -101,6 +101,7 @@ import Notes from '../../../../assets/svgs/icons/notes.svg';
 import AddNumber from '../../../../assets/svgs/icons/addNumber.svg';
 import DeletePenBlue from '../../../../assets/svgs/icons/deletePenBlue.svg';
 import Check from '../../../../assets/svgs/icons/check.svg';
+import Plug2 from '../../../../assets/svgs/icons/plug2.svg';
 
 const width = 30;
 const height = 30;
@@ -115,6 +116,9 @@ const customStyle = props => {
   };
 };
 export const Icons = {
+  Plug2: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Plug2} />;
+  },
   Check: ({...props}) => {
     return <Svg {...customStyle(props)} file={Check} />;
   },

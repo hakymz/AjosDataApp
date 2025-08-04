@@ -71,7 +71,7 @@ export const ElectricityScreen = ({navigation}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      billersCode: __DEV__ ? '0159004775551' : '',
+      billersCode: __DEV__ ? '1111111111111' : '',
       amount: '',
       variation_code: '',
       provider: '',
@@ -200,7 +200,7 @@ export const ElectricityScreen = ({navigation}) => {
   };
 
   const verifyMeterNumber = async (value, type, setFieldValue) => {
-    console.log(values.provider?.serviceID);
+    console.log(values.provider?.serviceID, type?.value, 'messssssss');
 
     setState(prevState => ({...prevState, loading: true}));
     if (!type || !values?.provider) {
@@ -215,16 +215,18 @@ export const ElectricityScreen = ({navigation}) => {
       setFieldValue('name', '');
       try {
         const response = await fetchRequest({
-          path: 'billpayment/vtpass/verify-account',
+          path: '/billpayment/electricity/verify-meter',
           method: 'POST',
           data: {
             serviceID: values.provider?.serviceID,
             billersCode: value,
             type: type?.value,
           },
-          // displayMessage: false,
+          displayMessage: true,
           showLoader: false,
         });
+
+        console.log(response);
 
         if (response?.data?.content?.error) {
           Toast.show('error', response?.data?.content?.error);
@@ -263,8 +265,6 @@ export const ElectricityScreen = ({navigation}) => {
     }
   }, [values, isValid]);
 
-  React.useEffect(() => {}, []);
-  console.log(errors);
   return (
     <CustomSafeAreaView>
       <MainHeader nav title={'Electricity'} />
@@ -285,7 +285,7 @@ export const ElectricityScreen = ({navigation}) => {
             <CustomPicker
               error={touched?.provider && errors?.provider}
               value={values.provider}
-              data={electricityData}
+              data={electricityData?.content ?? []}
               onValueChange={value => {
                 setFieldValue('provider', value);
               }}

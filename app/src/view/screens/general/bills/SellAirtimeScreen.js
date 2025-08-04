@@ -50,6 +50,7 @@ export const SellAirtimeScreen = ({navigation, route}) => {
     getAirtimeData,
   );
 
+  console.log(airtimeData);
   const filterAirtimeData = React.useMemo(() => {
     return airtimeData?.map(item => ({name: item?.network, ...item}));
   }, [airtimeData]);
@@ -133,14 +134,6 @@ export const SellAirtimeScreen = ({navigation, route}) => {
     amount: yup.number().required('Please input amount'),
   });
 
-  const {
-    data: customersData,
-    status,
-    refetch,
-    isSuccess,
-    error,
-  } = useQuery('getCustomersAirtimeScreen', getCustomers);
-
   const cashbackPer = React.useMemo(() => {
     let currentCashback = airtimeData?.cashback?.filter?.(
       item => item?.network == values?.network?.serviceID,
@@ -151,12 +144,13 @@ export const SellAirtimeScreen = ({navigation, route}) => {
   const sellAirtime = async (transactionPin, useCashback) => {
     try {
       const response = await fetchRequest({
-        path: 'billpayment/vtpass/purchase-airtime',
+        path: 'billpayment/airtime/buy',
         data: {
           ...values,
+          phoneNumber: values?.phone,
           useCashback,
           transactionPin,
-          serviceID: values?.network?.serviceID,
+          networkId: values?.network?.networkId,
           amount: values?.amount * 1,
         },
         pageError: {
@@ -212,10 +206,6 @@ export const SellAirtimeScreen = ({navigation, route}) => {
     }
   }, [values, isValid]);
 
-  React.useEffect(() => {
-    refetch();
-  }, [isFocused]);
-
   return (
     <CustomSafeAreaView>
       <MainHeader nav title={'Airtime Purchase'} />
@@ -261,7 +251,8 @@ export const SellAirtimeScreen = ({navigation, route}) => {
                 setValues({
                   ...values,
                   phone: phone,
-                  network: selectedNetworkData,
+                  network:
+                    phone?.length > 5 ? selectedNetworkData : values?.network,
                 });
               }}
               onBlur={() => setFieldTouched('phone', true)}

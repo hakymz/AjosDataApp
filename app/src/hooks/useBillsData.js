@@ -112,20 +112,13 @@ export const useBillsData = () => {
   const getTvData = async () => {
     try {
       const response = await fetchRequest({
-        path: 'billpayment/vtpass/service-id?identifier=tv-subscription',
+        path: 'billpayment/tv/services',
         method: 'GET',
         displayMessage: false,
         showLoader: false,
       });
 
-      console.log(response, 'tv data responseee....');
-
-      if (
-        response?.status == 'success' &&
-        response?.data?.content?.length > 0
-      ) {
-        return response?.data?.content;
-      }
+      return response?.data;
     } catch (error) {
       console.log(error);
       throw error;
@@ -156,18 +149,13 @@ export const useBillsData = () => {
   const getElectricityData = async () => {
     try {
       const response = await fetchRequest({
-        path: 'billpayment/vtpass/service-id?identifier=electricity-bill',
+        path: 'billpayment/electricity/services',
         method: 'GET',
         displayMessage: false,
         showLoader: false,
       });
 
-      if (
-        response?.status == 'success' &&
-        response?.data?.content?.length > 0
-      ) {
-        return response?.data?.content;
-      }
+      return response?.data;
     } catch (error) {
       throw error;
     }

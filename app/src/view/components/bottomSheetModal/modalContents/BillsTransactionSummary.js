@@ -1,9 +1,8 @@
 import React from 'react';
 import {View, Image, TouchableOpacity} from 'react-native';
-import {BottomSheets, Button, PageInput, Text} from '../../general';
-import LottieView from 'lottie-react-native';
-import {COLORS, GENERAL, IMAGES, NETWORKS} from '../../../../conts';
-import {fetchRequest, formatAmount} from '../../../../helper';
+import {BottomSheets, Button, Text} from '../../general';
+import {COLORS, GENERAL} from '../../../../conts';
+import {formatAmount} from '../../../../helper';
 import {useUser} from '../../../../hooks';
 import {useNavigation} from '@react-navigation/native';
 
@@ -33,34 +32,26 @@ const Cashback = ({useCashback, state, setState}) => {
   const maincashbackBalance = data?.wallet?.cashback?.balance;
 
   return (
-    <View style={{height: 32, marginTop: 10, flexDirection: 'row'}}>
+    <View style={{height: 34, marginTop: 10, flexDirection: 'row'}}>
       <View
         style={{
-          backgroundColor: '#F8F8F8',
+          backgroundColor: state?.useCashback ? '#FFEDEF' : '#E9E6F7',
           flex: 1,
-          borderRadius: 6,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
           paddingHorizontal: 10,
+          borderRadius: 32,
         }}>
         <Text
           style={{
             textDecorationLine: state?.useCashback ? 'line-through' : null,
           }}
           fontWeight="700"
-          size={15}
-          color={state?.useCashback ? '#979797' : COLORS.primary}>
+          size={12}
+          color={state?.useCashback ? '#D12431' : COLORS.darkBlue}>
+          Available Cashback
           {GENERAL.nairaSign} {formatAmount(state?.cashbackBalance)}
-        </Text>
-        <Text
-          numberOfLines={1}
-          style={{flex: 1}}
-          color={state?.useCashback ? '#979797' : COLORS.primary}
-          fontWeight={'500'}
-          size={10}>
-          {' '}
-          - Cashback Balance
         </Text>
       </View>
       <TouchableOpacity
@@ -93,17 +84,13 @@ const Cashback = ({useCashback, state, setState}) => {
         }}
         style={{
           width: 121,
-          borderWidth: 1,
-          borderColor: useCashback ? '#3BA935' : '#7F8192',
-          borderRadius: 6,
+          backgroundColor: useCashback ? '#CED5DA' : '#CBDB31',
+          borderRadius: 32,
           marginLeft: 10,
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-        <Text
-          size={13}
-          fontWeight={'800'}
-          color={useCashback ? '#3BA935' : '#7F8192'}>
+        <Text medium size={12} fontWeight={'800'} color={'#151521'}>
           Use Cashback
         </Text>
       </TouchableOpacity>
@@ -112,7 +99,6 @@ const Cashback = ({useCashback, state, setState}) => {
 };
 
 export const BillsTransactionSummary = ({
-  btnTitle = 'Data',
   details,
   detailsList,
   proceed,
@@ -128,34 +114,6 @@ export const BillsTransactionSummary = ({
     useCashback: false,
     cashbackBalance: maincashbackBalance,
   });
-
-  // const detailsList = [
-  //   details?.type == 'Data' && {
-  //     title: 'Data Type',
-  //     value: details?.variation_code?.name || details?.dataType,
-  //   },
-  //   details?.type == 'Airtime' && {
-  //     title: 'Amount',
-  //     value: GENERAL.nairaSign + formatAmount(details?.amount),
-  //   },
-  //   {title: 'Customer’s Number', value: details?.phone},
-  //   {
-  //     title: `Receivable Cashback - ${
-  //       details?.variation_code?.cashback ||
-  //       details?.cashbackPer ||
-  //       details?.cashback
-  //     }%`,
-  //     value:
-  //       GENERAL.nairaSign +
-  //       formatAmount(
-  //         (details?.amount *
-  //           (details?.variation_code?.cashback ||
-  //             details?.cashbackPer ||
-  //             details?.cashback)) /
-  //           100,
-  //       ),
-  //   },
-  // ];
 
   return (
     <View style={{paddingHorizontal: 20}}>
@@ -175,7 +133,7 @@ export const BillsTransactionSummary = ({
             borderRadius: 12,
           }}>
           <Image style={{height: 43, width: 43}} source={logo} />
-          <Text medium size={16} color={COLORS.blue}>
+          <Text medium size={16} color={COLORS.darkBlue}>
             Airtime Purchase
           </Text>
         </View>
@@ -192,26 +150,6 @@ export const BillsTransactionSummary = ({
           setState={setState}
           useCashback={state?.useCashback}
         />
-        <View
-          style={{
-            height: 54,
-            flex: 1,
-            backgroundColor: '#EFF1FB',
-            marginTop: 17,
-            borderRadius: 8,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 20,
-            justifyContent: 'space-between',
-          }}>
-          <Text fontWeight={'500'} size={13} color={COLORS.blue}>
-            {state?.useCashback ? 'New Total' : 'Total'}
-          </Text>
-          <Text color={COLORS.blue} size={20} fontWeight={'500'}>
-            {GENERAL.nairaSign}
-            {formatAmount(state?.totalAmount)}
-          </Text>
-        </View>
       </View>
       <View style={{marginTop: 60}}>
         <Text style={{marginBottom: 20}} bold size={20} textAlign={'center'}>

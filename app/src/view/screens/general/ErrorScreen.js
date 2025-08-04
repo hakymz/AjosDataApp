@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, Platform, ScrollView, StatusBar, View} from 'react-native';
+import {Image, ScrollView, StatusBar, View} from 'react-native';
 import {COLORS, GENERAL} from '../../../conts';
 import {useLayouts} from '../../../hooks';
 import {
@@ -11,13 +11,10 @@ import {
 
 export const ErrorScreen = ({route, navigation}) => {
   const {
-    title = 'We encountered some problems and we will love you to try again',
     btnTitle = 'Try Again',
     subTitle,
     image,
-    proceed = () => {
-      navigation.goBack();
-    },
+    proceed = () => {},
   } = route?.params || {};
   const {minHeight} = useLayouts();
   return (
