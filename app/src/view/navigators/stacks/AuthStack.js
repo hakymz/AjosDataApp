@@ -14,13 +14,19 @@ import {
   ForgotPasswordScreen,
   ChangePasswordSuccessScreen,
   WelcomeScreen,
+  LoginWithPinScreen,
 } from '../../screens/auth';
 
 const Stack = createStackNavigator();
 const AuthStack = () => {
   const {settings, appHasBeenOpened} = useUser();
+  let initialRouteName = 'SignInScreen';
+  if (settings?.loginWithPin) {
+    initialRouteName = 'LoginWithPinScreen';
+  }
   return (
     <Stack.Navigator
+      initialRouteName={initialRouteName}
       screenOptions={{
         headerShown: false,
       }}>
@@ -61,6 +67,7 @@ const AuthStack = () => {
         component={PasswordSuccessScreen}
       />
       <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
+      <Stack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
     </Stack.Navigator>
   );
 };

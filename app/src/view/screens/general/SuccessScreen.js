@@ -84,7 +84,7 @@ export const SuccessScreen = ({route, navigation}) => {
         <CircleButton />
       </View>
       <KeyboardAvoidingViewWrapper
-        addMinHeight
+        contentContainerStyle={{minHeight: '90%'}}
         showsVerticalScrollIndicator={false}>
         <View
           style={{
@@ -117,13 +117,17 @@ export const SuccessScreen = ({route, navigation}) => {
                   {title}
                 </Text>
               ))}
-            <Text textAlign={'center'} color={'#868D95'}>
+            <Text style={{marginTop: 5}} textAlign={'center'} color={'#868D95'}>
               {subTitle}
             </Text>
           </View>
         </View>
         <View
-          style={{flex: 1, justifyContent: 'flex-end', alignItems: 'center'}}>
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+          }}>
           {btnComponent || (
             <View
               style={{

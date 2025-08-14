@@ -102,6 +102,7 @@ export const BillsTransactionSummary = ({
   details,
   detailsList,
   proceed,
+  title = 'Airtime Purchase',
   logo,
 }) => {
   const navigation = useNavigation();
@@ -132,15 +133,18 @@ export const BillsTransactionSummary = ({
             paddingHorizontal: 15,
             borderRadius: 12,
           }}>
-          <Image style={{height: 43, width: 43}} source={logo} />
+          <Image
+            style={{height: 43, width: 43, borderRadius: 50}}
+            source={typeof logo == 'string' ? {uri: logo} : logo}
+          />
           <Text medium size={16} color={COLORS.darkBlue}>
-            Airtime Purchase
+            {title}
           </Text>
         </View>
       </View>
 
       <View>
-        {detailsList?.map(item => {
+        {detailsList?.map?.(item => {
           if (item) {
             return <List {...item} />;
           }
@@ -160,7 +164,7 @@ export const BillsTransactionSummary = ({
             BottomSheets.hide();
             navigation.navigate('PinScreen', {
               proceed: pin => {
-                proceed(pin, state?.useCashback);
+                proceed?.(pin, state?.useCashback);
               },
             });
           }}

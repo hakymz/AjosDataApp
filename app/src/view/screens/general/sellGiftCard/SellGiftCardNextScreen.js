@@ -54,7 +54,7 @@ export const SellGiftCardNextScreen = ({navigation, route}) => {
     setValues,
     isValid,
   } = useFormik({
-    initialValues: {amount: '', total: '', cardSubCategory: ''},
+    initialValues: {amount: '', total: '', cardSubCategory: '', note: ''},
     validationSchema: validationSchema,
 
     onSubmit: values => {

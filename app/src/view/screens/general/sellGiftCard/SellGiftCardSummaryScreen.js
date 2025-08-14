@@ -22,7 +22,6 @@ import {
   fetchRequest,
   formatAmount,
   openSuccessScreen,
-  uploadImage,
 } from '../../../../helper';
 import {s} from 'react-native-size-matters';
 import {Preloader} from '../../../components/loaders';
@@ -97,7 +96,7 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
       des: 'Comment/Card E-Code',
       titleStyle: {color: COLORS.primary},
     },
-    {
+    details?.selectedImages?.length > 0 && {
       title: ``,
       desStyle: {width: '100%'},
       desComponent: (
@@ -131,32 +130,44 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
   const sellGiftCard = async () => {
     let imagesLink;
     Preloader.show();
-    const filteredImages = [];
-
-    if (details?.selectedImages) {
-      details?.selectedImages?.forEach?.((element, index) => {
-        const uri =
-          GENERAL.platform == 'ios'
-            ? element?.uri?.replace?.('file://', '')
-            : element?.uri;
-        filteredImages.push({
-          name: element?.fileName,
-          type: element?.type,
-          uri: uri,
-        });
-      });
-
-      imagesLink = await uploadImage(filteredImages);
-    }
+    const formData = new FormData();
 
     try {
+      if (details?.selectedImages?.length > 0) {
+        details?.selectedImages?.forEach?.((element, index) => {
+          console.log(element);
+          const uri =
+            GENERAL.platform == 'ios'
+              ? element?.uri?.replace?.('file://', '')
+              : element?.uri;
+          formData.append('file', {
+            name: element?.fileName,
+            type: element?.type,
+            uri: uri,
+          });
+        });
+
+        const response1 = await fetchRequest({
+          path: '/fileupload',
+          headers: {'Content-Type': 'multipart/form-data'},
+          data: formData,
+          method: 'POST',
+        });
+
+        imagesLink = response1?.data;
+      }
+
       const response = await fetchRequest({
         path: 'giftcard/sell',
         data: {
-          cardSubcategoryId: details?.cardSubCategory?._id,
+          cardSubcategoryId: details?.cardCategory?.id,
           purchaseAmount: details?.amount,
           ecode: details?.note,
-          uploadPath: imagesLink,
+          cardImage: imagesLink,
+          currency: 'NGN',
+          ecode: details?.ecode,
+          cardProperty:
+            details?.cardType?.value == 'E-code' ? 'ecode' : 'physical',
         },
         method: 'POST',
         pageError: {navigation},
@@ -186,6 +197,7 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
         proceed: () => navigation.navigate('HistoryNavigation'),
       });
     } catch (error) {
+      Preloader.hide();
       console.log(error, 'error ....');
     }
   };
@@ -286,7 +298,12 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
               onPress={() => {
                 BottomSheets.show({
                   component: (
-                    <GiftcardTradeTerms data={details} onPress={() => {}} />
+                    <GiftcardTradeTerms
+                      data={details}
+                      onPress={() => {
+                        sellGiftCard();
+                      }}
+                    />
                   ),
                 });
               }}

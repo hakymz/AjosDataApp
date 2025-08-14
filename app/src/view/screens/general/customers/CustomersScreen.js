@@ -7,37 +7,30 @@ import {
   SearchInput,
   Text,
 } from '../../../components/general';
-import {AppNav, MainHeader} from '../../../components/layouts';
+import {MainHeader} from '../../../components/layouts';
 import {
-  FlatList,
   Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
-  useWindowDimensions,
 } from 'react-native';
-import {AVATAR, COLORS, IMAGES} from '../../../../conts';
-import {AddCustomer} from '../../../components/bottomSheetModal/contents';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import {AVATAR, COLORS} from '../../../../conts';
+
 import {useBillsData} from '../../../../hooks';
 import {useQuery} from 'react-query';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import {DeleteCustomer} from '../../../components/bottomSheetModal/modalContents';
 const List = ({item, deleteCustomers}) => {
   const navigation = useNavigation();
-  let customerNumber = item?.customerNumber?.split('+234');
-  if (customerNumber[1]) {
+  let customerNumber = item?.phone_number?.split('+234');
+  if (customerNumber?.[1]) {
     customerNumber =
       customerNumber?.[1]?.[0] == '0'
         ? customerNumber?.[1]
         : '0' + customerNumber?.[1];
   } else {
-    customerNumber = item?.customerNumber;
+    customerNumber = item?.phone_number;
   }
 
   return (
@@ -56,14 +49,14 @@ const List = ({item, deleteCustomers}) => {
         />
         <View style={{flex: 1}}>
           <Text size={14} fontWeight={'700'} color={'#231F20'}>
-            {item?.customerName}
+            {item?.fullname}
           </Text>
           <Text
             style={{marginTop: 3}}
             size={12}
             fontWeight={800}
             color={'#231F20'}>
-            {item?.customerNumber}
+            {customerNumber}
           </Text>
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -79,7 +72,7 @@ const List = ({item, deleteCustomers}) => {
               BottomSheets.show({
                 component: (
                   <DeleteCustomer
-                    deleteCustomers={() => deleteCustomers(item?._id)}
+                    deleteCustomers={() => deleteCustomers(item?.id)}
                     item={item}
                   />
                 ),

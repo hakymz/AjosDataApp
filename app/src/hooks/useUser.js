@@ -1,6 +1,4 @@
-import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppState} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   updateUser,
@@ -15,9 +13,8 @@ import {fetchRequest} from '../helper';
 import {SideDrawer} from '../view/components/sideDrawer';
 import {BottomSheets} from '../view/components/general';
 import Toast from '../view/components/toast/Toast';
-// import Intercom from '@intercom/intercom-react-native';
 
-export const useUser = location => {
+export const useUser = () => {
   const dispatch = useDispatch();
 
   const {
@@ -80,6 +77,7 @@ export const useUser = location => {
       hideBalance: false,
       notification: true,
       biometrics: false,
+      loginWithPin: false,
     };
     await updateUserData({
       loggedIn: false,
@@ -130,9 +128,22 @@ export const useUser = location => {
         showLoader: false,
       });
 
-      if (response?.status == 'success' && response?.data && loggedIn) {
+      const response2 = await fetchRequest({
+        path: 'wallet/balance',
+        method: 'GET',
+        displayMessage: false,
+        showLoader: false,
+      });
+
+      if (response?.data && loggedIn) {
         updateUserData({
-          data: {...data, user: {...data?.user, ...response?.data}},
+          data: {
+            ...data,
+            user: {
+              ...data?.user,
+              ...{...response?.data, wallet: response2?.data},
+            },
+          },
         });
         return response;
       }

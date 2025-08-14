@@ -13,13 +13,10 @@ import {
 } from '../../../components/general';
 import {BillsBalance, MainHeader} from '../../../components/layouts';
 import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
-import {COLORS, ELECTRICITY, FONTS} from '../../../../conts';
+import {COLORS, ELECTRICITY, FONTS, GENERAL} from '../../../../conts';
 
 import {useBillsData, useLayouts, useUser} from '../../../../hooks';
-import {
-  BillsTransactionSummary,
-  TransactionSummary,
-} from '../../../components/bottomSheetModal/contents';
+import {TransactionSummary} from '../../../components/bottomSheetModal/contents';
 import {useQuery} from 'react-query';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
@@ -32,6 +29,7 @@ import {
 import Toast from '../../../components/toast/Toast';
 import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
 import {RecentCustomers} from '../../../components/home';
+import {BillsTransactionSummary} from '../../../components/bottomSheetModal/modalContents';
 
 const validationSchema = yup.object().shape({
   billersCode: yup.string().required('Please enter Meter Number'),
@@ -71,7 +69,7 @@ export const ElectricityScreen = ({navigation}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      billersCode: __DEV__ ? '1111111111111' : '',
+      billersCode: __DEV__ ? '0159004775551' : '',
       amount: '',
       variation_code: '',
       provider: '',
@@ -79,43 +77,54 @@ export const ElectricityScreen = ({navigation}) => {
     },
     validationSchema: validationSchema,
     onSubmit: values => {
-      const providerName = values?.provider?.serviceID
-        ?.split?.('-')?.[0]
+      const providerName = values?.provider?.name
+        ?.split?.('-')?.[1]
         ?.toUpperCase?.();
-      const transactionsData = [
-        {title: 'Token Amount', details: formatAmount(values?.amount)},
-        {title: 'Meter Number', details: values?.billersCode},
-        {title: 'Customer’s Name', details: values?.name},
+      const detailsList = [
+        {name: 'Meter Number', details: values?.billersCode},
+        {
+          name: 'Token Amount',
+          details: `${GENERAL.nairaSign}${formatAmount(values?.amount)}`,
+        },
+        {
+          name: 'Provider + Plan',
+          details: `${providerName} - ${values?.variation_code?.value}`,
+        },
+        {
+          name: 'Receivable Cash-back',
+          details: `${parseInt(electricityData?.cashback)}% - ${
+            GENERAL.nairaSign
+          }${(parseInt(electricityData?.cashback) * values?.amount) / 100}`,
+        },
       ];
 
       BottomSheets.show({
         component: (
           <BillsTransactionSummary
-            title={'Electricity Token Resell'}
-            image={values?.provider.image}
-            amount={values?.amount}
-            data={transactionsData}
-            serviceName={`${providerName} Token`}
+            detailsList={detailsList}
+            details={{
+              ...values,
+            }}
+            title={'Electricity'}
+            logo={values?.provider.image}
             btnTitle="Purchase Token"
             proceed={proceed}
           />
         ),
-        customSnapPoints: [650, 650],
       });
     },
   });
 
-  const proceed = async transactionPin => {
+  const proceed = async (transactionPin, useCashback) => {
     try {
       const response = await fetchRequest({
-        path: 'billpayment/vtpass/purchase-electricity',
+        path: 'billpayment/electricity/buy',
         data: {
-          ...values,
           serviceID: values?.provider?.serviceID,
           billersCode: values?.billersCode,
-          variation_code: values?.variation_code?.value,
+          variationCode: values?.variation_code?.value,
           amount: values?.amount * 1,
-          phone: data?.user?.phoneNumber,
+          useCashback,
           transactionPin,
         },
         pageError: {
@@ -200,8 +209,6 @@ export const ElectricityScreen = ({navigation}) => {
   };
 
   const verifyMeterNumber = async (value, type, setFieldValue) => {
-    console.log(values.provider?.serviceID, type?.value, 'messssssss');
-
     setState(prevState => ({...prevState, loading: true}));
     if (!type || !values?.provider) {
       setFieldTouched('variation_code', true);
@@ -226,15 +233,13 @@ export const ElectricityScreen = ({navigation}) => {
           showLoader: false,
         });
 
-        console.log(response);
-
+    
         if (response?.data?.content?.error) {
           Toast.show('error', response?.data?.content?.error);
         }
 
-        console.log(response?.data, 'Customer_Name Customer_Name');
-        if (response?.status == 'success' && response?.data) {
-          setFieldValue('name', response?.data?.content);
+        if (response?.data?.Customer_Name) {
+          setFieldValue('name', response?.data);
         } else {
         }
         setState(prevState => ({...prevState, loading: false}));
@@ -300,11 +305,11 @@ export const ElectricityScreen = ({navigation}) => {
               value={values.variation_code}
               data={[
                 {
-                  name: `Prepaid ${values?.provider?.name || ''}`,
+                  name: `Prepaid`,
                   value: 'prepaid',
                 },
                 {
-                  name: `Postpaid ${values?.provider?.name || ''}`,
+                  name: `Postpaid`,
                   value: 'postpaid',
                 },
               ]}

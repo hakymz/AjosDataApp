@@ -93,7 +93,7 @@ export const Services = ({navigation}) => {
       name: 'Dollar',
       details: 'Card',
       icon: <Icons.DollarCard size={18} />,
-      screen: 'DollarCardScreen',
+      screen: 'DollarCardDetailsScreen',
     },
   ];
   return (

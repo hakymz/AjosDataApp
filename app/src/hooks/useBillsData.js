@@ -61,10 +61,9 @@ export const useBillsData = () => {
         displayMessage: false,
         showLoader: false,
       });
+      console.log(response);
 
-      if (response?.status == 'success') {
-        return response?.data;
-      }
+      return response?.data;
     } catch (error) {
       throw error;
     }
@@ -77,7 +76,26 @@ export const useBillsData = () => {
         method: 'POST',
         data: {...values},
       });
-      console.log(response);
+
+      openSuccessScreen({
+        navigation,
+        title: 'Customer successfully saved, Well done!',
+        proceed: () => navigation.navigate('HomeScreen'),
+        btnTitle: 'Go Home',
+      });
+    } catch (error) {
+      console.log(error, 'erooor');
+      throw error;
+    }
+  };
+
+  const updateCustomers = async values => {
+    try {
+      const response = await fetchRequest({
+        path: `customer/${values?.id}`,
+        method: 'PATCH',
+        data: {...values},
+      });
 
       openSuccessScreen({
         navigation,
@@ -94,7 +112,7 @@ export const useBillsData = () => {
   const deleteCustomers = async id => {
     try {
       const response = await fetchRequest({
-        path: 'customer/delete/' + id,
+        path: 'customer/' + id,
         method: 'DELETE',
       });
 
@@ -209,6 +227,7 @@ export const useBillsData = () => {
     getCustomers,
     deleteCustomers,
     addCustomers,
+    updateCustomers,
     getEducationData,
     ...billsData,
   };

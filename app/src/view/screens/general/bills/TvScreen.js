@@ -19,16 +19,18 @@ import {COLORS, ELECTRICITY, FONTS, GENERAL} from '../../../../conts';
 import * as yup from 'yup';
 
 import {useBillsData, useLayouts, useUser} from '../../../../hooks';
-import {
-  BillsTransactionSummary,
-  TransactionSummary,
-} from '../../../components/bottomSheetModal/contents';
+import {TransactionSummary} from '../../../components/bottomSheetModal/contents';
 import {useFormik} from 'formik';
 import {useQuery} from 'react-query';
-import {fetchRequest, openSuccessScreen} from '../../../../helper';
+import {
+  fetchRequest,
+  formatAmount,
+  openSuccessScreen,
+} from '../../../../helper';
 import Toast from '../../../components/toast/Toast';
 import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
 import {RecentCustomers} from '../../../components/home';
+import {BillsTransactionSummary} from '../../../components/bottomSheetModal/modalContents';
 
 const List = ({item}) => {
   return (
@@ -91,7 +93,7 @@ export const TvScreen = ({navigation}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      billersCode: __DEV__ ? '1212121212' : '',
+      billersCode: __DEV__ ? '8061705668' : '',
       amount: '',
       variation_code: '',
       name: '',
@@ -101,16 +103,22 @@ export const TvScreen = ({navigation}) => {
     onSubmit: values => {
       console.log(values?.variation_code);
       const transactionsData = [
-        {title: 'Sub type', details: values?.variation_code?.name},
         values?.provider?.name != 'ShowMax' && {
-          title: 'Customer’s User-ID',
+          name: 'Unique Number',
           details: values?.billersCode,
         },
-        values?.provider?.name != 'ShowMax' && {
-          title: 'Customer’s Name',
-          details: values?.name,
+
+        {
+          name: 'Amount',
+          details: `${GENERAL.nairaSign}${formatAmount(values?.amount)}`,
         },
-        {title: 'Validity Period', details: '30 Days'},
+        {name: 'Provider + Plan', details: values?.variation_code?.name},
+        {
+          name: 'Receivable Cash-back',
+          details: `${parseInt(tvData?.cashback)}% - ${GENERAL.nairaSign}${
+            (parseInt(tvData?.cashback) * values?.amount) / 100
+          }`,
+        },
       ];
 
       const providerName = values?.provider?.serviceID
@@ -119,16 +127,14 @@ export const TvScreen = ({navigation}) => {
       BottomSheets.show({
         component: (
           <BillsTransactionSummary
-            title={'TV Subscription Resell'}
-            image={values?.provider?.image}
+            title={'TV Subscription'}
+            logo={values?.provider?.image}
             amount={values?.amount}
-            data={transactionsData}
-            serviceName={`${providerName}`}
-            btnTitle="Purchase Subscription"
+            detailsList={transactionsData}
+            details={{...values}}
             proceed={proceed}
           />
         ),
-        customSnapPoints: [670, 670],
       });
     },
   });
@@ -156,20 +162,19 @@ export const TvScreen = ({navigation}) => {
     });
   }
 
-  const proceed = async transactionPin => {
+  const proceed = async (transactionPin, useCashback) => {
     try {
       const response = await fetchRequest({
-        path: 'billpayment/vtpass/purchase-tv',
+        path: 'billpayment/tv/buy',
         data: {
-          ...values,
           serviceID: values?.provider?.serviceID,
           billersCode: values?.billersCode,
-          variation_code: values?.variation_code?.value,
+          variationCode: values?.variation_code?.variation_code,
           amount: values?.amount * 1,
-          phone: data?.user?.phoneNumber,
-          subscription_type: 'change',
+          subscriptionType: 'change',
           quantity: 1,
           transactionPin,
+          useCashback,
         },
         pageError: {
           navigation,
@@ -224,13 +229,9 @@ export const TvScreen = ({navigation}) => {
           showLoader: false,
           headers: {debounceToken: new Date().getTime()},
         });
-        console.log(response);
 
-        if (
-          response?.status == 'success' &&
-          response?.data?.content?.Customer_Name
-        ) {
-          setFieldValue('name', response?.data?.content?.Customer_Name);
+        if (response?.data?.Customer_Name) {
+          setFieldValue('name', response?.data?.Customer_Name);
         } else {
           setFieldValue('name', '');
         }

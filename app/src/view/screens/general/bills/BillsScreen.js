@@ -22,7 +22,11 @@ const ServiceCard = ({item, total = 3}) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate(item?.screen);
+        if (item?.onPress) {
+          item?.onPress();
+        } else {
+          navigation.navigate(item?.screen);
+        }
       }}
       style={{
         width: width / total - (total == 2 ? 30 : 25),
@@ -46,7 +50,7 @@ const ServiceCard = ({item, total = 3}) => {
     </TouchableOpacity>
   );
 };
-export const BillsScreen = () => {
+export const BillsScreen = ({navigation}) => {
   const listData = [
     {
       name: 'Electricity',
@@ -65,11 +69,24 @@ export const BillsScreen = () => {
     {
       name: 'WAEC',
       details: 'Token',
-      icon: <Icons.Book1 size={32} />,
-      screen: 'BillsScreen',
+      icon: <Icons.Book1 sioze={32} />,
+      screen: 'EPinScreen',
+      onPress: () => navigation.navigate('EPinScreen', {type: 'WAEC'}),
     },
-    {name: 'NECO', details: 'Token', icon: <Icons.Book2 size={32} />},
-    {name: 'NABTEB', details: 'Token', icon: <Icons.Book3 size={32} />},
+    {
+      name: 'NECO',
+      details: 'Token',
+      icon: <Icons.Book2 size={32} />,
+      screen: 'EPinScreen',
+      onPress: () => navigation.navigate('EPinScreen', {type: 'NECO'}),
+    },
+    {
+      name: 'NABTEB',
+      details: 'Token',
+      icon: <Icons.Book3 size={32} />,
+      screen: 'EPinScreen',
+      onPress: () => navigation.navigate('EPinScreen', {type: 'NABTEB'}),
+    },
   ];
   return (
     <CustomSafeAreaView>

@@ -50,7 +50,6 @@ export const SellAirtimeScreen = ({navigation, route}) => {
     getAirtimeData,
   );
 
-  console.log(airtimeData);
   const filterAirtimeData = React.useMemo(() => {
     return airtimeData?.map(item => ({name: item?.network, ...item}));
   }, [airtimeData]);

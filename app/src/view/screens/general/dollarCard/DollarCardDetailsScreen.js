@@ -16,6 +16,8 @@ import {
   Text,
 } from '../../../components/general';
 import {BillsBalance, MainHeader} from '../../../components/layouts';
+import {fetchRequest} from '../../../../helper';
+import {useQuery} from 'react-query';
 const Btn = ({title, icon}) => {
   return (
     <TouchableOpacity
@@ -31,8 +33,29 @@ const Btn = ({title, icon}) => {
   );
 };
 
-export const DollarCardDetailsScreen = () => {
+export const DollarCardDetailsScreen = ({navigation}) => {
   const [state, setState] = React.useState({});
+  const getDollarCards = async () => {
+    try {
+      const response = await fetchRequest({
+        path: '/virtual-card',
+        method: 'GET',
+
+        headers: {debounceToken: new Date().getTime()},
+      });
+
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const {data} = useQuery('getDollarCards', getDollarCards);
+
+  if (data?.data?.length === 0) {
+    navigation.replace('DollarCardScreen');
+  }
   return (
     <CustomSafeAreaView style={{backgroundColor: COLORS.background}}>
       <MainHeader nav title={'Dollar Card'} />

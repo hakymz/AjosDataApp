@@ -16,6 +16,7 @@ const IMAGES = {
   chevron: require('../assets/images/others/chevron.png'),
   neco: require('../assets/images/others/neco.png'),
   waec: require('../assets/images/others/waec.png'),
+  nabteb: require('../assets/images/others/nabteb.png'),
   newsPapper: require('../assets/images/others/newsPapper.png'),
   logoIcon: require('../assets/images/others/logoIcon.png'),
   face: require('../assets/images/others/face.png'),

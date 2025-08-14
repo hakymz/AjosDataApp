@@ -6,7 +6,6 @@ import {useUser} from '../../../hooks';
 import {} from '../../components/bottomSheetModal/content';
 import {
   BottomSheets,
-  CheckBox,
   CustomSafeAreaView,
   Icons,
   Text,
@@ -15,10 +14,7 @@ import {
 import {MainHeader} from '../../components/layouts';
 import {PageList} from '../../components/lists';
 
-import {
-  ContactUs,
-  UpdateNotification,
-} from '../../components/bottomSheetModal/contents';
+import {UpdateNotification} from '../../components/bottomSheetModal/contents';
 
 import {enableBiometric, openLink} from '../../../helper';
 import Toast from '../../components/toast/Toast';
@@ -100,13 +96,32 @@ export const ProfileScreen = ({navigation, route}) => {
         />
         <List
           onPress={() => {
-            BottomSheets.show({
-              component: <UpdateNotification />,
-              customSnapPoints: [450, 450],
+            updateUserData({
+              data: data,
+              settings: {...settings, loginWithPin: !settings?.loginWithPin},
             });
           }}
           title={'Use PIN login'}
           icon={<Icons.AddCategory size={24} />}
+          rightIcon={
+            <ToggleInput
+              onValueChange={() => {}}
+              click={async () => {
+                try {
+                  updateUserData({
+                    data: data,
+                    settings: {
+                      ...settings,
+                      loginWithPin: !settings?.loginWithPin,
+                    },
+                  });
+                } catch (error) {
+                  console.log(error);
+                }
+              }}
+              enableSwitch={settings?.loginWithPin}
+            />
+          }
         />
         <List
           onPress={() => {

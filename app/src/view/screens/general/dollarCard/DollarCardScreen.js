@@ -3,6 +3,7 @@ import {Image, ScrollView, View, StyleSheet} from 'react-native';
 import {s} from 'react-native-size-matters';
 import {COLORS, CONTACTS, FONTS, GENERAL} from '../../../../conts';
 import {
+  BottomSheets,
   Button,
   CheckBox,
   CustomSafeAreaView,
@@ -10,6 +11,9 @@ import {
   Text,
 } from '../../../components/general';
 import {BillsBalance, MainHeader} from '../../../components/layouts';
+import {fetchRequest, openSuccessScreen} from '../../../../helper';
+import {TransactionSummary} from '../../../components/bottomSheetModal/contents';
+import {useQuery} from 'react-query';
 
 export const DollarCardScreen = ({navigation}) => {
   const [state, setState] = React.useState({isChecked: false});
@@ -18,7 +22,7 @@ export const DollarCardScreen = ({navigation}) => {
     try {
       const response = await fetchRequest({
         path: 'virtual-card/create',
-        data: {},
+        data: {transactionPin},
         pageError: {
           navigation,
         },
@@ -26,43 +30,40 @@ export const DollarCardScreen = ({navigation}) => {
       });
 
       openSuccessScreen({
-        number: values?.phone,
         navigation,
-        title: (
-          <Text color={'#27A770'} size={18}>
-            Airtime Successfully sold to{' '}
-            <Text color={'#27A770'} size={18} fontWeight={'700'}>
-              {values?.phone}
+        subTitle: 'We have successfully created your virtual dollar card.',
+        titleComponent: (
+          <View>
+            <Text textAlign={'center'} semiBold size={25}>
+              You card has been{''}
             </Text>
-          </Text>
-        ),
-        btnTitle: 'Okay',
-        btnComponent: (
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: 80,
-              justifyContent: 'center',
-            }}>
-            <SuccessHomeBtn title={'Go Home'} />
-            <SuccessShadowBtn
-              title={'View Receipt'}
-              onPress={() => {
-                // navigation.goBack();
-                BottomSheets.show({
-                  component: <TransactionSummary details={response?.data} />,
-                  customSnapPoints: ['85%', '85%'],
-                });
-              }}
-            />
+            <Text textAlign={'center'} bold size={25}>
+              Plugged🔌
+            </Text>
           </View>
         ),
+        image: (
+          <Image
+            style={{height: 285, width: 285}}
+            source={require('../../../../assets/images/others/virtualCardCreated.png')}
+          />
+        ),
+        btnTitle: 'Go To Receipt',
+        proceed: () => {
+          BottomSheets.show({
+            component: <TransactionSummary />,
+            customSnapPoints: ['85%', '85%'],
+          });
+        },
       });
       getAndUpdateUserData();
     } catch (error) {
+      console.log(error);
       throw error;
     }
   };
+
+  React.useEffect(() => {}, []);
   return (
     <CustomSafeAreaView style={{backgroundColor: COLORS.background}}>
       <MainHeader nav title={'Dollar Card'} />
@@ -169,7 +170,11 @@ export const DollarCardScreen = ({navigation}) => {
           <Button
             disabled={!state?.isChecked}
             title={'Proceed'}
-            onPress={() => navigation.navigate('DollarCardDetailsScreen')}
+            onPress={() => {
+              navigation.navigate('PinScreen', {
+                proceed: pin => createCard(pin),
+              });
+            }}
           />
         </View>
       </KeyboardAvoidingViewWrapper>

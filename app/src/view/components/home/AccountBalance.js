@@ -66,7 +66,7 @@ export const AccountBalance = () => {
           }}>
           <Text size={16} semiBold color={COLORS.white}>
             {GENERAL.nairaSign}
-            {formatAmount(data?.wallet?.cashback?.balance)}
+            {formatAmount(data?.user?.wallet?.cashback?.balance)}
           </Text>
           <Text size={12} color={COLORS.white}>
             Available Cashback for use
@@ -104,9 +104,9 @@ export const AccountBalance = () => {
           </Text>
           <Text size={34} fontWeight={'500'} color={'#151521'}>
             {GENERAL.nairaSign}
-            {formatAmount(data?.wallet?.naira?.balance)?.split('.')[0]}.
+            {formatAmount(data?.user?.wallet?.naira?.balance)?.split('.')[0]}.
             <Text size={34} fontWeight={'500'} color={'#BBBBBB'}>
-              {formatAmount(data?.wallet?.naira?.balance)?.split('.')[1]}
+              {formatAmount(data?.user?.wallet?.naira?.balance)?.split('.')[1]}
             </Text>
           </Text>
         </View>

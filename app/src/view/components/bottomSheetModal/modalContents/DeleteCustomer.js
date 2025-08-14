@@ -29,14 +29,14 @@ export const DeleteCustomer = ({item, deleteCustomers}) => {
           />
           <View style={{flex: 1}}>
             <Text size={14} fontWeight={'700'} color={'#231F20'}>
-              {item?.customerName}
+              {item?.fullname}
             </Text>
             <Text
               style={{marginTop: 3}}
               size={12}
               fontWeight={800}
               color={'#231F20'}>
-              {item?.customerNumber}
+              {item?.phone_number}
             </Text>
           </View>
         </View>

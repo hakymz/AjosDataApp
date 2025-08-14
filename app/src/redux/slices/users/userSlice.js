@@ -6,6 +6,7 @@ const initialState = {
   sessionOut: false,
   settings: {},
   tour: false,
+  loginWithPin: false,
 };
 
 export const userSlice = createSlice({
