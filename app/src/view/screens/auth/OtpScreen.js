@@ -63,6 +63,7 @@ export const OtpScreen = ({navigation, route}) => {
   };
 
   const verifyOtp = async values => {
+    console.log(values, token);
     try {
       const response = await fetchRequest({
         path: type == 'resetPassword' ? 'auth/verify-otp' : 'auth/verify-email',

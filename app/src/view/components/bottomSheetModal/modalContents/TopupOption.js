@@ -2,18 +2,50 @@ import React from 'react';
 import {View, Image} from 'react-native';
 import {BottomSheets, Text} from '../../general';
 import {PageList} from '../../lists';
-import {fetchRequest} from '../../../../helper';
+import {extractError, fetchRequest} from '../../../../helper';
 import {useUser} from '../../../../hooks';
 import {useNavigation} from '@react-navigation/native';
+import {NoAccountNumber} from './NoAccountNumber';
+import {AccountDetails} from './AccountDetails';
 
 export const TopupOption = ({}) => {
   const {user} = useUser();
-  console.log(user);
+
+  const isVerified =
+    typeof user?.isVerified == 'string'
+      ? JSON.parse(user?.isVerified)
+      : user?.isVerified;
+
   const navigation = useNavigation();
-  const getAccount = async () => {
+  const getAccount = async (type, data) => {
     try {
       const response = await fetchRequest({
-        path: 'wallet/virtual-account?gateway=palmpay',
+        path: `/wallet/virtual-account?gateway=${type}`,
+        method: 'GET',
+      });
+
+      BottomSheets.show({
+        component: <AccountDetails data={{...response?.data, ...data}} />,
+      });
+    } catch (error) {
+      const message = extractError(error);
+      if (message == 'Virtual account not found') {
+        BottomSheets.show({component: <NoAccountNumber data={data} />});
+      }
+    }
+  };
+  const generateAccount = async (type, data) => {
+    try {
+      const response = await fetchRequest({
+        path: `/wallet/virtual-account?gateway=${type}`,
+      });
+      console.log(response?.data?.bankAccounts?.[0]);
+      BottomSheets.show({
+        component: (
+          <AccountDetails
+            data={{...response?.data?.bankAccounts?.[0], ...data}}
+          />
+        ),
       });
     } catch (error) {}
   };
@@ -26,8 +58,9 @@ export const TopupOption = ({}) => {
           source={require('../../../../assets/images/others/moniepoint.png')}
         />
       ),
+      bankName: 'Moniepoint',
       onPress: () => {
-        getAccount();
+        getAccount('monnify', list[0]);
       },
     },
     {
@@ -38,6 +71,10 @@ export const TopupOption = ({}) => {
           source={require('../../../../assets/images/others/palmpay.png')}
         />
       ),
+      bankName: 'Palmpay',
+      onPress: () => {
+        getAccount('palmpay', list[1]);
+      },
     },
     {
       name: 'Opay Virtual Account',
@@ -47,6 +84,10 @@ export const TopupOption = ({}) => {
           source={require('../../../../assets/images/others/opay.png')}
         />
       ),
+      bankName: 'Opay',
+      onPress: () => {
+        getAccount('opay', list[2]);
+      },
     },
     {
       name: '9Payment Bank',
@@ -56,6 +97,10 @@ export const TopupOption = ({}) => {
           source={require('../../../../assets/images/others/9bank.png')}
         />
       ),
+      bankName: '9Payment',
+      onPress: () => {
+        getAccount('palmpay', list[3]);
+      },
     },
   ];
   return (
@@ -75,7 +120,7 @@ export const TopupOption = ({}) => {
           <PageList
             onPress={() => {
               BottomSheets.hide();
-              if (!user?.bvn) {
+              if (!isVerified?.bvn) {
                 navigation.navigate('KycScreen', {...item});
               } else {
                 item?.onPress?.();

@@ -131,6 +131,7 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
     let imagesLink;
     Preloader.show();
     const formData = new FormData();
+    formData.append('type', 'giftcard');
 
     try {
       if (details?.selectedImages?.length > 0) {
@@ -140,11 +141,13 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
             GENERAL.platform == 'ios'
               ? element?.uri?.replace?.('file://', '')
               : element?.uri;
-          formData.append('file', {
-            name: element?.fileName,
-            type: element?.type,
-            uri: uri,
-          });
+          formData.append('file', [
+            {
+              name: element?.fileName,
+              type: element?.type,
+              uri: uri,
+            },
+          ]);
         });
 
         const response1 = await fetchRequest({

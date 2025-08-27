@@ -37,7 +37,6 @@ const Btn = ({icon, title, style, onPress}) => {
 
 export const AccountBalance = () => {
   const {data} = useUser();
-  const [state, setState] = React.useState({showModal: false});
   const navigation = useNavigation();
 
   return (

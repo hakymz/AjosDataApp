@@ -35,6 +35,7 @@ import {
   openClipboardNumberModal,
 } from '../../components/bottomSheetModal/contents';
 import {AppUpdate} from '../../components/bottomSheetModal/modalContents/AppUpdate';
+import {NoAddress} from '../../components/bottomSheetModal/modalContents';
 
 // import Intercom from '@intercom/intercom-react-native';
 
@@ -84,10 +85,10 @@ export const HomeScreen = ({navigation}) => {
         } else if (!data?.user?.setTransactionPin && tour) {
           navigation.navigate('SetPinScreen');
         } else if (!settings?.biometric && tour) {
-          BottomSheets.show({
-            component: <Biometric />,
-            customSnapPoints: [600, 600],
-          });
+          // BottomSheets.show({
+          //   component: <Biometric />,
+          //   customSnapPoints: [600, 600],
+          // });
         }
       }, 500);
     })();

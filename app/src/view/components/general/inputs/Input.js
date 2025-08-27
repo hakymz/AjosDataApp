@@ -112,7 +112,6 @@ export const Input = React.forwardRef(
     };
 
     const showErrorMessage = !focused && error && showTextError;
-    console.log(showErrorMessage, error, 'showErrorMessage showErrorMessage');
 
     return (
       <View

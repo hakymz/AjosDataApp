@@ -1,48 +1,40 @@
 import {useFormik} from 'formik';
 import React from 'react';
-import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 import {s} from 'react-native-size-matters';
-import {COLORS, GENERAL} from '../../../conts';
+import {COLORS} from '../../../conts';
 import {
+  BottomSheets,
   Button,
   CircleButton,
   CustomSafeAreaView,
   Input,
   KeyboardAvoidingViewWrapper,
-  MyIcons,
   Text,
 } from '../../components/general';
-import {AppNav, BackNav, MainHeader} from '../../components/layouts';
 import * as yup from 'yup';
-import Line from '../../components/general/others/Line';
 import {useUser} from '../../../hooks';
 import {
   dateToString,
+  extractError,
   fetchRequest,
-  getImageFromDevice,
   openSuccessScreen,
-  uploadImage,
 } from '../../../helper';
 import {useQueryClient} from 'react-query';
 import CustomDatePicker from '../../components/general/inputs/DatePicker';
-import moment from 'moment';
-import {Preloader} from '../../components/loaders';
 import {PageList} from '../../components/lists';
+import BottomSheet from '@gorhom/bottom-sheet';
+import {NoAddress} from '../../components/bottomSheetModal/modalContents';
 let validationSchema;
 export const KycScreen = ({navigation, route}) => {
   const {data} = useUser();
   const details = route?.params || {};
 
-  const [state, setState] = React.useState({userIdImage: null, selfie: null});
-  const {governmentIssuedCard, selfie, bankVerification} =
-    data?.user?.isVerified?.[0];
+  validationSchema = yup.object().shape({
+    bvn: yup.string().required('Enter BVN').max(11),
+    dob: yup.string().required('Choose date of birth'),
+  });
 
-  if (!bankVerification) {
-    yup.object().shape({
-      bvn: yup.string().required('Enter BVN').max(11),
-      dob: yup.string().required('Choose date of birth'),
-    });
-  }
   const queryClient = useQueryClient();
 
   const {
@@ -56,7 +48,7 @@ export const KycScreen = ({navigation, route}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      bvn: data?.user?.bvn == 'NULL' ? '' : data?.user?.bvn,
+      bvn: __DEV__ ? '22233555025' : '',
       dob: '',
     },
     validationSchema: validationSchema,
@@ -65,86 +57,44 @@ export const KycScreen = ({navigation, route}) => {
     },
   });
 
-  const getImage = async () => {
-    try {
-      const result = await getImageFromDevice('camera');
-
-      const {fileName, type} = result?.[0] || {};
-      const uri =
-        GENERAL.platform == 'ios'
-          ? result?.[0]?.uri?.replace?.('file://', '')
-          : result?.[0]?.uri;
-      return {name: fileName, type, uri};
-    } catch (error) {
-      throw error;
-    }
-  };
-
   const submitKYC = async values => {
-    const formData = new FormData();
-
-    let response;
-    let response2;
-
     try {
-      if (!bankVerification) {
-        const dob = dateToString(values?.dob)?.split('/');
-        let newDob = `${dob[1]}-${dob[0]}-${dob[2]}`;
+      const dob = dateToString(values?.dob)?.split('/');
+      let newDob = `${dob[2]}-${dob[1]}-${dob[0]}`;
+      console.log(values, newDob, 'newDob newDob');
 
-        response = await fetchRequest({
-          path: 'settings/validate-bvn',
-          data: {...values, dob: newDob},
-          method: 'POST',
-        });
-      }
-      let license;
-      let selfie;
+      const response = await fetchRequest({
+        path: 'kyc/bvn',
+        data: {...values, dob: newDob},
+        method: 'POST',
+      });
 
-      if (state.selfie || state.userIdImage) {
-        Preloader.show();
-        if (state.userIdImage) {
-          license = await uploadImage([state.userIdImage]);
-        }
-        if (state.selfie) {
-          selfie = await uploadImage([state.selfie]);
-        }
+      console.log(response, 'response response');
 
-        response2 = await fetchRequest({
-          path: 'settings/kyc',
-          data: {license: license?.[0], selfie: selfie?.[0]},
-          method: 'POST',
-        });
-      }
-
-      if (response || response2) {
-        queryClient.invalidateQueries({queryKey: ['userData']});
-        navigation.navigate('HomeScreen');
-        openSuccessScreen({
-          navigation: navigation,
-          btnTitle: 'Head back to Settings',
-          title: 'Submitted successfully',
-          indicatorWidth: null,
-          subTitle: 'We will notify you when we are done with our checks 👌',
-          proceed: () => navigation.navigate('SettingsScreen'),
-        });
-      }
+      queryClient.invalidateQueries({queryKey: ['userData']});
+      navigation.navigate('HomeScreen');
+      openSuccessScreen({
+        navigation: navigation,
+        subTitle: (
+          <Text size={14} color={'#868D95'}>
+            We have successfully verified your BVN and this was the name we
+            found.
+            <Text bold style={{marginTop: 20}}>
+              {response?.data?.name}
+            </Text>
+          </Text>
+        ),
+        btnTitle: 'Give us 5secs',
+      });
     } catch (error) {
+      const message = extractError(error);
+      if (message == 'Kindly setup your address before you can proceed') {
+        BottomSheets.show({component: <NoAddress />});
+      }
       console.log(error);
     }
   };
 
-  const enableButton = () => {
-    if (isValid && values?.bvn && !bankVerification) {
-      return true;
-    } else if (
-      (state.selfie && !selfie) ||
-      (state.userIdImage && !governmentIssuedCard)
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
   return (
     <CustomSafeAreaView backgroundColor={COLORS.white}>
       <View style={{paddingHorizontal: 20}}>
@@ -175,7 +125,6 @@ export const KycScreen = ({navigation, route}) => {
         </Text>
         <Input
           conStyle={{}}
-          editable={!bankVerification}
           placeholder="Enter BVN"
           value={values.bvn}
           error={touched?.bvn && errors?.bvn}

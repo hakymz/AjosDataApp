@@ -9,26 +9,23 @@ import {
 } from '../../components/general';
 import {MainHeader} from '../../components/layouts';
 import {AVATAR, COLORS} from '../../../conts';
-import {Image, TouchableOpacity, View} from 'react-native';
+import {Image, View} from 'react-native';
 import {useUser} from '../../../hooks';
-import moment from 'moment';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
+import {fetchRequest} from '../../../helper';
+import Toast from '../../components/toast/Toast';
 
 let validationSchema = yup.object().shape({
-  network: yup.object().required('Please choose network'),
-  phone: yup
+  phoneNumber: yup
     .string()
     .required('Please input phone no')
     .max(11, 'Max length of 11 digits'),
-  amount: yup.number().required('Please input amount'),
+  email: yup.string().required('Please email'),
 });
 
-const Edit = () => {
-  return <View></View>;
-};
 export const UpdateProfileScreen = () => {
-  const {data, user} = useUser();
+  const {data, user, getAndUpdateUserData} = useUser();
   const {
     values,
     errors,
@@ -46,8 +43,27 @@ export const UpdateProfileScreen = () => {
   } = useFormik({
     initialValues: {phoneNumber: user?.phoneNumber, email: user?.email},
     validationSchema: validationSchema,
-    onSubmit: values => {},
+    onSubmit: values => {
+      saveDetails(values);
+    },
   });
+
+  const saveDetails = async values => {
+    try {
+      const response = await fetchRequest({
+        path: '/settings/profile/edit',
+        method: 'PATCH',
+        data: {
+          ...values,
+        },
+      });
+
+      Toast.show('success', 'Details updated.');
+      getAndUpdateUserData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <CustomSafeAreaView backgroundColor={COLORS.white}>
@@ -107,8 +123,8 @@ export const UpdateProfileScreen = () => {
           />
         </View>
 
-        <View style={{flex: 1, justifyContent: 'flex-end'}}>
-          <Button title={'Save Details'} />
+        <View style={{flex: 1, marginTop: 20, justifyContent: 'flex-end'}}>
+          <Button title={'Save Details'} onPress={submitForm} />
         </View>
       </KeyboardAvoidingViewWrapper>
     </CustomSafeAreaView>
