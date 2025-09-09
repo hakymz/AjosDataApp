@@ -14,6 +14,7 @@ import Info from '../../../../assets/svgs/icons/info.svg';
 import CloseCircle from '../../../../assets/svgs/icons/closeCircle.svg';
 import Copy from '../../../../assets/svgs/icons/copy.svg';
 import AddCircle from '../../../../assets/svgs/icons/addCircle.svg';
+import MinusCircle from '../../../../assets/svgs/icons/minusCircle.svg';
 import DeleteIcon from '../../../../assets/svgs/icons/deleteIcon.svg';
 import Chevron from '../../../../assets/svgs/icons/chevron.svg';
 import Phone from '../../../../assets/svgs/icons/phone.svg';
@@ -102,6 +103,9 @@ import AddNumber from '../../../../assets/svgs/icons/addNumber.svg';
 import DeletePenBlue from '../../../../assets/svgs/icons/deletePenBlue.svg';
 import Check from '../../../../assets/svgs/icons/check.svg';
 import Plug2 from '../../../../assets/svgs/icons/plug2.svg';
+import Delete2 from '../../../../assets/svgs/icons/delete2.svg';
+import Freeze from '../../../../assets/svgs/icons/freeze.svg';
+import Freeze2 from '../../../../assets/svgs/icons/freeze2.svg';
 
 const width = 30;
 const height = 30;
@@ -116,6 +120,18 @@ const customStyle = props => {
   };
 };
 export const Icons = {
+  Delete2: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Delete2} />;
+  },
+  Freeze: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Freeze} />;
+  },
+  Freeze2: ({...props}) => {
+    return <Svg {...customStyle(props)} file={Freeze2} />;
+  },
+  MinusCircle: ({...props}) => {
+    return <Svg {...customStyle(props)} file={MinusCircle} />;
+  },
   Plug2: ({...props}) => {
     return <Svg {...customStyle(props)} file={Plug2} />;
   },

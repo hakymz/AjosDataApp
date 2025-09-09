@@ -5,7 +5,7 @@ import {BottomSheets, InfiniteFlatList, Text} from '../../general';
 import {fetchRequest, formatAmount} from '../../../../helper';
 import moment from 'moment';
 import {GENERAL} from '../../../../conts';
-import {TransactionSummary} from './TransactionSummary';
+// import {TransactionSummary} from './TransactionSummary';
 
 export const DataToCashTransactionHistory = ({data}) => {
   const List = ({item}) => {

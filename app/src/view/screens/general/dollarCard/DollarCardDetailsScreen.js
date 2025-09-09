@@ -5,57 +5,363 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  useWindowDimensions,
 } from 'react-native';
 import {s} from 'react-native-size-matters';
 import {COLORS, FONTS} from '../../../../conts';
 import {
-  Button,
-  CheckBox,
+  BottomSheets,
   CustomSafeAreaView,
+  Icons,
+  InfiniteFlatList,
   KeyboardAvoidingViewWrapper,
   Text,
 } from '../../../components/general';
-import {BillsBalance, MainHeader} from '../../../components/layouts';
-import {fetchRequest} from '../../../../helper';
-import {useQuery} from 'react-query';
-const Btn = ({title, icon}) => {
+import {MainHeader} from '../../../components/layouts';
+import {fetchRequest, formatAmount} from '../../../../helper';
+import {useQuery, useQueryClient} from 'react-query';
+import {
+  DollarCardDetails,
+  FreezeCard,
+  TerminateCard,
+  TopupDollarCard,
+  WithdrawDollarCard,
+} from '../../../components/bottomSheetModal/modalContents';
+import {BlurView} from '@react-native-community/blur';
+import moment from 'moment';
+const List = ({item}) => {
+  console.log(item);
+  let des = '';
+
+  if (item?.receiptDetails?.info == 'Airtime Recharge') {
+    des = item?.receiptDetails?.metaInfo?.receiver;
+  } else {
+    des = item?.receiptDetails?.type;
+  }
   return (
     <TouchableOpacity
+      onPress={() => {
+        // BottomSheets.show({
+        //   component: <TransactionSummary details={item} />,
+        //   disableScrollIfPossible: false,
+        //   showCloseBtn: false,
+        // });
+      }}
       style={{
-        paddingHorizontal: 15,
-        height: 50,
+        height: 80,
         backgroundColor: COLORS.white,
-        borderRadius: 32,
+        marginBottom: 15,
+        borderRadius: 16,
+        paddingHorizontal: 20,
+        borderWidth: 1,
+        borderColor: '#E9F1FF',
+        justifyContent: 'center',
+        paddingVertical: 10,
       }}>
-      <View></View>
-      <Text>{title}</Text>
+      <Text numberOfLines={1} color={'#848A94'} size={12}>
+        {item?.description}
+      </Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{flex: 1}}>
+          <Text
+            style={{marginTop: 4}}
+            numberOfLines={1}
+            fontWeight={500}
+            size={14}
+            color={COLORS.darkBlue}>
+            ${item?.amount}
+          </Text>
+          <Text style={{marginTop: 4}} color={'#848A94'} size={12}>
+            {moment(item?.created_at).format('DD-MMM-YYYY')} |{' '}
+          </Text>
+        </View>
+
+        <Image
+          source={{uri: item?.imageUrl || item?.image}}
+          style={{height: 43, width: 43, borderRadius: 40}}
+        />
+      </View>
     </TouchableOpacity>
   );
 };
 
-export const DollarCardDetailsScreen = ({navigation}) => {
-  const [state, setState] = React.useState({});
-  const getDollarCards = async () => {
+const ActionBtn = ({icon, title, onPress}) => {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        height: 50,
+        backgroundColor: COLORS.white,
+        paddingHorizontal: 15,
+        borderRadius: 32,
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: 160,
+      }}>
+      {icon}
+      <Text style={{marginLeft: 5}} size={12} bold color={'#151521'}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+const getDollarCards = async () => {
+  try {
+    const response = await fetchRequest({
+      path: '/virtual-card',
+      method: 'GET',
+      showLoader: false,
+    });
+
+    return response;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getDollarDetails = async id => {
+  try {
+    const response = await fetchRequest({
+      path: `virtual-card/details/${id}`,
+      method: 'GET',
+      showLoader: false,
+    });
+
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getDollarCardRates = async () => {
+  try {
+    const response = await fetchRequest({
+      path: `virtual-card/fee`,
+      method: 'GET',
+      showLoader: false,
+    });
+
+    return response?.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const Card = ({item, totalCards}) => {
+  const {width} = useWindowDimensions();
+  const queryClient = useQueryClient();
+  let cardDetails =
+    typeof item?.body == 'string' ? JSON.parse(item?.body) : item?.body?.card;
+
+  const {data} = useQuery({
+    queryKey: [item?.id],
+    queryFn: () => getDollarDetails(item?.id),
+  });
+
+  const unfreezeCard = async () => {
     try {
       const response = await fetchRequest({
-        path: '/virtual-card',
-        method: 'GET',
-
-        headers: {debounceToken: new Date().getTime()},
+        path: `virtual-card/unfreeze/${item?.id}`,
       });
-
-      return response;
+      queryClient.invalidateQueries({queryKey: ['getDollarCards']});
     } catch (error) {
-      console.log(error);
       throw error;
     }
   };
 
-  const {data} = useQuery('getDollarCards', getDollarCards);
+  return (
+    <View
+      style={{
+        height: 183,
+        marginRight: 10,
+        overflow: 'hidden',
+        borderRadius: 18,
+        width: totalCards == 1 ? width - 90 : width - 120,
+      }}>
+      {item?.status == 'freeze' && (
+        <View
+          style={[
+            StyleSheet.absoluteFillObject,
+            {
+              position: 'absolute',
+              zIndex: 10,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+          ]}>
+          <TouchableOpacity
+            onPress={unfreezeCard}
+            style={{
+              height: 50,
+              backgroundColor: COLORS.white,
+              zIndex: 20,
+              paddingHorizontal: 20,
+              flexDirection: 'row',
+              alignItems: 'center',
+              borderRadius: 32,
+            }}>
+            <Icons.Freeze2 size={24} />
+            <Text style={{marginLeft: 5}} bold color={'#151521'}>
+              Unfreeze Card
+            </Text>
+          </TouchableOpacity>
+          <BlurView
+            blurType="light"
+            blurAmount={4}
+            style={StyleSheet.absoluteFillObject}
+          />
+          <View
+            style={[
+              StyleSheet.absoluteFillObject,
+              {backgroundColor: 'rgba(0,0,0,0.3)'}, // match Figma overlay
+            ]}
+          />
+        </View>
+      )}
 
-  if (data?.data?.length === 0) {
+      <Image
+        style={{
+          height: 183,
+          width: '100%',
+          borderRadius: 18,
+          position: 'absolute',
+        }}
+        source={require('../../../../assets/images/others/cardBg.png')}
+      />
+      <View style={{flex: 1, paddingHorizontal: 20, paddingVertical: 20}}>
+        <Text
+          style={{marginTop: 20}}
+          textAlign={'center'}
+          fontType={FONTS.MONTSERRAT}
+          semiBold
+          size={12}
+          color={'#111B21'}>
+          {cardDetails?.card?.name}
+        </Text>
+        <Text
+          fontType={FONTS.MONTSERRAT}
+          bold
+          style={{marginTop: 20}}
+          textAlign={'center'}
+          size={30}
+          color={'#111B21'}>
+          ${formatAmount(data?.data?.balance)}
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+const CardMenus = ({selectedCard}) => {
+  return (
+    selectedCard?.status == 'active' && (
+      <View style={{alignItems: 'center'}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginTop: 20,
+          }}>
+          <ActionBtn
+            onPress={() => {
+              BottomSheets.show({
+                component: <TopupDollarCard rate={rate} card={selectedCard} />,
+              });
+            }}
+            icon={<Icons.AddCircle size={30} />}
+            title={'Add funds'}
+          />
+          <View style={{width: 15}} />
+          <ActionBtn
+            onPress={() => {
+              BottomSheets.show({
+                component: (
+                  <WithdrawDollarCard rate={rate} card={selectedCard} />
+                ),
+              });
+            }}
+            icon={<Icons.MinusCircle size={30} />}
+            title={'Widthdraw'}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            marginTop: 10,
+          }}>
+          <ActionBtn
+            onPress={() => {
+              BottomSheets.show({
+                component: <FreezeCard card={selectedCard} />,
+              });
+            }}
+            icon={<Icons.Freeze size={24} />}
+            title={'Freeze Card'}
+          />
+          <View style={{width: 15}} />
+          <ActionBtn
+            onPress={() => {
+              BottomSheets.show({
+                component: <TerminateCard card={selectedCard} />,
+              });
+            }}
+            icon={<Icons.Delete2 size={24} />}
+            title={'Terminate Card'}
+          />
+        </View>
+      </View>
+    )
+  );
+};
+
+const getHistory = async ({pageParam = 1, id}) => {
+  try {
+    const response = await fetchRequest({
+      path: `virtual-card/transactions/${id}`,
+      data: {
+        page: '1',
+        limit: '5',
+        startDate: '2025-07-01',
+        endDate: '2025-07-31',
+      },
+      displayMessage: true,
+      showLoader: false,
+      method: 'GET',
+    });
+
+    // console.log(response, 'response response');
+
+    return {...response, current_page: pageParam};
+  } catch (error) {
+    console.log(error, 'erroor pkkkk');
+    throw error;
+  }
+};
+export const DollarCardDetailsScreen = ({navigation}) => {
+  const [state, setState] = React.useState({selectedCard: null});
+  const {width} = useWindowDimensions();
+
+  const {data: card} = useQuery({
+    queryKey: ['getDollarCards'],
+    queryFn: getDollarCards,
+  });
+
+  const {data: rate} = useQuery({
+    queryKey: ['getDollarCardRates'],
+    queryFn: getDollarCardRates,
+  });
+
+  if (card?.data?.length === 0) {
     navigation.replace('DollarCardScreen');
   }
+
+  React.useEffect(() => {
+    setState(prevState => ({...prevState, selectedCard: card?.data?.[0]}));
+  }, [card]);
+
   return (
     <CustomSafeAreaView style={{backgroundColor: COLORS.background}}>
       <MainHeader nav title={'Dollar Card'} />
@@ -64,7 +370,6 @@ export const DollarCardDetailsScreen = ({navigation}) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           backgroundColor: COLORS.background,
-          paddingHorizontal: 20,
           marginTop: 10,
           paddingBottom: 80,
         }}>
@@ -75,66 +380,60 @@ export const DollarCardDetailsScreen = ({navigation}) => {
             marginBottom: 20,
             marginTop: 20,
             justifyContent: 'space-between',
+            paddingHorizontal: 20,
           }}>
           <Text size={25} semiBold color={COLORS.darkBlue}>
             Cards
           </Text>
-          <View
-            style={{
-              height: 35,
-              backgroundColor: COLORS.white,
-              paddingHorizontal: 18,
-              borderRadius: 32,
-              justifyContent: 'center',
-            }}>
-            <Text size={12} bold color={'#151521'}>
-              View Card Details
-            </Text>
-          </View>
+          {state?.selectedCard?.status == 'active' && (
+            <TouchableOpacity
+              onPress={() => {
+                BottomSheets.show({
+                  component: <DollarCardDetails card={state?.selectedCard} />,
+                });
+              }}
+              style={{
+                height: 35,
+                backgroundColor: COLORS.white,
+                paddingHorizontal: 18,
+                borderRadius: 32,
+                justifyContent: 'center',
+              }}>
+              <Text size={12} bold color={COLORS.dark2}>
+                View Card Details
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View
-            style={{
-              height: 183,
-              flex: 1,
-              marginRight: 15,
-            }}>
-            <Image
-              style={{
-                height: 183,
-                width: '100%',
-                borderRadius: 18,
-                position: 'absolute',
-              }}
-              source={require('../../../../assets/images/others/cardBg.png')}
-            />
-            <View style={{flex: 1, paddingHorizontal: 20, paddingVertical: 20}}>
-              <Text
-                textAlign={'center'}
-                fontType={FONTS.MONTSERRAT}
-                semiBold
-                size={12}
-                color={'#111B21'}>
-                Bankole Ajanlekoko
-              </Text>
-              <Text
-                medium
-                style={{marginTop: 20}}
-                textAlign={'center'}
-                size={20}>
-                **** 5652 3356 3447
-              </Text>
+          <ScrollView
+            contentContainerStyle={{
+              paddingHorizontal: 20,
+            }}
+            decelerationRate="fast"
+            snapToInterval={width - 120}
+            onScroll={({nativeEvent}) => {
+              if (!nativeEvent?.contentOffset) return;
 
-              <Text size={11} style={{marginTop: 60}} textAlign={'center'}>
-                Exp{' '}
-                <Text semiBold size={11} textAlign={'center'}>
-                  **/**
-                </Text>
-              </Text>
-            </View>
-          </View>
-          <View
+              const index = Math.round(nativeEvent.contentOffset.x / width);
+
+              setState(prevState => ({
+                ...prevState,
+                selectedCard: card?.data?.[index],
+              }));
+            }}
+            showsHorizontalScrollIndicator={false}
+            horizontal>
+            {card?.data?.map(item => (
+              <Card item={item} totalCards={card?.data?.length} />
+            ))}
+          </ScrollView>
+
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('DollarCardScreen');
+            }}
             style={{
               height: 183,
               width: 38,
@@ -142,6 +441,7 @@ export const DollarCardDetailsScreen = ({navigation}) => {
               borderRadius: 18,
               borderStyle: 'dashed',
               justifyContent: 'center',
+              marginRight: 20,
             }}>
             <View
               style={{
@@ -150,12 +450,38 @@ export const DollarCardDetailsScreen = ({navigation}) => {
                 left: -33,
                 top: -20,
               }}>
-              <Text size={12} medium style={{}} color={'#151521'}>
+              <Text size={12} medium style={{}} color={COLORS.dark2}>
                 Add Card
               </Text>
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
+        {/* Card menus */}
+        <CardMenus selectedCard={state?.selectedCard} />
+
+        <View
+          style={{
+            marginTop: 20,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: 20,
+          }}>
+          <Text medium size={18} color={COLORS.dark}>
+            Transactions
+          </Text>
+          <Text style={{opacity: 0.5}} size={12} color={COLORS.dark}>
+            See all
+          </Text>
+        </View>
+        <InfiniteFlatList
+          keyProps="data"
+          renderItem={({item}) => <List item={item} />}
+          request={({pageParam}) =>
+            getHistory({pageParam, id: state?.selectedCard?.id})
+          }
+          queryKey={`getHistory${state?.selectedCard?.id}`}
+        />
       </KeyboardAvoidingViewWrapper>
     </CustomSafeAreaView>
   );

@@ -7,6 +7,7 @@ const COLORS = {
   lightGrey: '#F8F8F8',
   black: '#231F20',
   dark: '#000',
+  dark2: '#151521',
   red: '#D12431',
   error: '#D12431',
   errorRed: '#EC2B27',

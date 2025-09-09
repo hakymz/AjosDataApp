@@ -36,9 +36,6 @@ export const GiftcardTradeTerms = ({data, onPress}) => {
           }}
         />
         <Text
-          onPress={() => {
-            openLink(CONTACTS.termsLink);
-          }}
           color={'#7F8192'}
           fontWeight={'500'}
           style={{paddingLeft: 10}}

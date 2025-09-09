@@ -28,7 +28,7 @@ import {
   openSuccessScreen,
 } from '../../../../helper';
 import Toast from '../../../components/toast/Toast';
-import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
+
 import {RecentCustomers} from '../../../components/home';
 import {BillsTransactionSummary} from '../../../components/bottomSheetModal/modalContents';
 
@@ -101,7 +101,6 @@ export const TvScreen = ({navigation}) => {
     },
     validationSchema: validationSchema,
     onSubmit: values => {
-      console.log(values?.variation_code);
       const transactionsData = [
         values?.provider?.name != 'ShowMax' && {
           name: 'Unique Number',
@@ -121,9 +120,6 @@ export const TvScreen = ({navigation}) => {
         },
       ];
 
-      const providerName = values?.provider?.serviceID
-        ?.split?.('-')?.[0]
-        ?.toUpperCase?.();
       BottomSheets.show({
         component: (
           <BillsTransactionSummary
@@ -144,8 +140,6 @@ export const TvScreen = ({navigation}) => {
     () => getTvVariation(values?.provider?.serviceID),
   );
 
-  console.log(values?.provider?.serviceID);
-  console.log(tvVariationCodes);
   if (values?.provider?.name == 'ShowMax') {
     validationSchema = yup.object().shape({
       amount: yup.number().required('Please input amount'),
@@ -183,31 +177,12 @@ export const TvScreen = ({navigation}) => {
 
       openSuccessScreen({
         navigation,
-        title: (
-          <Text color={'#27A770'} size={18}>
-            Subscription Purchased Successfully
-          </Text>
-        ),
-        btnTitle: 'Okay',
-        btnComponent: (
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: 80,
-              justifyContent: 'center',
-            }}>
-            <SuccessHomeBtn title={'Go Home'} />
-            <SuccessShadowBtn
-              title={'View Receipt'}
-              onPress={() => {
-                BottomSheets.show({
-                  component: <TransactionSummary details={response?.data} />,
-                  customSnapPoints: ['85%', '85%'],
-                });
-              }}
-            />
-          </View>
-        ),
+
+        proceed: () => {
+          BottomSheets.show({
+            component: <TransactionSummary details={response?.data} />,
+          });
+        },
       });
     } catch (error) {
       console.log(error, 'errrss');
@@ -354,18 +329,7 @@ export const TvScreen = ({navigation}) => {
         </View>
 
         <View style={{marginBottom: 20}}>
-          <RecentCustomers
-            value={values?.phone}
-            onPress={phone => {
-              const network = getNumberNetwork(phone);
-              const selectedNetworkData = getNumberNetwork(network);
-              setValues({
-                ...values,
-                phone: phone,
-                network: state?.bypass ? null : selectedNetworkData,
-              });
-            }}
-          />
+          <RecentCustomers value={values?.phone} />
         </View>
 
         <View

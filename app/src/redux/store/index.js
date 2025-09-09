@@ -12,6 +12,7 @@ import billsReducer from '../slices/datas/billsDataSlice';
 import paymentReducer from '../slices/datas/paymentDataSlice';
 import walletReducer from '../slices/datas/walletDataSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import popupModalReducer from '../slices/modals/popupSlice';
 const reducers = combineReducers({
   userData: userReducer,
   alert: alertReducer,
@@ -24,6 +25,7 @@ const reducers = combineReducers({
   billsData: billsReducer,
   paymentData: paymentReducer,
   walletData: walletReducer,
+  popupModal: popupModalReducer,
 });
 
 // middleware: getDefaultMiddleware =>

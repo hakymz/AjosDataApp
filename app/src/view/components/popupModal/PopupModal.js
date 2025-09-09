@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity, BackHandler} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  BackHandler,
+  ScrollView,
+  useWindowDimensions,
+} from 'react-native';
 import {COLORS, GENERAL} from '../../../conts';
 import store from '../../../redux/store';
 import {updatePopupModal} from '../../../redux/slices';
@@ -12,24 +19,47 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {useLayouts} from '../../../hooks';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {KeyboardAvoidingViewWrapper, Text} from '../general';
-import {useTheme} from '../../../hooks/useTheme';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import LottieView from 'lottie-react-native';
 
 let backHandler;
+const show = ({
+  component,
+  height = 350,
+  title = '',
+  onClose = () => {},
+  hideCloseBtn,
+  showConfetti,
+}) => {
+  let Component = null;
+  let props = {};
 
-const show = ({component, height = 350, title = ''}) => {
+  // If user passed a JSX element (<NoshV2 ... />)
+  if (React.isValidElement(component)) {
+    Component = component.type; // extract the component type (e.g. NoshV2)
+    props = component.props; // extract its props
+  }
+  // If user passed a component reference (NoshV2)
+  else if (typeof component === 'function') {
+    Component = component;
+  }
+
   store.dispatch(
     updatePopupModal({
       visible: true,
       hideModal: false,
-      component,
+      component: Component, // just the function reference
+      props, // plain object
       height,
       title,
+      onClose, // ⚠️ still non-serializable, better pass key instead
+      hideCloseBtn,
+      showConfetti,
     }),
   );
 };
-
 const hide = (visible = false) => {
   store.dispatch(updatePopupModal({hideModal: true, visible: visible}));
 };
@@ -38,15 +68,24 @@ const Modal = () => {
   const {
     visible,
     hideModal,
-    component = null,
+    // component = null,
     height,
     title,
+    onClose = () => {},
+    hideCloseBtn = false,
+    showConfetti = false,
+    component: Component,
+    props = {},
   } = useSelector(state => state.popupModal);
+  const {bottom} = useSafeAreaInsets();
 
-  const {theme} = useTheme();
+  const animationRef = React.useRef();
+
+  const [state, setState] = React.useState({showConfetti: false});
 
   const dispatch = useDispatch();
   const [showModal, setShowModal] = React.useState(false);
+  const {width} = useWindowDimensions();
 
   const aniValue = useSharedValue(0);
   React.useEffect(() => {
@@ -62,7 +101,9 @@ const Modal = () => {
 
     if (visible) {
       backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-        close();
+        if (!hideCloseBtn) {
+          close();
+        }
         return true;
       });
     } else {
@@ -78,7 +119,9 @@ const Modal = () => {
   }, [hideModal]);
 
   const animatedStyle = useAnimatedStyle(() => {
-    return {transform: [{scale: aniValue?.value}]};
+    return {
+      transform: [{scale: aniValue?.value}],
+    };
   });
   const close = () => {
     aniValue.value = withTiming(0, {
@@ -88,6 +131,8 @@ const Modal = () => {
     setTimeout(() => {
       dispatch(updatePopupModal({visible: false, hideModal: true}));
       setShowModal(false);
+      setState(prevState => ({...prevState, showConfetti: false}));
+      animationRef.current?.reset?.();
     }, 300);
   };
 
@@ -99,44 +144,56 @@ const Modal = () => {
     }
   };
 
+  React.useEffect(() => {
+    if (visible && showConfetti) {
+      setState(prevState => ({...prevState, showConfetti: true}));
+      setTimeout(() => {
+        animationRef.current?.play?.();
+      }, 10);
+    }
+  }, [visible]);
+
   return (
     showModal && (
       <View style={{...styles.container}}>
-        <Animated.View
-          style={[
-            {
-              ...styles.modal,
-              backgroundColor:
-                theme == GENERAL.DarkTheme
-                  ? COLORS.backgroundDark
-                  : COLORS.white,
-            },
-            animatedStyle,
-          ]}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Text lineHeight={20} medium size={16}>
-              {title}
-            </Text>
-            <TouchableOpacity
-              onPress={() => hide()}
+        <KeyboardAvoidingViewWrapper
+          contentContainerStyle={{flexGrow: 1, justifyContent: 'center'}}>
+          <Animated.View
+            style={[
+              {
+                borderRadius: 24,
+                width: width - 50,
+                maxHeight: '80%',
+              },
+              animatedStyle,
+            ]}>
+            <View
               style={{
-                height: s(30),
-                width: s(30),
-                justifyContent: 'center',
-                alignItems: 'center',
+                backgroundColor: COLORS.white,
+                borderColor: COLORS.white,
+                ...styles.modal,
+                paddingHorizontal: 16,
+                borderWidth: 1,
               }}>
-              <Icon size={25} name="close" />
-            </TouchableOpacity>
-          </View>
-          <KeyboardAvoidingViewWrapper>{component}</KeyboardAvoidingViewWrapper>
-        </Animated.View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: !title ? 'flex-end' : 'space-between',
+                }}>
+                {title && (
+                  <Text medium size={20}>
+                    {title}
+                  </Text>
+                )}
+              </View>
+
+              {Component ? <Component {...props} /> : null}
+            </View>
+          </Animated.View>
+        </KeyboardAvoidingViewWrapper>
       </View>
     )
   );
@@ -150,14 +207,10 @@ export const PopupModal = {
 
 const styles = StyleSheet.create({
   modal: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: COLORS.white,
     paddingBottom: 30,
+    paddingVertical: 16,
     minHeight: 200,
-    borderRadius: 10,
-    width: '100%',
-    maxHeight: 450,
+    borderRadius: 16,
   },
   container: {
     backgroundColor: 'rgba(0,0,0,0.2)',
@@ -166,8 +219,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     width: '100%',
     height: '100%',
-    paddingHorizontal: 30,
-    justifyContent: 'center',
+    paddingHorizontal: 16,
     alignItems: 'center',
   },
 });

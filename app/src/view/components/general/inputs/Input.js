@@ -11,7 +11,7 @@ import {TouchableOpacity} from '@gorhom/bottom-sheet';
 import {Icons} from '../others';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Text} from '../text';
-
+import CurrencyInput from 'react-native-currency-input';
 const fetchCopiedText = async () => {
   const text = await Clipboard.getString();
   return text;
@@ -45,7 +45,10 @@ export const Input = React.forwardRef(
       showTextError = true,
       handleScroll,
       paste = true,
+      currencyInput,
+      onChangeText,
       onPaste,
+      currency,
       ...props
     },
     ref,
@@ -151,32 +154,72 @@ export const Input = React.forwardRef(
           ) : (
             <>
               {leftIcon && <View style={{left: 0}}>{leftIcon}</View>}
+              {currency && (
+                <Text style={{flex: 1, textAlign: 'right'}}>{currency}</Text>
+              )}
 
-              <TextInput
-                secureTextEntry={!focused && error ? false : showPassword}
-                onFocus={() => {
-                  onFocus();
-                  setFocused(true);
-                }}
-                onBlur={() => {
-                  onBlur();
-                  setFocused(false);
-                }}
-                placeholderTextColor={getTextColor()}
-                style={{
-                  fontSize,
-                  ...styles.input,
-                  color: getTextColor(),
-                  textAlign: centerText ? 'center' : 'left',
-                  fontFamily:
-                    fontFamily || FONTS.PLUS_JAKARTA_SANS_FONTS.regular,
-                  ...inputStyle,
-                }}
-                ref={ref}
-                editable={editable}
-                value={value?.trimStart?.() ?? ''}
-                {...props}
-              />
+              {currencyInput ? (
+                <CurrencyInput
+                  precision={2}
+                  delimiter=","
+                  separator="."
+                  secureTextEntry={!focused && error ? false : showPassword}
+                  onFocus={() => {
+                    onFocus();
+                    setFocused(true);
+                  }}
+                  onBlur={() => {
+                    onBlur();
+                    setFocused(false);
+                  }}
+                  placeholderTextColor={getTextColor()}
+                  style={{
+                    fontSize,
+                    ...styles.input,
+                    color: getTextColor(),
+                    textAlign: centerText ? 'center' : 'left',
+                    fontFamily:
+                      fontFamily || FONTS.PLUS_JAKARTA_SANS_FONTS.regular,
+                    ...inputStyle,
+                  }}
+                  ref={ref}
+                  editable={editable}
+                  value={value}
+                  onChangeValue={value => {
+                    onChangeText(value);
+                  }}
+                  {...props}
+                />
+              ) : (
+                <TextInput
+                  secureTextEntry={!focused && error ? false : showPassword}
+                  onFocus={() => {
+                    onFocus();
+                    setFocused(true);
+                  }}
+                  onBlur={() => {
+                    onBlur();
+                    setFocused(false);
+                  }}
+                  placeholderTextColor={getTextColor()}
+                  style={{
+                    fontSize,
+                    ...styles.input,
+                    color: getTextColor(),
+                    textAlign: centerText ? 'center' : 'left',
+                    fontFamily:
+                      fontFamily || FONTS.PLUS_JAKARTA_SANS_FONTS.regular,
+                    ...inputStyle,
+                  }}
+                  ref={ref}
+                  editable={editable}
+                  value={value?.trimStart?.() ?? ''}
+                  onChangeText={value => {
+                    onChangeText(value);
+                  }}
+                  {...props}
+                />
+              )}
 
               {rightIcon ? (
                 <View style={{right: -10}}>{rightIcon}</View>

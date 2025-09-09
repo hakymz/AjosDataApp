@@ -13,7 +13,7 @@ import Toast from '../components/toast/Toast';
 const Stack = createStackNavigator();
 const RootNavigator = () => {
   const [showSplashScreen, setShowSplashScreen] = React.useState(!__DEV__);
-  console.log(showSplashScreen);
+
   const {loggedIn} = useUser('root');
 
   const hideSplashScreen = () => {

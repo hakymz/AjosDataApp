@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  ScrollView,
-  RefreshControl,
-  FlatList,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {COLORS, GENERAL} from '../../../conts';
-import {fetchRequest, formatAmount} from '../../../helper';
+import {TouchableOpacity, View} from 'react-native';
+import {COLORS} from '../../../conts';
+import {fetchRequest} from '../../../helper';
 
 import {
   BottomSheets,
@@ -17,12 +11,11 @@ import {
   Text,
 } from '../../components/general';
 import {MainHeader} from '../../components/layouts';
-import {useQuery, useQueryClient} from 'react-query';
 
-import {useIsFocused} from '@react-navigation/native';
 import moment from 'moment';
-import {TransactionSummary} from '../../components/bottomSheetModal/contents';
+
 import {Image} from '../../components/general/image';
+import {TransactionSummary} from '../../components/bottomSheetModal/modalContents';
 
 const List = ({item}) => {
   let des = '';
@@ -37,8 +30,8 @@ const List = ({item}) => {
       onPress={() => {
         BottomSheets.show({
           component: <TransactionSummary details={item} />,
-          // customSnapPoints: ['85%', '85%'],
           disableScrollIfPossible: false,
+          showCloseBtn: false,
         });
       }}
       style={{
@@ -47,41 +40,34 @@ const List = ({item}) => {
         marginBottom: 15,
         borderRadius: 16,
         paddingHorizontal: 20,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
         borderWidth: 1,
         borderColor: '#E9F1FF',
+        justifyContent: 'center',
+        paddingVertical: 10,
       }}>
-      <View style={{flex: 1}}>
-        <Text fontWeight={700} size={14} color={'#4961AC'}>
-          {item?.receiptDetails?.info == 'Data Transfer'
-            ? 'Data to Cash'
-            : item?.receiptDetails?.info}
-        </Text>
-        <Text
-          style={{marginTop: 5}}
-          fontWeight={500}
-          color={'#7F8192'}
-          size={10}>
-          {moment(item?.created_at).format('DD-MMM-YYYY')} |{' '}
-          {/* {moment(item?.created_at).format('h:mA')} */}
-          {item?.receiptDetails?.metaInfo?.receiver}
-        </Text>
+      <Text color={'#848A94'} size={12}>
+        {item?.category}
+      </Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{flex: 1}}>
+          <Text
+            style={{marginTop: 4}}
+            numberOfLines={1}
+            fontWeight={500}
+            size={14}
+            color={COLORS.darkBlue}>
+            {JSON.parse(item?.receiptDetails)?.metaInfo?.description}
+          </Text>
+          <Text style={{marginTop: 4}} color={'#848A94'} size={12}>
+            {moment(item?.created_at).format('DD-MMM-YYYY')} |{' '}
+          </Text>
+        </View>
+
+        <Image
+          source={{uri: item?.imageUrl || item?.image}}
+          style={{height: 43, width: 43, borderRadius: 40}}
+        />
       </View>
-      <View>
-        <Text
-          fontWeight={'500'}
-          size={18}
-          color={item?.status == 'debit' ? '#D12431' : '#3BA935'}>
-          {GENERAL.nairaSign}
-          {formatAmount(item?.amount)}
-        </Text>
-      </View>
-      <Image
-        source={{uri: item?.imageUrl || item?.image}}
-        style={{height: 43, width: 43, borderRadius: 40}}
-      />
     </TouchableOpacity>
   );
 };

@@ -2,6 +2,7 @@ import React from 'react';
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
+  HistoryScreen,
   HomeScreen,
   ProfileScreen,
   ServicesScreen,
@@ -10,11 +11,12 @@ import {
 const Tab = createBottomTabNavigator();
 
 import {View, TouchableOpacity} from 'react-native';
-import {COLORS, GENERAL} from '../../../conts';
+import {COLORS} from '../../../conts';
 import {TabsIcons} from '../../components/general/others/TabsIcons';
-import {HistoryNavigation, HomeNavigator} from '../nestedNavigators';
-import {BottomSheets, Text} from '../../components/general';
-import {Flyer} from '../../components/bottomSheetModal/contents';
+import {HomeNavigator} from '../nestedNavigators';
+import {Text} from '../../components/general';
+import {PopupModal} from '../../components/popupModal/PopupModal';
+import {Finder} from '../../components/popupModal';
 
 const MyTabBar = ({state, descriptors, navigation}) => {
   return (
@@ -61,6 +63,10 @@ const MyTabBar = ({state, descriptors, navigation}) => {
               target: route.key,
               canPreventDefault: true,
             });
+
+            if (route?.name == 'FinderScreen') {
+              PopupModal.show({component: <Finder />});
+            }
 
             if (!isFocused && !event.defaultPrevented) {
               navigation.navigate(route.name, route.params);
@@ -129,7 +135,7 @@ const HomeBottomTab = () => {
       />
 
       <Tab.Screen
-        name="FlyerScreen"
+        name="FinderScreen"
         component={HomeScreen}
         options={{
           tabBarLabel: 'Finder',
@@ -143,8 +149,8 @@ const HomeBottomTab = () => {
         }}
       />
       <Tab.Screen
-        name="HistoryNavigation"
-        component={HistoryNavigation}
+        name="HistoryScreen"
+        component={HistoryScreen}
         options={{
           tabBarLabel: 'History',
           tabBarIcon: ({focused, size}) => {

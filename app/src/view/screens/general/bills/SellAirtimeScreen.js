@@ -107,7 +107,6 @@ export const SellAirtimeScreen = ({navigation, route}) => {
               cashbackPer,
             }}
             proceed={sellAirtime}
-            btnTitle="Airtime"
           />
         ),
       });

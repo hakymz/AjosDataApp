@@ -27,6 +27,7 @@ const show = ({
   customSnapPoints,
   scrollview = true,
   canClose = true,
+  showCloseBtn = true,
   disableScrollIfPossible = true,
 }) => {
   prevComponent = component;
@@ -40,6 +41,7 @@ const show = ({
       scrollview,
       canClose,
       disableScrollIfPossible,
+      showCloseBtn,
     }),
   );
 };
@@ -75,6 +77,7 @@ const BottomSheetContent = ({
     scrollview = true,
     canClose = true,
     disableScrollIfPossible = true,
+    showCloseBtn,
   } = useSelector(state => state.bottomSheet);
 
   React.useEffect(() => {
@@ -142,18 +145,21 @@ const BottomSheetContent = ({
             ...containerStyle,
           }}>
           {component}
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: 0,
-            }}>
-            <CloseButton
-              onPress={() => {
-                hide();
-              }}
-            />
-          </View>
+
+          {showCloseBtn && (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 0,
+              }}>
+              <CloseButton
+                onPress={() => {
+                  hide();
+                }}
+              />
+            </View>
+          )}
         </View>
       </View>
     </Modalize>
@@ -162,7 +168,7 @@ const BottomSheetContent = ({
 
 let backHandler;
 const BottomSheetsModal = ({}) => {
-  const {visible, customSnapPoints, canClose} = useSelector(
+  const {visible, customSnapPoints, canClose, showCloseBtn} = useSelector(
     state => state.bottomSheet,
   );
   const {height, width} = useWindowDimensions();

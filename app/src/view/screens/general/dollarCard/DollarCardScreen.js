@@ -11,9 +11,14 @@ import {
   Text,
 } from '../../../components/general';
 import {BillsBalance, MainHeader} from '../../../components/layouts';
-import {fetchRequest, openSuccessScreen} from '../../../../helper';
-import {TransactionSummary} from '../../../components/bottomSheetModal/contents';
+import {
+  fetchRequest,
+  formatAmount,
+  openSuccessScreen,
+} from '../../../../helper';
+
 import {useQuery} from 'react-query';
+import {TransactionSummary} from '../../../components/bottomSheetModal/modalContents';
 
 export const DollarCardScreen = ({navigation}) => {
   const [state, setState] = React.useState({isChecked: false});
@@ -48,13 +53,12 @@ export const DollarCardScreen = ({navigation}) => {
             source={require('../../../../assets/images/others/virtualCardCreated.png')}
           />
         ),
-        btnTitle: 'Go To Receipt',
-        proceed: () => {
-          BottomSheets.show({
-            component: <TransactionSummary />,
-            customSnapPoints: ['85%', '85%'],
-          });
-        },
+        btnTitle: 'Okay',
+        // proceed: () => {
+        //   BottomSheets.show({
+        //     component: <TransactionSummary details={response?.data} />,
+        //   });
+        // },
       });
       getAndUpdateUserData();
     } catch (error) {
@@ -63,7 +67,26 @@ export const DollarCardScreen = ({navigation}) => {
     }
   };
 
-  React.useEffect(() => {}, []);
+  const getDollarCardRates = async () => {
+    try {
+      const response = await fetchRequest({
+        path: `virtual-card/fee`,
+        method: 'GET',
+        showLoader: false,
+
+        headers: {debounceToken: new Date().getTime()},
+      });
+
+      return response?.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const {data: rate} = useQuery({
+    queryKey: ['getDollarCardRates'],
+    queryFn: getDollarCardRates,
+  });
   return (
     <CustomSafeAreaView style={{backgroundColor: COLORS.background}}>
       <MainHeader nav title={'Dollar Card'} />
@@ -123,7 +146,7 @@ export const DollarCardScreen = ({navigation}) => {
             We will be charging a creation fee for this card.
           </Text>
           <Text style={{marginTop: 5}} size={25} semiBold>
-            $3 - ₦5,235.00
+            ${rate?.cardFeeInUsd} - ₦{formatAmount(rate?.cardFeeInNgn)}
           </Text>
           <View style={{alignItems: 'flex-start', marginTop: 10}}>
             <BillsBalance style={{marginHorizontal: 0}} />

@@ -26,7 +26,10 @@ import {
 import {s} from 'react-native-size-matters';
 import {Preloader} from '../../../components/loaders';
 import FastImage from 'react-native-fast-image';
-import {GiftcardTradeTerms} from '../../../components/bottomSheetModal/modalContents';
+import {
+  GiftcardTradeTerms,
+  TransactionSummary,
+} from '../../../components/bottomSheetModal/modalContents';
 
 const ImageButton = ({number = 1, item, onPress}) => {
   return (
@@ -126,6 +129,10 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
       right: null,
     },
   ];
+  console.log(
+    details?.cardSubCategory?.sub_category_id,
+    'details?.cardSubCategory?.ixd',
+  );
 
   const sellGiftCard = async () => {
     let imagesLink;
@@ -141,29 +148,30 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
             GENERAL.platform == 'ios'
               ? element?.uri?.replace?.('file://', '')
               : element?.uri;
-          formData.append('file', [
-            {
-              name: element?.fileName,
-              type: element?.type,
-              uri: uri,
-            },
-          ]);
+          console.log(element?.type);
+          formData.append('file', {
+            name: element?.fileName,
+            type: element?.type,
+            uri: uri,
+          });
         });
-
-        const response1 = await fetchRequest({
-          path: '/fileupload',
-          headers: {'Content-Type': 'multipart/form-data'},
-          data: formData,
-          method: 'POST',
-        });
-
-        imagesLink = response1?.data;
       }
+
+      console.log(formData);
+
+      const response1 = await fetchRequest({
+        path: '/fileupload',
+        headers: {'Content-Type': 'multipart/form-data'},
+        data: formData,
+        method: 'POST',
+      });
+
+      imagesLink = response1?.data;
 
       const response = await fetchRequest({
         path: 'giftcard/sell',
         data: {
-          cardSubcategoryId: details?.cardCategory?.id,
+          cardSubcategoryId: details?.cardSubCategory?.sub_category_id,
           purchaseAmount: details?.amount,
           ecode: details?.note,
           cardImage: imagesLink,
@@ -197,7 +205,11 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
             source={require('../../../../assets/images/others/giftcardSuccess.png')}
           />
         ),
-        proceed: () => navigation.navigate('HistoryNavigation'),
+        proceed: () => {
+          BottomSheets.show({
+            component: <TransactionSummary details={response?.data} />,
+          });
+        },
       });
     } catch (error) {
       Preloader.hide();

@@ -24,9 +24,9 @@ import {useNavigation} from '@react-navigation/native';
 const getNotification = async ({pageParam = 0}) => {
   try {
     const response = await fetchRequest({
-      path: `/notifications?page=${pageParam}&limit=10`,
+      path: `/notification?page=${pageParam}&limit=10`,
       method: 'GET',
-      displayMessage: false,
+      displayMessage: true,
       showLoader: false,
     });
 

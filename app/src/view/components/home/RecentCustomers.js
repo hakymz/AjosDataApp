@@ -6,6 +6,7 @@ import {useQuery} from 'react-query';
 import {COLORS} from '../../../conts';
 import {useNavigation} from '@react-navigation/native';
 import {Image} from '../general/image';
+import {removeCountryCode} from '../../../helper';
 
 const List = ({item, onPress, value}) => {
   let customerNumber = item?.customerNumber?.split('+234');
@@ -59,8 +60,7 @@ export const RecentCustomers = ({onPress, value}) => {
     refetch,
     isSuccess,
     error,
-  } = useQuery('getCustomersAirtimeCom', getCustomers);
-  const navigation = useNavigation();
+  } = useQuery({queryKey: ['getCustomersAirtimeCom'], queryFn: getCustomers});
 
   const list = [
     {
@@ -98,55 +98,29 @@ export const RecentCustomers = ({onPress, value}) => {
         </Text>
       </View>
 
-      {/* {customersData?.length > 0 && (
-        <View style={{marginTop: 25}}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <Text
-              color={COLORS.dark}
-              fontWeight={'500'}
-              size={14}
-              style={{marginBottom: 10}}>
-              Recent Customers
-            </Text>
-
-            <Text
-              onPress={() => {
-                navigation.navigate('CustomersScreen', {onPress});
-              }}
-              color={COLORS.blue}
-              fontWeight={'700'}
-              size={14}
-              style={{marginBottom: 10, textDecorationLine: 'underline'}}>
-              View more
-            </Text>
-          </View>
-
-          <ScrollView showsHorizontalScrollIndicator={false} horizontal>
-            {customersData?.slice?.(0, 3)?.map(item => (
-              <List item={item} onPress={onPress} value={value} />
-            ))}
-          </ScrollView>
-        </View>
-      )} */}
       <ScrollView
+        showsHorizontalScrollIndicator={false}
         contentContainerStyle={{flex: 0, paddingHorizontal: 20}}
         style={{flexGrow: 0}}
         horizontal>
-        {list.map(item => (
-          <TouchableOpacity style={{width: 70, marginRight: 10}}>
-            <Image style={{width: 64, height: 64}} source={item?.image} />
+        {customersData?.result.map((item, index) => (
+          <TouchableOpacity
+            disabled={!onPress}
+            onPress={() => {
+              onPress(removeCountryCode(item?.phone_number));
+            }}
+            style={{width: 70, marginRight: 10}}>
+            <Image
+              style={{width: 64, height: 64}}
+              source={list[index % list.length].image}
+            />
             <Text
               style={{marginTop: 5}}
               textAlign={'center'}
               medium
               color={COLORS.primary}
               size={11}>
-              {item?.name}
+              {item?.fullname}
             </Text>
           </TouchableOpacity>
         ))}

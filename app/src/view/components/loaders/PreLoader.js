@@ -35,7 +35,7 @@ const Loader = () => {
         height,
       }}>
       <Image
-        style={{width: 210, height: 94}}
+        style={{width: 187, height: 141}}
         source={require('../../../assets/images/others/logoWhite.png')}
       />
     </View>

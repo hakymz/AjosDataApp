@@ -6,13 +6,14 @@ import {useUser} from '../../../../hooks';
 import {formatAmount} from '../../../../helper';
 export const BillsBalance = ({style}) => {
   const {data} = useUser();
+
   return (
     <View
       style={{
         height: 34,
         backgroundColor: '#E9E6F7',
         borderRadius: 32,
-        paddingHorizontal: 25,
+        paddingHorizontal: 15,
         alignItems: 'center',
         marginHorizontal: 10,
         justifyContent: 'center',
@@ -24,7 +25,7 @@ export const BillsBalance = ({style}) => {
         fontWeight={'700'}
         textAlign={'center'}>
         Available funds: {GENERAL.nairaSign}
-        {formatAmount(data?.wallet?.naira?.balance)}
+        {formatAmount(data?.user?.wallet?.naira?.balance)}
       </Text>
     </View>
   );

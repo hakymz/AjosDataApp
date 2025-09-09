@@ -15,7 +15,6 @@ export * from './ContactUs';
 export * from './VerifyBVN';
 export * from './Flyer';
 export * from './OpayOption';
-export * from './TransactionSummary';
 export * from './EditNumber';
 export * from './OpayQRScanCode';
 export * from './MonniePointOption';

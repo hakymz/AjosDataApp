@@ -64,7 +64,7 @@ export const fetchRequest = async ({
   } catch (error) {
     const {data: {message = ''} = {}, status} = error?.response || {};
 
-    console.error({url: path, message, status});
+    // console.error({url: path, message, status});
 
     if (status == 401) {
       Toast.show(

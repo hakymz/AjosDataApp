@@ -48,6 +48,7 @@ export const ForgotPasswordScreen = ({navigation}) => {
       navigation.navigate('OtpScreen', {
         token: response?.data?.resetToken,
         type: 'resetPassword',
+        email: values?.email,
       });
     } catch (error) {
       console.log(error);

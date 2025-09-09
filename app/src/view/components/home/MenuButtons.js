@@ -22,11 +22,8 @@ const menus = [
   {
     name: 'Receipts',
     Icon: <Icons.Clipboard size={24} />,
-    onPress: () => {
-      BottomSheets.show({
-        component: <TopupWallet />,
-        customSnapPoints: [580, 580],
-      });
+    onPress: navigation => {
+      navigation.navigate('HistoryScreen');
     },
     backgroundColor: '#CBDB31',
     textColor: COLORS.darkBlue,

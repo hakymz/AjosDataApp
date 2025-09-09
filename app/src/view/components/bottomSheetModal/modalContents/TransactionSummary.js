@@ -1,13 +1,8 @@
 import React from 'react';
 import {Image, Platform, TouchableOpacity, View} from 'react-native';
-import {BottomSheets, Button, Icons, Text} from '../../general';
+import {BottomSheets, CloseButton, Icons, Text} from '../../general';
 import {COLORS, GENERAL, IMAGES} from '../../../../conts';
-import {
-  Copy,
-  fetchRequest,
-  formatAmount,
-  openSuccessScreen,
-} from '../../../../helper';
+import {Copy, formatAmount} from '../../../../helper';
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
 import ViewShot from 'react-native-view-shot';
@@ -18,42 +13,39 @@ import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 const OsVer = Platform.constants['Release'];
 import Share from 'react-native-share';
 
-const List = ({title, details, desCom}) => {
+const List = ({name, details, copy}) => {
   return (
     <View
       style={{
-        minHeight: 54,
-        borderRadius: 8,
-        backgroundColor: '#F8F8F8',
+        minHeight: 62,
+        justifyContent: 'space-between',
+        flex: 1,
+        borderBottomWidth: 1,
+        borderBottomColor: '#F5F5F5',
+        paddingBottom: 10,
+        marginBottom: 10,
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 20,
-        justifyContent: 'space-between',
-        marginBottom: 7,
       }}>
-      <Text
-        numberOfLines={1}
-        style={{paddingRight: 10, maxWidth: 200}}
-        fontWeight={'500'}
-        size={13}
-        color={'#979797'}>
-        {title}
-      </Text>
-      {desCom || (
-        <Text
-          textAlign={'right'}
-          numberOfLines={1}
-          size={16}
-          color={COLORS.blue}
-          fontWeight={'500'}
-          style={{flex: 1}}>
+      <View style={{justifyContent: 'flex-end', flex: 1}}>
+        <Text numberOfLines={2} size={16} bold>
           {details}
         </Text>
+        <Text size={11} color={'#979797'}>
+          {name}
+        </Text>
+      </View>
+      {copy && (
+        <Icons.Copy
+          size={20}
+          onPress={() => {
+            Copy(details);
+          }}
+        />
       )}
     </View>
   );
 };
-
 export const TransactionSummary = ({proceed, btnTitle = 'Data', details}) => {
   const navigation = useNavigation();
   const [state, setState] = React.useState({showBtn: true});
@@ -61,25 +53,6 @@ export const TransactionSummary = ({proceed, btnTitle = 'Data', details}) => {
   console.log(details);
 
   const viewShotRef = React.useRef();
-
-  const buyAgain = async transactionPin => {
-    try {
-      const response = await fetchRequest({
-        path: `billpayment/buy-again/${details?.transactionId}`,
-        data: {transactionPin},
-        method: 'POST',
-        pageError: {
-          navigation,
-        },
-      });
-      openSuccessScreen({
-        navigation,
-        proceed: () => {
-          navigation.navigate('HistoryScreen');
-        },
-      });
-    } catch (error) {}
-  };
 
   const captureAndSaveScreenshot = async () => {
     setState(prevState => ({...prevState, showBtn: false}));
@@ -132,18 +105,33 @@ export const TransactionSummary = ({proceed, btnTitle = 'Data', details}) => {
     }
   };
 
+  const receiptDetails =
+    typeof details?.receiptDetails === 'string'
+      ? JSON.parse(details?.receiptDetails)
+      : details?.receiptDetails;
+  const category = details?.category?.toLowerCase?.();
+
+  const electricityToken = receiptDetails?.metaInfo?.purchased_code;
+  let digitName = 'Transaction Mobile Number';
+  if (category == 'electricity') {
+    digitName = 'Meter Number';
+  } else if (category == 'tv subscription') {
+    digitName = 'Cable Number';
+  } else if (category == 'virtual dollar card') {
+    digitName = 'Card Number';
+  }
+
   const lists = [
     {
-      title: 'Transaction type',
-      details:
-        details?.receiptDetails?.info == 'Data Transfer'
-          ? 'Data to Cash'
-          : details?.receiptDetails?.info || details?.type,
+      title: details?.summary,
+      details: 'Remark',
     },
+
     {
-      title: 'Customer’s No',
-      details: details?.receiptDetails?.metaInfo?.receiver,
+      title: digitName,
+      details: receiptDetails?.metaInfo?.receiver,
     },
+
     {
       title: 'Amount',
       details: `${GENERAL.nairaSign}${formatAmount(details?.amount)}`,
@@ -153,14 +141,17 @@ export const TransactionSummary = ({proceed, btnTitle = 'Data', details}) => {
       details: moment(details?.created_at).format('DD - MMM - YY | hh:mm:a'),
     },
     {
-      title: 'Initial Balance',
-      details: `${GENERAL.nairaSign}${formatAmount(details?.previousBalance)}`,
+      title: 'Electricity Token',
+      details: electricityToken,
+      copy: true,
     },
     {
-      title: 'Post-purchase Balance',
-      details: `${GENERAL.nairaSign}${formatAmount(details?.newBalance)}`,
+      title: 'Transaction ID/Marker',
+      details: `${receiptDetails?.metaInfo?.transactionId}`,
+      copy: true,
     },
   ];
+
   return (
     <View style={{flex: 1}}>
       <ViewShot ref={viewShotRef} style={{backgroundColor: COLORS.white}}>
@@ -170,128 +161,64 @@ export const TransactionSummary = ({proceed, btnTitle = 'Data', details}) => {
               marginBottom: 20,
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'space-between',
             }}>
-            <View style={{flexDirection: 'row'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <View
                 style={{
-                  height: 26,
-                  borderWidth: 1,
+                  height: 23,
                   borderColor: '#179338',
-                  width: 83,
-                  borderRadius: 6,
                   justifyContent: 'center',
                   alignItems: 'center',
+                  position: 'absolute',
+                  backgroundColor: '#37D6A3',
+                  borderRadius: 32,
+                  paddingHorizontal: 10,
                 }}>
-                <Text fontWeight="700" color={COLORS.green} size={12}>
+                <Text medium color={'#151521'} size={12}>
                   {details?.state}
                 </Text>
               </View>
-              <TouchableOpacity
-                onPress={() => {
-                  BottomSheets.hide();
-                  navigation.navigate('PinScreen', {
-                    proceed: pin => {
-                      buyAgain(pin, state?.useCashback);
-                    },
-                  });
-                }}
-                style={{
-                  height: 26,
-                  backgroundColor: '#179338',
-                  width: 83,
-                  borderRadius: 6,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginLeft: 10,
-                }}>
-                <Text fontWeight="700" color={COLORS.white} size={12}>
-                  Buy Again
-                </Text>
-              </TouchableOpacity>
             </View>
 
-            <Text fontWeight={800} size={18}>
-              Summary
+            <Text style={{flex: 1}} textAlign={'center'} bold size={22}>
+              Receipt
             </Text>
           </View>
-          <Text color={'#828282'} size={12}>
-            Here is a Summary of the selected Transaction and it can be share if
-            desired.
-          </Text>
-        </View>
-
-        <View
-          style={{
-            height: 100,
-            borderRadius: 8,
-            backgroundColor: '#F8F8F8',
-            paddingHorizontal: 20,
-            justifyContent: 'center',
-            marginBottom: 7,
-            marginHorizontal: 30,
-          }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <Text fontWeight={'500'} size={13} color={'#979797'}>
-              Remark
-            </Text>
-            <Icons.Copy
-              size={20}
-              onPress={() => {
-                Copy(details?.summary);
-              }}
-            />
+          <View style={{marginBottom: 20}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                height: 56,
+                backgroundColor: '#E9E6F7',
+                paddingHorizontal: 15,
+                borderRadius: 12,
+              }}>
+              <Image
+                style={{height: 43, width: 43, borderRadius: 50}}
+                source={{uri: receiptDetails.metaInfo?.image}}
+              />
+              <Text medium size={16} color={COLORS.darkBlue}>
+                {details?.category}
+              </Text>
+            </View>
           </View>
-
-          <Text
-            style={{marginTop: 5}}
-            fontWeight={'500'}
-            size={11}
-            color={'#979797'}>
-            {details?.summary}
-          </Text>
         </View>
 
         <View style={{paddingHorizontal: 30}}>
-          {lists?.map(item => (
-            <List title={item?.title} details={`${item?.details}`} />
-          ))}
-        </View>
-        <View style={{paddingHorizontal: 10}}>
-          <List
-            title={'Transaction ID'}
-            desCom={
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  width: '100%',
-                  flex: 1,
-                }}>
-                <Text
-                  style={{flex: 1, marginRight: 10}}
-                  textAlign={'right'}
-                  numberOfLines={2}
-                  size={16}
-                  color={COLORS.blue}
-                  fontWeight={'500'}>
-                  {details?.transactionId}
-                </Text>
-                <Icons.Copy
-                  size={20}
-                  onPress={() => {
-                    Copy(details?.transactionId);
-                  }}
+          {lists?.map(
+            item =>
+              item?.details && (
+                <List
+                  name={item?.title}
+                  details={`${item?.details}`}
+                  copy={item?.copy}
                 />
-              </View>
-            }
-          />
+              ),
+          )}
         </View>
+
         <View style={{paddingHorizontal: 30}}>
           {!state?.showBtn && (
             <View
@@ -313,26 +240,30 @@ export const TransactionSummary = ({proceed, btnTitle = 'Data', details}) => {
               flexDirection: 'row',
               marginTop: 20,
               paddingHorizontal: 24,
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}>
-            <Button
-              onPress={() => {
-                captureAndShareScreenshot();
-              }}
-              type="lightGrey"
+            <TouchableOpacity
               style={{
-                flex: 1,
-                paddingHorizontal: 0,
-              }}
-              fontSize={14}
-              title={'Share Receipt'}
-            />
+                backgroundColor: '#CBDB31',
+                height: 50,
+                borderRadius: 32,
+                paddingHorizontal: 15,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Icons.Share size={26} />
+              <Text style={{marginLeft: 5}} size={12} bold>
+                Share this Receipt
+              </Text>
+            </TouchableOpacity>
             <View style={{width: 10}} />
-            <Button
+            <CloseButton
+              style={{marginTop: 0}}
               onPress={() => {
                 BottomSheets.hide();
-                navigation.navigate('EditTransactionHistoryScreen', details);
               }}
-              style={{flex: 1, paddingHorizontal: 0}}
               fontSize={14}
               title={`Edit Receipt`}
             />

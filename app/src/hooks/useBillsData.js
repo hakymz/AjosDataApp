@@ -4,6 +4,7 @@ import {fetchRequest, openSuccessScreen} from '../helper';
 import {updateBillsData} from '../redux/slices';
 import {useNavigation} from '@react-navigation/native';
 import Toast from '../view/components/toast/Toast';
+import {useQueryClient} from 'react-query';
 
 export const useBillsData = () => {
   const billsData = useSelector(state => state.billsData);
@@ -11,6 +12,7 @@ export const useBillsData = () => {
   const dispatch = useDispatch();
   const getVariationCodeIdRef = React.useRef();
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
 
   React.useEffect(() => {
     dispatch(updateBillsData(state));
@@ -76,7 +78,8 @@ export const useBillsData = () => {
         method: 'POST',
         data: {...values},
       });
-
+      queryClient.invalidateQueries({queryKey: ['getCustomersAirtimeCom']});
+      queryClient.invalidateQueries({queryKey: ['getCustomersCustomerScreen']});
       openSuccessScreen({
         navigation,
         title: 'Customer successfully saved, Well done!',
@@ -96,7 +99,8 @@ export const useBillsData = () => {
         method: 'PATCH',
         data: {...values},
       });
-
+      queryClient.invalidateQueries({queryKey: ['getCustomersAirtimeCom']});
+      queryClient.invalidateQueries({queryKey: ['getCustomersCustomerScreen']});
       openSuccessScreen({
         navigation,
         title: 'Customer successfully saved, Well done!',
@@ -116,6 +120,8 @@ export const useBillsData = () => {
         method: 'DELETE',
       });
 
+      queryClient.invalidateQueries({queryKey: ['getCustomersAirtimeCom']});
+      queryClient.invalidateQueries({queryKey: ['getCustomersCustomerScreen']});
       if (response?.status == 'success') {
         Toast.show('success', 'Customer deleted');
       }

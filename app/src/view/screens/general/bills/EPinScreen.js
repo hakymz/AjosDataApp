@@ -95,7 +95,11 @@ export const EPinScreen = ({route, navigation}) => {
             name: 'Receivable Cash-back',
             details: `${parseInt(values?.provider?.cashback)}% - ${
               GENERAL.nairaSign
-            }${(parseInt(values?.provider?.cashback) * values?.amount) / 100}`,
+            }${
+              (parseInt(values?.provider?.cashback) *
+                values?.provider?.amount) /
+              100
+            }`,
           },
         ];
         console.log(

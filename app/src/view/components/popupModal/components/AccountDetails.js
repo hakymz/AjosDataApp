@@ -2,7 +2,7 @@ import React from 'react';
 import {View} from 'react-native';
 import {useUser} from '../../../../hooks';
 import {Text} from '../../general';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {Copy} from '../../../../helper';
 import {COLORS} from '../../../../conts';
 

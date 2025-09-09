@@ -2,7 +2,7 @@ import React from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import {useUser} from '../../../../hooks';
 import {Text} from '../../general';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {Copy, fetchRequest} from '../../../../helper';
 import {COLORS, GENERAL} from '../../../../conts';
 import {useTheme} from '../../../../hooks/useTheme';

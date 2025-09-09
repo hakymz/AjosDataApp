@@ -6,86 +6,34 @@ import {
   Icons,
   Input,
   KeyboardAvoidingViewWrapper,
-  PageInput,
-  SuccessRateDisplay,
   Text,
   TextArea,
 } from '../../../components/general';
-import {BillsBalance, MainHeader} from '../../../components/layouts';
-import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
-import {COLORS, FONTS} from '../../../../conts';
+import {MainHeader} from '../../../components/layouts';
+import {StyleSheet, View} from 'react-native';
+import {COLORS} from '../../../../conts';
 import * as yup from 'yup';
-import RNFS from 'react-native-fs';
+
 import {useLayouts, useUser} from '../../../../hooks';
-import {
-  EditNumber,
-  TransactionSummary,
-} from '../../../components/bottomSheetModal/contents';
+
 import {useFormik} from 'formik';
 
-import DocumentPicker, {types} from 'react-native-document-picker';
-import {
-  fetchRequest,
-  formatAmount,
-  openErrorScreen,
-  openSuccessScreen,
-} from '../../../../helper';
+import {fetchRequest, openSuccessScreen} from '../../../../helper';
 
 import Toast from '../../../components/toast/Toast';
-import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
-import {ScrollView} from 'react-native-gesture-handler';
+
 import {
-  AddNumberForBulkSms,
   AddNumberForBulkSmsOption,
+  TransactionSummary,
 } from '../../../components/bottomSheetModal/modalContents';
 const validationSchema = yup.object().shape({
   message: yup.string().required('Please enter message'),
   sender: yup.string().required('Please add sender'),
 });
 
-const ContactsList = ({text, style, onPress}) => {
-  return (
-    <TouchableOpacity
-      disabled={!onPress}
-      onPress={() => {
-        onPress();
-      }}
-      style={{
-        backgroundColor: '#DCE0F0',
-        justifyContent: 'center',
-        height: 29,
-        borderRadius: 8,
-        paddingHorizontal: 7,
-        marginRight: 5,
-        marginBottom: 3,
-        ...style,
-      }}>
-      <Text numberOfLines={1} color={'#4961AC'} size={15} fontWeight={500}>
-        {text}
-      </Text>
-    </TouchableOpacity>
-  );
-};
-
 export const BulkSmsScreen = ({navigation}) => {
   const {minHeight} = useLayouts();
   const {getAndUpdateUserData} = useUser();
-  const [contacts, setContacts] = React.useState([]);
-  const [state, setState] = React.useState({fileName: '', fileNumbers: []});
-
-  const deleteNumber = index => {
-    let currentNumbers = [...contacts];
-    currentNumbers = currentNumbers?.filter(
-      number => number != currentNumbers?.[index],
-    );
-    setContacts(currentNumbers);
-  };
-
-  const saveUserNumber = (value, index) => {
-    const currentNumbers = [...contacts];
-    currentNumbers[index] = value;
-    setContacts(currentNumbers);
-  };
 
   const {
     values,
@@ -123,8 +71,6 @@ export const BulkSmsScreen = ({navigation}) => {
     },
   });
 
-  console.log(values.contacts);
-
   const sendSms = async transactionPin => {
     try {
       const response = await fetchRequest({
@@ -141,10 +87,17 @@ export const BulkSmsScreen = ({navigation}) => {
         headers: {debounceToken: new Date().getTime()},
       });
 
+      navigation.navigate('HomeScreen');
       openSuccessScreen({
         navigation,
         btnTitle: 'Go to receipt',
-        proceed: () => {},
+        subTitle:
+          'We have successfully sent the Airtime to the mobile number inputed.',
+        proceed: () => {
+          BottomSheets.show({
+            component: <TransactionSummary details={response?.data} />,
+          });
+        },
       });
       getAndUpdateUserData();
     } catch (error) {
@@ -212,27 +165,12 @@ export const BulkSmsScreen = ({navigation}) => {
                 </Text>
               </View>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Icons.PlusCircle
-                  onPress={() => {
-                    BottomSheets.show({
-                      component: (
-                        <AddNumberForBulkSmsOption
-                          onValueChange={value => {
-                            setFieldValue('contacts', value);
-                          }}
-                          currentContacts={values?.contacts}
-                        />
-                      ),
-                    });
-                  }}
-                />
-                {values?.contacts?.length > 0 && (
-                  <Icons.DeletePen
-                    size={27}
+                {values?.contacts?.length > 0 ? (
+                  <Icons.EditPenCircle
                     onPress={() => {
                       BottomSheets.show({
                         component: (
-                          <AddNumberForBulkSms
+                          <AddNumberForBulkSmsOption
                             onValueChange={value => {
                               setFieldValue('contacts', value);
                             }}
@@ -240,6 +178,30 @@ export const BulkSmsScreen = ({navigation}) => {
                           />
                         ),
                       });
+                    }}
+                  />
+                ) : (
+                  <Icons.PlusCircle
+                    onPress={() => {
+                      BottomSheets.show({
+                        component: (
+                          <AddNumberForBulkSmsOption
+                            onValueChange={value => {
+                              setFieldValue('contacts', value);
+                            }}
+                            currentContacts={values?.contacts}
+                          />
+                        ),
+                      });
+                    }}
+                  />
+                )}
+
+                {values?.contacts?.length > 0 && (
+                  <Icons.DeletePen
+                    size={27}
+                    onPress={() => {
+                      setFieldValue('contacts', []);
                     }}
                   />
                 )}
@@ -277,16 +239,3 @@ export const BulkSmsScreen = ({navigation}) => {
     </CustomSafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  list: {
-    height: 72,
-    backgroundColor: '#F8F8F8',
-    marginBottom: 10,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-});

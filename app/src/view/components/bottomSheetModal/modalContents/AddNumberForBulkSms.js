@@ -62,8 +62,9 @@ export const AddNumberForBulkSms = ({currentContacts = [], onValueChange}) => {
                 setState(prevState => ({
                   ...prevState,
                   phone: '',
-                  contacts: [...prevState?.contacts, splitNumbers],
+                  contacts: [...prevState?.contacts, value?.trim?.()],
                 }));
+                // console.log([...prevState?.contacts, value]);
 
                 // setContacts([...contacts, ...splitNumbers]);
               }
@@ -87,7 +88,7 @@ export const AddNumberForBulkSms = ({currentContacts = [], onValueChange}) => {
           />
         </View>
         <Button
-          title={'Add Numbers'}
+          title={'Save Numbers'}
           onPress={() => {
             BottomSheets.hide();
             onValueChange(state?.contacts);

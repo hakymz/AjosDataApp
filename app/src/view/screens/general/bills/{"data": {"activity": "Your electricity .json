@@ -1,0 +1,33 @@
+{
+  "data": {
+    "activity": "Your electricity bill payment of NGN 1,000.00 for meter 1111111111111 was successful Token : 26362054405982757802. You have received a cashback of NGN 2.00. You have NGN 10,160.00 balance left.",
+    "actualCategory": "Electricity",
+    "amount": 1000,
+    "category": "Electricity",
+    "channel": "Electricity",
+    "customize": "[]",
+    "declineData": "[]",
+    "description": "Your electricity bill payment of NGN 1,000.00 for meter 1111111111111 was successful Token : 26362054405982757802. You have received a cashback of NGN 2.00. You have NGN 10,160.00 balance left.",
+    "gateway": "ajebo",
+    "imageUrl": "https://sandbox.vtpass.com/resources/products/200X200/Ikeja-Electric-Payment-PHCN.jpg",
+    "journeyActivity": "Pay Electricity Bill",
+    "newBalance": 10160,
+    "previousBalance": 11160,
+    "product": "Pay Electricity Bill",
+    "purchaseType": "electricity",
+    "receiptDetails": "{\"name\":\"Your electricity bill payment of NGN 1,000.00 for meter 1111111111111 was successful Token : 26362054405982757802. You have received a cashback of NGN 2.00. You have NGN 10,160.00 balance left.\",\"info\":\"electricity\",\"amount\":1000,\"transactionFee\":0,\"type\":\"electricity\",\"transactionId\":\"20250903170633\",\"transactionDate\":\"2025-09-03\",\"metaInfo\":{\"name\":\"Hakym Tijani\",\"receiver\":\"1111111111111\",\"amount\":1000,\"fee\":0,\"type\":\"electricity\",\"image\":\"https:\\/\\/sandbox.vtpass.com\\/resources\\/products\\/200X200\\/Ikeja-Electric-Payment-PHCN.jpg\",\"account_name\":\"Hakym Tijani\",\"transactionId\":\"20250903170633\",\"description\":\"Electricity Bill Payment |  Ikeja Electric Payment - IKEDC\",\"purchased_code\":\"Token : 26362054405982757802\"}}",
+    "shortDescription": "Your electricity bill payment of NGN 1,000.00 for meter 1111111111111 was successful Token : 26362054405982757802. You have received a cashback of NGN 2.00. You have NGN 10,160.00 balance left.",
+    "staffAction": "[]",
+    "state": "completed",
+    "status": "debit",
+    "summary": "Your electricity bill payment of NGN 1,000.00 for meter 1111111111111 was successful Token : 26362054405982757802. You have received a cashback of NGN 2.00. You have NGN 10,160.00 balance left.",
+    "timestamp": 1756915604,
+    "transactionId": "20250903170633",
+    "transactionInfo": "{\"rep\":\"Electricity\",\"action\":\"Pay Electricity Bill\"}",
+    "type": "electricity",
+    "userId": "aff00292-ac5d-439a-8f88-9b842653c472"
+  },
+  "message": "Electricity bill payment successful",
+  "status": true,
+  "statusCode": 200
+}

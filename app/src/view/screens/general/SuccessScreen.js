@@ -72,9 +72,7 @@ export const SuccessScreen = ({route, navigation}) => {
     subTitle,
     btnComponent,
     image,
-    proceed = () => {
-      navigation.goBack();
-    },
+    proceed,
   } = route?.params || {};
 
   return (
@@ -136,7 +134,13 @@ export const SuccessScreen = ({route, navigation}) => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <Button title={btnTitle} onPress={proceed} />
+              <Button
+                title={btnTitle}
+                onPress={() => {
+                  proceed?.();
+                  navigation.goBack();
+                }}
+              />
             </View>
           )}
           <CloseButton />

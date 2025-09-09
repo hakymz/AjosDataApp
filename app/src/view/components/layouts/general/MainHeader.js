@@ -121,7 +121,7 @@ export const MainHeader = ({
               <Icons.NoteRedDot
                 size={17}
                 onPress={() => {
-                  navigation.navigate('NotificationScreen');
+                  navigation.navigate('HistoryScreen');
                 }}
               />
             </View>

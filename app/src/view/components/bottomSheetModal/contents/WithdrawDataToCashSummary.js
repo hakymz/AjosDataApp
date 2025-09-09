@@ -12,7 +12,6 @@ import {
   openSuccessScreen,
 } from '../../../../helper';
 import {SuccessHomeBtn, SuccessShadowBtn} from '../../../screens/general';
-import {TransactionSummary} from './TransactionSummary';
 
 export const WithdrawDataToCashSummary = ({data}) => {
   const navigation = useNavigation();
@@ -84,15 +83,6 @@ export const WithdrawDataToCashSummary = ({data}) => {
               justifyContent: 'center',
             }}>
             <SuccessHomeBtn title={'Go Home'} />
-            <SuccessShadowBtn
-              title={'View Receipt'}
-              onPress={() => {
-                BottomSheets.show({
-                  component: <TransactionSummary details={response?.data} />,
-                  customSnapPoints: ['85%', '85%'],
-                });
-              }}
-            />
           </View>
         ),
       });

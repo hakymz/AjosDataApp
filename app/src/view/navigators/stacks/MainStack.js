@@ -54,12 +54,14 @@ import {
   ProfileDetailsScreen,
   UpdateProfileScreen,
 } from '../../screens/settings';
+import {PopupModal} from '../../components/popupModal/PopupModal';
 
 const Stack = createStackNavigator();
 const MainStack = () => {
   return (
     <>
       <BottomSheets.Modal />
+      <PopupModal.Modal />
       <Stack.Navigator
         // initialRouteName="SuccessScreen"
         screenOptions={{headerShown: false}}>

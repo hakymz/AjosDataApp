@@ -17,67 +17,108 @@ import {
   FlatList,
   Image,
   Keyboard,
+  Pressable,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  useColorScheme,
   useWindowDimensions,
   View,
 } from 'react-native';
 import {COLORS, FONTS, GENERAL, NETWORKS} from '../../../../conts';
 import * as yup from 'yup';
 import {useBillsData, useLayouts, useUser} from '../../../../hooks';
-import {
-  ResellTransactionSummary,
-  SavedCustomers,
-  TransactionSummary,
-} from '../../../components/bottomSheetModal/contents';
-import {useQuery} from 'react-query';
+import {TransactionSummary} from '../../../components/bottomSheetModal/contents';
+import {useQuery, useQueryClient} from 'react-query';
 import {useFormik} from 'formik';
 import {
   fetchRequest,
   formatAmount,
   getNumberNetwork,
   openSuccessScreen,
-  pickerPhoneNo,
+  scaleFont,
   validateNumberNetwork,
 } from '../../../../helper';
 import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
 import {useIsFocused} from '@react-navigation/native';
 import {RecentCustomers} from '../../../components/home';
 import LinearGradient from 'react-native-linear-gradient';
+import RNPickerSelect from 'react-native-picker-select';
+import {BillsTransactionSummary} from '../../../components/bottomSheetModal/modalContents';
 
 let validationSchema;
 
-const List = ({item, setFieldValue}) => {
-  let customerNumber = item?.customerNumber?.split('+234');
-  if (customerNumber[1]) {
-    customerNumber =
-      customerNumber?.[1]?.[0] == '0'
-        ? customerNumber?.[1]
-        : '0' + customerNumber?.[1];
-  } else {
-    customerNumber = item?.customerNumber;
-  }
+const PickerTrigger = ({
+  value,
+  onValueChange,
+  data,
+  fontFamily,
+  pickerStyle,
+}) => {
+  const colorScheme = useColorScheme();
+  const pickerRef = React.useRef(null);
+  let itemColor =
+    colorScheme == 'dark'
+      ? Platform.OS == 'ios'
+        ? COLORS.grey
+        : COLORS.white
+      : COLORS.black;
+
+  const dataSet = (data ?? [])?.map?.(item => ({
+    ...item,
+    label:
+      item?.name?.toString?.()?.trim?.() || item?.plan?.toString?.()?.trim?.(),
+    value: item,
+    color: itemColor,
+  }));
+
   return (
     <TouchableOpacity
-      onPress={() => {
-        setFieldValue('phone', customerNumber);
-      }}
+      activeOpacity={0.7}
+      onPress={() => pickerRef.current?.togglePicker?.()}
       style={{
-        ...styles.list,
+        height: 38,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginRight: 8,
+        width: 60,
+        position: 'absolute',
+        zIndex: 10,
       }}>
-      <View style={{flex: 1}}>
-        <Text size={14} fontWeight={'500'} color={'#7F8192'}>
-          {item?.customerName}
-        </Text>
-        <Text
-          style={{marginTop: 3}}
-          size={18}
-          fontWeight={800}
-          color={'#7F8192'}>
-          {customerNumber}
-        </Text>
-      </View>
+      {/* Invisible picker but controlled */}
+      <RNPickerSelect
+        ref={pickerRef}
+        value={value}
+        items={dataSet}
+        onValueChange={onValueChange}
+        placeholder={{
+          value: '',
+          label: '',
+          color: itemColor,
+        }}
+        useNativeAndroidPickerStyle={false}
+        style={
+          Platform.OS === 'ios'
+            ? {
+                inputIOSContainer: {pointerEvents: 'none'},
+                inputIOS: {
+                  color: 'transparent', // always hidden
+                  fontSize: scaleFont(14),
+                  fontFamily,
+                  ...pickerStyle,
+                },
+              }
+            : {
+                inputAndroid: {
+                  color: 'transparent',
+                  fontSize: scaleFont(14),
+                  fontFamily,
+                  ...pickerStyle,
+                },
+                inputAndroidContainer: {pointerEvents: 'none'},
+              }
+        }
+      />
     </TouchableOpacity>
   );
 };
@@ -85,7 +126,7 @@ const List = ({item, setFieldValue}) => {
 const getPlans = async (network = 'MTN') => {
   try {
     const response = await fetchRequest({
-      path: `billpayment/data/plans?network=${network?.toUpperCase?.()}&platform=apisubportal`,
+      path: `data-vending/plans?network=${network}`,
       displayMessage: true,
       showLoader: false,
       method: 'GET',
@@ -98,90 +139,63 @@ const getPlans = async (network = 'MTN') => {
   }
 };
 
-const getGiftingPlans = async (network = 'mtn') => {
-  try {
-    const response = await fetchRequest({
-      path: `billpayment/vtpass/variation-code?serviceId=${network?.toLocaleLowerCase?.()}-data`,
-      displayMessage: true,
-      showLoader: false,
-      method: 'GET',
-    });
-
-    return response?.data?.content?.varations;
-  } catch (error) {
-    console.log(error, 'errrss');
-    throw error;
-  }
-};
-
-const DataCard = ({}) => {
+const DataCard = ({data, onPress}) => {
   const {width} = useWindowDimensions();
-  const currentWidth = width / 3 - 100 / 3;
+  const currentWidth = width / 3 - 90 / 3;
   return (
-    <LinearGradient
-      // start={{x: 0, y: 0}}
-      // end={{x: 1, y: 0}}
-      colors={['#FFC849', '#CBDB31']}
-      style={{
-        height: 157,
-        // backgroundColor: '#CBDB31',
-        width: currentWidth,
-        marginBottom: 20,
-        marginHorizontal: 5,
-        borderRadius: 12,
-      }}>
-      <View
+    <TouchableOpacity onPress={onPress}>
+      <LinearGradient
+        colors={['#FFC849', '#CBDB31']}
         style={{
-          height: 127,
-          backgroundColor: '#F5F5F5',
-          marginTop: 1,
-          marginHorizontal: 1,
-          borderTopRightRadius: 12,
-          borderTopLeftRadius: 12,
-          alignItems: 'center',
-          justifyContent: 'center',
+          height: 157,
+          width: currentWidth,
+          marginBottom: 20,
+          marginHorizontal: 5,
+          borderRadius: 12,
         }}>
-        <Text size={12} semiBold color={COLORS.primary}>
-          30 Days
-        </Text>
+        <View
+          style={{
+            height: 127,
+            backgroundColor: '#F5F5F5',
+            marginTop: 1,
+            marginHorizontal: 1,
+            borderTopRightRadius: 12,
+            borderTopLeftRadius: 12,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text size={12} semiBold color={COLORS.primary}>
+            {data?.validity}
+          </Text>
 
-        <Text style={{marginTop: 10}} size={18} bold color={COLORS.darkBlue}>
-          1.8 GB
-        </Text>
-        <Text style={{marginTop: 10}} size={12} semiBold color={COLORS.primary}>
-          ₦1,500
-        </Text>
-      </View>
-      <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
-        <Text size={10} bold>
-          ₦30 Cashback
-        </Text>
-      </View>
-    </LinearGradient>
+          <Text style={{marginTop: 10}} size={18} bold color={COLORS.darkBlue}>
+            {data?.plan?.split?.(' ')?.[0]}
+          </Text>
+          <Text
+            style={{marginTop: 10}}
+            size={12}
+            semiBold
+            color={COLORS.primary}>
+            ₦{data?.amount}
+          </Text>
+        </View>
+        <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+          <Text size={10} bold>
+            ₦{formatAmount((data?.cashback / 100) * data?.amount)} Cashback
+          </Text>
+        </View>
+      </LinearGradient>
+    </TouchableOpacity>
   );
 };
 
 export const SellDataScreen = ({navigation, route}) => {
-  const [state, setState] = React.useState({
-    buttonDisabled: false,
-    bypass: false,
-  });
-
   const pickerRef = React.useRef(null);
 
+  const queryClients = useQueryClient();
   const {minHeight} = useLayouts();
-  const {getCustomers} = useBillsData();
-  const isFocused = useIsFocused();
-  const {getAndUpdateUserData} = useUser();
-  let {network, variation_code, variation_code_data, initialData, phoneNo} =
-    route?.params || {};
 
-  let selectedNetwork = NETWORKS[0];
-  if (network == 'airtel') {
-    selectedNetwork = NETWORKS[1];
-  } else if (network == 'glo') {
-    selectedNetwork = NETWORKS[3];
-  }
+  const {getAndUpdateUserData} = useUser();
 
   const {
     values,
@@ -197,36 +211,55 @@ export const SellDataScreen = ({navigation, route}) => {
     isValid,
   } = useFormik({
     initialValues: {
-      phone: phoneNo || '',
-      network: !network
-        ? ''
-        : typeof network == 'string'
-        ? selectedNetwork
-        : network,
-      amount: !network
-        ? ''
-        : variation_code?.amount || variation_code?.variation_amount,
-      type: !network
-        ? ''
-        : network == 'airtel' || network == 'glo'
-        ? variation_code_data
-        : {name: 'SME', value: 'SME'},
-      variation_code: variation_code || {},
+      phone: '',
+      network: NETWORKS[0],
+      amount: '',
+      type: {name: 'All', value: 'All'},
+      variation_code: {},
+      validityType: 'Daily',
     },
     validationSchema: validationSchema,
     onSubmit: values => {
+      const logo = NETWORKS?.filter?.(
+        item =>
+          item?.name?.toLowerCase?.() == values?.network?.name?.toLowerCase?.(),
+      )?.[0]?.image;
+      const detailsList = [
+        {name: 'Transaction Mobile Number', details: values?.phone},
+        {
+          name: 'Amount',
+          details: `${GENERAL.nairaSign}${formatAmount(
+            values?.variation_code?.amount,
+          )}`,
+        },
+        {
+          name: 'Data Type',
+          details: `${values?.variation_code?.name}`,
+        },
+        {
+          name: 'Receivable Cash-back',
+          details: `${values?.variation_code?.cashback}% - ${
+            GENERAL.nairaSign
+          }${formatAmount(
+            (values?.variation_code?.amount *
+              values?.variation_code?.cashback) /
+              100,
+          )}`,
+        },
+      ];
       BottomSheets.show({
         component: (
-          <ResellTransactionSummary
+          <BillsTransactionSummary
+            logo={logo}
+            detailsList={detailsList}
             details={{
               ...values,
-              type: 'Data',
+              amount: values?.variation_code?.amount,
             }}
             proceed={sellData}
-            btnTitle="Data"
+            title="Data Purchase"
           />
         ),
-        customSnapPoints: ['85%', '85%'],
       });
     },
   });
@@ -234,7 +267,6 @@ export const SellDataScreen = ({navigation, route}) => {
   validationSchema = yup.object().shape({
     network: yup.object().required('Please choose network'),
     type: yup.object().required('Please choose type'),
-    variation_code: yup.object().required('Please select data plan'),
     phone: yup
       .string()
       .required('Please input phone no')
@@ -244,67 +276,53 @@ export const SellDataScreen = ({navigation, route}) => {
         !values?.network?.name
           ? 'Select network'
           : `Invalid ${values?.network?.name} number`,
-        value =>
-          state?.bypass
-            ? true
-            : validateNumberNetwork(value, values?.network?.name),
+        value => validateNumberNetwork(value, values?.network?.name),
       ),
-    amount: yup.number().required('Please input amount'),
   });
-  const {
-    data: plansData,
-    error: plansError,
-    refetch: refetchPlans,
-    isFetching,
-  } = useQuery({
-    queryFn: () => getPlans(values?.network?.name),
-    queryKey: 'getPlans' + values?.network?.name,
-    initialData: initialData,
+  const {data: plansData, refetch: refetchPlans} = useQuery({
+    queryFn: () => getPlans(values?.network?.name?.toUpperCase?.()),
+    queryKey: [`getPlans'${values?.network?.name}`],
   });
 
   React.useEffect(() => {
     refetchPlans();
+    queryClients.invalidateQueries({
+      queryKey: [`getPlans'${values?.network?.name}`],
+    });
   }, [values?.network]);
-
-  const {
-    data: giftingPlansData,
-    error: plansGiftingError,
-    refetch: refetchGiftingPlans,
-  } = useQuery('getGiftingPlans' + values?.network?.name, () =>
-    getGiftingPlans(values?.network?.name, network),
-  );
-
-  React.useEffect(() => {
-    refetchPlans();
-    refetchGiftingPlans();
-  }, [values?.network]);
-
-  React.useEffect(() => {
-    refetchGiftingPlans();
-  }, [values?.type]);
 
   const mainDataPlans = React.useMemo(() => {
-    const plansDataFiltered = plansData?.filter(
-      item =>
-        item?.type?.toLowerCase?.() == values?.type?.value?.toLowerCase?.(),
-    );
+    const plansDataFiltered =
+      values?.type?.value == 'All'
+        ? plansData
+        : plansData?.filter(
+            item =>
+              item?.type?.toLowerCase?.() ==
+              values?.type?.value?.toLowerCase?.(),
+          );
 
-    const data = plansDataFiltered?.map?.(item => ({
-      ...item,
-      name: `${item?.network} ${item?.plan} ${item?.type}`,
-    }));
-    return data || [];
-  }, [plansData, values?.type]);
+    const dataWithValidity = plansDataFiltered?.map?.(item => {
+      const days = Number(item?.validity?.split(' ')[0]); // ensure it's a number
+      let type = '';
+      if (days < 7) {
+        type = 'Daily';
+      } else if (days < 30) {
+        type = 'Weekly';
+      } else {
+        type = 'Monthly';
+      }
 
-  const mainGiftingDataPlans = React.useMemo(() => {
-    const data = giftingPlansData?.map?.(item => ({
-      ...item,
-      name: `${item?.name}`,
-    }));
-    return data || [];
-  }, [giftingPlansData, values?.type]);
+      return {
+        ...item,
+        name: `${item?.network} ${item?.plan} ${item?.type}`,
+        validityType: type,
+      };
+    });
 
-  const dataRes = React.useMemo(() => {
+    return dataWithValidity || [];
+  }, [plansData, values?.type, values?.validityType]);
+
+  const types = React.useMemo(() => {
     const currentType = [];
 
     plansData?.forEach?.(item => {
@@ -313,54 +331,31 @@ export const SellDataScreen = ({navigation, route}) => {
       }
     });
 
-    currentType.push('GIFTING');
-
     const mapType = currentType?.map?.(item => ({name: item, value: item}));
-    return [...mapType];
+    return [{name: 'All', value: 'All'}, ...mapType];
   }, [plansData]);
-
-  React.useEffect(() => {
-    validateForm();
-  }, [state?.bypass]);
 
   const sellData = async (transactionPin, useCashback) => {
     try {
       let response;
-      if (values?.type?.name == 'GIFTING') {
-        response = await fetchRequest({
-          path: 'billpayment/vtpass/purchase-data',
-          data: {
-            serviceID: values?.network?.name?.toLowerCase?.() + '-data',
-            amount: values?.amount * 1,
-            billersCode: values?.phone,
-            variation_code: values?.variation_code?.variation_code,
-            phone: values?.phone,
-            transactionPin,
-          },
-          pageError: {
-            navigation,
-          },
-          headers: {debounceToken: new Date().getTime()},
-        });
-      } else {
-        response = await fetchRequest({
-          path: 'billpayment/reseller/data',
-          data: {
-            useCashback,
-            transactionPin,
-            network: `${values?.variation_code?.network?.toUpperCase?.()}`,
-            phone: values?.phone,
-            networkId: values?.variation_code?.id,
-            amount: values?.amount * 1,
-            type: values?.variation_code?.type,
-            platform: values?.variation_code?.platform,
-          },
-          pageError: {
-            navigation,
-          },
-          headers: {debounceToken: new Date().getTime()},
-        });
-      }
+
+      response = await fetchRequest({
+        path: 'data-vending/purchase',
+        data: {
+          useCashback,
+          transactionPin,
+          network: `${values?.variation_code?.network?.toUpperCase?.()}`,
+          phone: values?.phone,
+          networkId: values?.variation_code?.id,
+          amount: values?.variation_code?.amount * 1,
+          type: values?.variation_code?.type,
+          platform: values?.variation_code?.platform,
+        },
+        pageError: {
+          navigation,
+        },
+        headers: {debounceToken: new Date().getTime()},
+      });
 
       openSuccessScreen({
         number: values?.phone,
@@ -400,30 +395,6 @@ export const SellDataScreen = ({navigation, route}) => {
     }
   };
 
-  const {data: customersData, refetch} = useQuery(
-    'getCustomersDataScreen',
-    getCustomers,
-  );
-
-  React.useEffect(() => {
-    if (
-      values.network &&
-      values.amount &&
-      values.phone &&
-      values.variation_code &&
-      isValid
-    ) {
-      setState(prevState => ({...prevState, buttonDisabled: false}));
-    } else {
-      setState(prevState => ({...prevState, buttonDisabled: true}));
-    }
-  }, [values, isValid]);
-
-  React.useEffect(() => {
-    refetch();
-  }, [isFocused]);
-  console.log(mainDataPlans);
-
   return (
     <CustomSafeAreaView>
       <MainHeader nav title={'Data Purchase'} />
@@ -439,11 +410,11 @@ export const SellDataScreen = ({navigation, route}) => {
             value={values?.phone}
             onPress={phone => {
               const network = getNumberNetwork(phone);
-              const selectedNetworkData = getNumberNetwork(network);
+
               setValues({
                 ...values,
                 phone: phone,
-                network: state?.bypass ? null : selectedNetworkData,
+                network: network ? network : values?.network,
               });
             }}
           />
@@ -451,9 +422,10 @@ export const SellDataScreen = ({navigation, route}) => {
             <View style={{flexDirection: 'row'}}>
               <Input
                 leftIcon={
-                  <TouchableOpacity
+                  <View
                     onPress={() => {
                       pickerRef?.current.focus?.();
+                      console.log('yesss');
                     }}
                     style={{
                       height: 36,
@@ -461,32 +433,14 @@ export const SellDataScreen = ({navigation, route}) => {
                       alignItems: 'center',
                       marginRight: 8,
                     }}>
-                    <CustomPicker
-                      ref={pickerRef}
-                      error={touched?.network && errors?.network}
-                      data={NETWORKS}
+                    <PickerTrigger
                       value={values?.network}
-                      onValueChange={value => {
-                        setValues({...values, network: value, type: ''});
-                      }}
+                      onValueChange={value =>
+                        setValues({...values, network: value})
+                      }
+                      data={NETWORKS}
                       placeholder="Select Network"
-                      onBlur={() => {
-                        setFieldTouched('network', true);
-                      }}
-                      rightIcon={<></>}
-                      innerStyle={{opacity: 1, backgroundColor: 'transparent'}}
-                      conStyle={{
-                        position: 'absolute',
-                        zIndex: 100,
-                        height: '100%',
-                        marginBottom: 0,
-                        marginTop: 0,
-                        backgroundColor: 'transparent',
-                        width: 70,
-                        left: -20,
-                        top: -20,
-                        zIndex: 0,
-                      }}
+                      error={touched?.network && errors?.network}
                     />
                     <Image
                       source={values?.network?.image}
@@ -494,14 +448,15 @@ export const SellDataScreen = ({navigation, route}) => {
                     />
 
                     <Icons.ChevronDown size={15} />
-                  </TouchableOpacity>
+                  </View>
                 }
                 onPaste={value => {
                   const network = getNumberNetwork(value);
+
                   setValues({
                     ...values,
                     phone: value,
-                    network: network,
+                    network: network ? network : values?.network,
                   });
                 }}
                 keyboardType="numeric"
@@ -513,7 +468,7 @@ export const SellDataScreen = ({navigation, route}) => {
                   setValues({
                     ...values,
                     phone: value,
-                    network: network,
+                    network: network ? network : values?.network,
                   });
                 }}
                 onBlur={() => setFieldTouched('phone', true)}
@@ -521,58 +476,6 @@ export const SellDataScreen = ({navigation, route}) => {
               />
             </View>
           </View>
-
-          {/* <View style={{flexDirection: 'row'}}>
-            <View style={{width: 5}} />
-            <CustomPicker
-              data={dataRes}
-              onValueChange={value => {
-                setFieldValue('type', value);
-              }}
-              value={values?.type}
-              error={touched?.type && errors?.type}
-              placeholder="Select Data type"
-              onBlur={() => {
-                setFieldTouched('type', true);
-              }}
-            />
-          </View> */}
-
-          {/* <CustomPicker
-            loading={isFetching}
-            value={values?.variation_code}
-            error={touched?.variation_code && errors?.variation_code}
-            onValueChange={value => {
-              if (values?.variation_code?.name != value?.name) {
-                setValues({
-                  ...values,
-                  variation_code: value,
-                  amount: value?.amount || value?.variation_amount,
-                });
-              }
-            }}
-            data={
-              (values?.type?.name == 'GIFTING'
-                ? mainGiftingDataPlans
-                : mainDataPlans) ?? []
-            }
-            onBlur={() => {
-              setFieldTouched('variation_code', true);
-            }}
-            placeholder="Select Data plan"
-          /> */}
-
-          {/* <Input
-            fontSize={16}
-            fontFamily={FONTS.PLUS_JAKARTA_SANS_FONTS.bold}
-            showTextError={false}
-            error={touched?.amount && errors?.amount}
-            editable={false}
-            textColor={COLORS.blue}
-            placeholder="Amount"
-            backgroundColor="#EFF1FB"
-            value={formatAmount(values?.amount)}
-          /> */}
         </View>
         <View
           style={{
@@ -582,10 +485,11 @@ export const SellDataScreen = ({navigation, route}) => {
             justifyContent: 'center',
           }}>
           <ScrollView
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={{paddingHorizontal: 20}}
             style={{flexGrow: 0}}
             horizontal>
-            {dataRes?.map(item => (
+            {types?.map(item => (
               <TouchableOpacity
                 onPress={() => {
                   setFieldValue('type', item);
@@ -618,11 +522,49 @@ export const SellDataScreen = ({navigation, route}) => {
               backgroundColor: COLORS.white,
               marginTop: 15,
               borderRadius: 18,
+              minHeight: 235,
             }}>
-            <Text></Text>
+            <View style={{marginBottom: 20}}>
+              <ScrollView
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{}}
+                style={{flexGrow: 0}}
+                horizontal>
+                {['Daily', 'Weekly', 'Monthly']?.map(item => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setFieldValue('validityType', item);
+                    }}
+                    style={{
+                      height: 34,
+                      backgroundColor:
+                        values?.validityType == item ? '#E9E6F7' : COLORS.white,
+                      paddingHorizontal: 15,
+                      marginRight: 7,
+                      justifyContent: 'center',
+                      borderRadius: 32,
+                    }}>
+                    <Text
+                      bold
+                      size={12}
+                      color={
+                        values?.validityType == item
+                          ? COLORS.primary
+                          : COLORS.darkBlue
+                      }>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
 
             <View>
-              {mainDataPlans?.length == 0 && (
+              {mainDataPlans.filter(
+                item =>
+                  item.validityType?.toLowerCase?.() ===
+                  values?.validityType?.toLowerCase?.(),
+              ) == 0 && (
                 <View
                   style={{
                     justifyContent: 'center',
@@ -637,12 +579,22 @@ export const SellDataScreen = ({navigation, route}) => {
               )}
 
               <FlatList
-                columnWrapperStyle={{
-                  justifyContent: 'space-evenly',
-                }}
+                columnWrapperStyle={{}}
                 numColumns={3}
-                data={mainDataPlans}
-                renderItem={({item}) => <DataCard item={item} />}
+                data={mainDataPlans.filter(
+                  item =>
+                    item.validityType?.toLowerCase?.() ===
+                    values?.validityType?.toLowerCase?.(),
+                )}
+                renderItem={({item}) => (
+                  <DataCard
+                    onPress={() => {
+                      setFieldValue('variation_code', item);
+                      submitForm();
+                    }}
+                    data={item}
+                  />
+                )}
               />
             </View>
           </View>
@@ -656,19 +608,6 @@ export const SellDataScreen = ({navigation, route}) => {
             marginTop: 10,
           }}>
           <BillsBalance />
-        </View>
-
-        <View style={{marginBottom: 20, paddingHorizontal: 20}}>
-          <Button
-            titleStyle={{color: COLORS.white}}
-            type={state?.buttonDisabled ? 'grey' : 'primary'}
-            onPress={() => {
-              Keyboard.dismiss();
-              submitForm();
-            }}
-            style={{marginTop: 40}}
-            title={'Purchase'}
-          />
         </View>
       </ScrollView>
     </CustomSafeAreaView>

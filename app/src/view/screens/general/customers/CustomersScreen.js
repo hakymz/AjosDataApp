@@ -97,7 +97,10 @@ export const CustomersScreen = ({navigation, route}) => {
     isSuccess,
 
     error,
-  } = useQuery('getCustomersDataCustomerScreen', getCustomers);
+  } = useQuery({
+    queryKey: ['getCustomersCustomerScreen'],
+    queryFn: getCustomers,
+  });
 
   const deleteCustomersData = async id => {
     try {

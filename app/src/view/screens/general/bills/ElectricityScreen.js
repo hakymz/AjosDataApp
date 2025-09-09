@@ -16,20 +16,21 @@ import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
 import {COLORS, ELECTRICITY, FONTS, GENERAL} from '../../../../conts';
 
 import {useBillsData, useLayouts, useUser} from '../../../../hooks';
-import {TransactionSummary} from '../../../components/bottomSheetModal/contents';
+
 import {useQuery} from 'react-query';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
 import {
-  Copy,
   fetchRequest,
   formatAmount,
   openSuccessScreen,
 } from '../../../../helper';
 import Toast from '../../../components/toast/Toast';
-import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
 import {RecentCustomers} from '../../../components/home';
-import {BillsTransactionSummary} from '../../../components/bottomSheetModal/modalContents';
+import {
+  BillsTransactionSummary,
+  TransactionSummary,
+} from '../../../components/bottomSheetModal/modalContents';
 
 const validationSchema = yup.object().shape({
   billersCode: yup.string().required('Please enter Meter Number'),
@@ -132,76 +133,15 @@ export const ElectricityScreen = ({navigation}) => {
         },
         headers: {debounceToken: new Date().getTime()},
       });
-
-      console.log(response, 'response response ');
+      navigation.navigate('HomeScreen');
 
       openSuccessScreen({
         navigation,
-        title: (
-          <Text color={'#27A770'} size={18}>
-            Token Purchased Successfully
-          </Text>
-        ),
-
-        btnComponent: (
-          <View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 80,
-                justifyContent: 'center',
-              }}>
-              <SuccessHomeBtn title={'Go Home'} />
-              <SuccessShadowBtn
-                title={'View Receipt'}
-                onPress={() => {
-                  BottomSheets.show({
-                    component: <TransactionSummary details={response?.data} />,
-                    customSnapPoints: ['85%', '85%'],
-                  });
-                }}
-              />
-            </View>
-
-            <View style={{paddingHorizontal: 20, marginTop: 40}}>
-              <View
-                style={{
-                  height: 94,
-                  backgroundColor: '#EFF1FB',
-                  borderRadius: 8,
-                  paddingHorizontal: 20,
-                  paddingVertical: 15,
-                  justifyContent: 'center',
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Text md color={COLORS.blue}>
-                    Token
-                  </Text>
-                  <Icons.Copy
-                    size={20}
-                    onPress={() => {
-                      Copy(
-                        response?.data?.receiptDetails?.metaInfo?.moredetails
-                          ?.purchase_code,
-                      );
-                    }}
-                  />
-                </View>
-                <Text style={{marginTop: 10}} color={COLORS.blue} size={19} md>
-                  {
-                    response?.data?.receiptDetails?.metaInfo?.moredetails?.purchase_code?.split?.(
-                      'Token :',
-                    )?.[1]
-                  }
-                </Text>
-              </View>
-            </View>
-          </View>
-        ),
+        proceed: () => {
+          BottomSheets.show({
+            component: <TransactionSummary details={response?.data} />,
+          });
+        },
       });
     } catch (error) {
       console.log(error, 'errrss');
@@ -233,7 +173,6 @@ export const ElectricityScreen = ({navigation}) => {
           showLoader: false,
         });
 
-    
         if (response?.data?.content?.error) {
           Toast.show('error', response?.data?.content?.error);
         }
@@ -397,18 +336,7 @@ export const ElectricityScreen = ({navigation}) => {
         </View>
 
         <View style={{marginBottom: 20}}>
-          <RecentCustomers
-            value={values?.phone}
-            onPress={phone => {
-              const network = getNumberNetwork(phone);
-              const selectedNetworkData = getNumberNetwork(network);
-              setValues({
-                ...values,
-                phone: phone,
-                network: state?.bypass ? null : selectedNetworkData,
-              });
-            }}
-          />
+          <RecentCustomers value={values?.phone} />
         </View>
         <View style={{}}>
           <Button

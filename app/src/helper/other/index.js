@@ -28,3 +28,4 @@ export * from './getStatusColor';
 export * from './uploadImage';
 export * from './validateNumberNetwork';
 export * from './checkForAppUpdate';
+export * from './removeCountryCode';
