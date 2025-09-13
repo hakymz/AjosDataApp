@@ -1,5 +1,5 @@
 import {GENERAL} from '../../conts';
-// import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 import {fetchRequest} from '.';
 import {Platform} from 'react-native';
 import grantPermission from './grantPermission';
@@ -11,11 +11,11 @@ const OsVer = Platform.constants['Release'];
 const sendKeyToServer = async token => {
   try {
     const response = await fetchRequest({
-      path: '/settings/firebasetoken',
-      displayMessage: false,
-      showLoader: false,
-      data: {token: token},
-      method: 'PATCH',
+      path: '/settings/fcm/add',
+      displayMessage: true,
+      showLoader: true,
+      data: {token: token, device_type: GENERAL.platform},
+      method: 'POST',
     });
     console.log(response, 'token sendt');
   } catch (error) {
@@ -44,7 +44,6 @@ export const pushNotificationHelper = async () => {
         );
         await messaging().subscribeToTopic('general');
         if (__DEV__) {
-          console.log('yess dev');
           await messaging().subscribeToTopic('test');
         }
       }

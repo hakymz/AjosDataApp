@@ -8,38 +8,28 @@ import {
 } from '../../components/general';
 import {MainHeader} from '../../components/layouts';
 
-import {useTradeData, useUser} from '../../../hooks';
+import {useUser} from '../../../hooks';
 
 import {useIsFocused} from '@react-navigation/native';
 
-import {
-  checkForAppUpdate,
-  openErrorScreen,
-  openSuccessScreen,
-  pushNotificationHelper,
-} from '../../../helper';
+import {checkForAppUpdate, pushNotificationHelper} from '../../../helper';
 import {useQuery} from 'react-query';
 import {
   AccountBalance,
   MenuButtons,
-  QuickBuyData,
   RecentCustomers,
   Services,
   TourGuide,
 } from '../../components/home';
 
-import {
-  Biometric,
-  CopyNumberFromClipboard,
-  CreatePin,
-  openClipboardNumberModal,
-} from '../../components/bottomSheetModal/contents';
+import {openClipboardNumberModal} from '../../components/bottomSheetModal/contents';
 import {AppUpdate} from '../../components/bottomSheetModal/modalContents/AppUpdate';
-import {NoAddress} from '../../components/bottomSheetModal/modalContents';
+
+import {Finder} from '../../components/popupModal';
 
 // import Intercom from '@intercom/intercom-react-native';
 
-export const HomeScreen = ({navigation}) => {
+export const HomeScreen = ({navigation, route}) => {
   const {
     data,
     tour,
@@ -67,32 +57,34 @@ export const HomeScreen = ({navigation}) => {
     //   email: data?.user?.email,
     //   userId: data?.user?._id,
     // });
-    // pushNotificationHelper();
+    pushNotificationHelper();
   }, []);
 
   React.useEffect(() => {
     (async () => {
-      const thereIsUpdate = await checkForAppUpdate();
-      const hasValidclipboardNumber = await openClipboardNumberModal();
+      if (route?.name == 'HomeScreen') {
+        const thereIsUpdate = await checkForAppUpdate();
+        const hasValidclipboardNumber = await openClipboardNumberModal();
 
-      setTimeout(() => {
-        if (thereIsUpdate && tour) {
-          BottomSheets.show({
-            component: <AppUpdate />,
-            customSnapPoints: [600, 600],
-            canClose: false,
-          });
-        } else if (!data?.user?.setTransactionPin && tour) {
-          navigation.navigate('SetPinScreen');
-        } else if (!settings?.biometric && tour) {
-          // BottomSheets.show({
-          //   component: <Biometric />,
-          //   customSnapPoints: [600, 600],
-          // });
-        }
-      }, 500);
+        setTimeout(() => {
+          if (!data?.user?.setTransactionPin && tour) {
+            navigation.navigate('SetPinScreen');
+          } else if (thereIsUpdate && tour) {
+            BottomSheets.show({
+              component: <AppUpdate />,
+              customSnapPoints: [600, 600],
+              canClose: false,
+            });
+          } else if (!settings?.biometric && tour) {
+            // BottomSheets.show({
+            //   component: <Biometric />,
+            //   customSnapPoints: [600, 600],
+            // });
+          }
+        }, 500);
+      }
     })();
-  }, []);
+  }, [route?.name]);
 
   React.useEffect(() => {
     autoLogout('check');
@@ -100,7 +92,6 @@ export const HomeScreen = ({navigation}) => {
       'change',
       async nextAppState => {
         autoLogout(nextAppState);
-        console.log(nextAppState);
 
         if (nextAppState == 'active') {
           Intercom.handlePushMessage();
@@ -140,38 +131,41 @@ export const HomeScreen = ({navigation}) => {
   };
 
   return (
-    <CustomSafeAreaView>
-      <TourGuide />
-      <MainHeader />
-      <ScrollView
-        bouncesZoom={false}
-        ref={scrollRef}
-        refreshControl={
-          <RefreshControl
-            tintColor={COLORS.lightBlue}
-            colors={[COLORS.primary, COLORS.lightBlue]}
-            refreshing={refreshing}
-            onRefresh={refresh}
-          />
-        }
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: GENERAL.platform == 'ios' ? 80 : 100,
-          paddingTop: 20,
-        }}
-        onMomentumScrollEnd={({nativeEvent}) => {}}>
-        <View style={{paddingHorizontal: 20}}>
-          <AccountBalance />
-        </View>
+    <>
+      {route?.name == 'FinderScreen' && <Finder />}
+      <CustomSafeAreaView>
+        <TourGuide />
+        <MainHeader />
+        <ScrollView
+          bouncesZoom={false}
+          ref={scrollRef}
+          refreshControl={
+            <RefreshControl
+              tintColor={COLORS.lightBlue}
+              colors={[COLORS.primary, COLORS.lightBlue]}
+              refreshing={refreshing}
+              onRefresh={refresh}
+            />
+          }
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingBottom: GENERAL.platform == 'ios' ? 80 : 100,
+            paddingTop: 20,
+          }}
+          onMomentumScrollEnd={({nativeEvent}) => {}}>
+          <View style={{paddingHorizontal: 20}}>
+            <AccountBalance />
+          </View>
 
-        <MenuButtons />
+          <MenuButtons />
 
-        <Services />
-        <View style={{paddingHorizontal: 20}}>
-          <RecentCustomers />
-        </View>
-      </ScrollView>
-      <LiveChatButton />
-    </CustomSafeAreaView>
+          <Services />
+          <View style={{paddingHorizontal: 20}}>
+            <RecentCustomers />
+          </View>
+        </ScrollView>
+        <LiveChatButton />
+      </CustomSafeAreaView>
+    </>
   );
 };

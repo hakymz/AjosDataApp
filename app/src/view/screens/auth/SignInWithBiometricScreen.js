@@ -52,7 +52,7 @@ export const SignInWithBiometricScreen = ({navigation}) => {
         data: value,
       });
 
-      await saveUserDetailsToKeyChain(value);
+      await saveUserDetailsToKeyChain({key: 'user_login', ...value});
 
       const currentSettings = {
         hideBalance: false,
@@ -75,10 +75,7 @@ export const SignInWithBiometricScreen = ({navigation}) => {
 
   const SignInWithAuth = async () => {
     try {
-      let auth = true;
-
-      const details = await getUserDetailsFromKeyChain();
-      console.log(details, 'keyChainDetails');
+      const details = await getUserDetailsFromKeyChain('user_login');
 
       if (details) {
         if (details?.username && details?.password) {

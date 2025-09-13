@@ -64,10 +64,6 @@ const MyTabBar = ({state, descriptors, navigation}) => {
               canPreventDefault: true,
             });
 
-            if (route?.name == 'FinderScreen') {
-              PopupModal.show({component: <Finder />});
-            }
-
             if (!isFocused && !event.defaultPrevented) {
               navigation.navigate(route.name, route.params);
             }

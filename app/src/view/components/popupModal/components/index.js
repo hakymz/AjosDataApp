@@ -1,4 +1,3 @@
-export * from './Finder';
+export * from '../../general/others/Finder';
 export * from './AccountDetails';
 export * from './CryptoRates';
-export * from './Finder';

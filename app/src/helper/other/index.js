@@ -29,3 +29,4 @@ export * from './uploadImage';
 export * from './validateNumberNetwork';
 export * from './checkForAppUpdate';
 export * from './removeCountryCode';
+export * from './parseJSON';

@@ -18,7 +18,7 @@ import {
   Text,
 } from '../../../components/general';
 import {MainHeader} from '../../../components/layouts';
-import {fetchRequest, formatAmount} from '../../../../helper';
+import {fetchRequest, formatAmount, parseJSON} from '../../../../helper';
 import {useQuery, useQueryClient} from 'react-query';
 import {
   DollarCardDetails,
@@ -30,22 +30,14 @@ import {
 import {BlurView} from '@react-native-community/blur';
 import moment from 'moment';
 const List = ({item}) => {
-  console.log(item);
-  let des = '';
-
-  if (item?.receiptDetails?.info == 'Airtime Recharge') {
-    des = item?.receiptDetails?.metaInfo?.receiver;
-  } else {
-    des = item?.receiptDetails?.type;
-  }
   return (
     <TouchableOpacity
       onPress={() => {
-        // BottomSheets.show({
-        //   component: <TransactionSummary details={item} />,
-        //   disableScrollIfPossible: false,
-        //   showCloseBtn: false,
-        // });
+        BottomSheets.show({
+          component: <TransactionSummary details={item} />,
+          disableScrollIfPossible: false,
+          showCloseBtn: false,
+        });
       }}
       style={{
         height: 80,
@@ -127,6 +119,7 @@ const getDollarDetails = async id => {
       path: `virtual-card/details/${id}`,
       method: 'GET',
       showLoader: false,
+      displayMessage: false,
     });
 
     return response;
@@ -152,8 +145,7 @@ const getDollarCardRates = async () => {
 const Card = ({item, totalCards}) => {
   const {width} = useWindowDimensions();
   const queryClient = useQueryClient();
-  let cardDetails =
-    typeof item?.body == 'string' ? JSON.parse(item?.body) : item?.body?.card;
+  let cardDetails = parseJSON(item?.body);
 
   const {data} = useQuery({
     queryKey: [item?.id],
@@ -161,6 +153,7 @@ const Card = ({item, totalCards}) => {
   });
 
   const unfreezeCard = async () => {
+    console.log(item?.id);
     try {
       const response = await fetchRequest({
         path: `virtual-card/unfreeze/${item?.id}`,
@@ -319,22 +312,17 @@ const CardMenus = ({selectedCard}) => {
 
 const getHistory = async ({pageParam = 1, id}) => {
   try {
+    if (!id) {
+      return false;
+    }
     const response = await fetchRequest({
-      path: `virtual-card/transactions/${id}`,
-      data: {
-        page: '1',
-        limit: '5',
-        startDate: '2025-07-01',
-        endDate: '2025-07-31',
-      },
-      displayMessage: true,
+      path: `virtual-card/transactions/${id}?page=0&limit=10`,
       showLoader: false,
+      displayMessage: false,
       method: 'GET',
     });
 
-    // console.log(response, 'response response');
-
-    return {...response, current_page: pageParam};
+    return {...response?.data, current_page: pageParam};
   } catch (error) {
     console.log(error, 'erroor pkkkk');
     throw error;
@@ -475,7 +463,7 @@ export const DollarCardDetailsScreen = ({navigation}) => {
           </Text>
         </View>
         <InfiniteFlatList
-          keyProps="data"
+          keyProps="result"
           renderItem={({item}) => <List item={item} />}
           request={({pageParam}) =>
             getHistory({pageParam, id: state?.selectedCard?.id})

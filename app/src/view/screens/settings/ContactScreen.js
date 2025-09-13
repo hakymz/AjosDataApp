@@ -14,7 +14,7 @@ import {PageList} from '../../components/lists';
 
 const List = ({title, icon, ...props}) => {
   return (
-    <PageList {...props}>
+    <PageList rightIcon={<></>} {...props}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         {icon}
         <Text

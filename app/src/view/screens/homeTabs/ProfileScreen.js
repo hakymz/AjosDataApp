@@ -1,11 +1,10 @@
 import React from 'react';
-import {Platform, ScrollView, TouchableOpacity, View} from 'react-native';
+import {Platform, ScrollView, View} from 'react-native';
 import {COLORS, GENERAL} from '../../../conts';
 import {useUser} from '../../../hooks';
 
 import {} from '../../components/bottomSheetModal/content';
 import {
-  BottomSheets,
   CustomSafeAreaView,
   Icons,
   Text,
@@ -14,9 +13,12 @@ import {
 import {MainHeader} from '../../components/layouts';
 import {PageList} from '../../components/lists';
 
-import {UpdateNotification} from '../../components/bottomSheetModal/contents';
-
-import {enableBiometric, openLink} from '../../../helper';
+import {
+  enableBiometric,
+  fetchRequest,
+  openLink,
+  saveUserDetailsToKeyChain,
+} from '../../../helper';
 import Toast from '../../components/toast/Toast';
 
 const List = ({title, icon, ...props}) => {
@@ -34,6 +36,17 @@ const List = ({title, icon, ...props}) => {
       </View>
     </PageList>
   );
+};
+
+const validatePin = async transactionPin => {
+  try {
+    const response = fetchRequest({
+      path: 'settings/verify-transaction-pin',
+      data: {
+        transactionPin,
+      },
+    });
+  } catch (error) {}
 };
 export const ProfileScreen = ({navigation, route}) => {
   const {logoutUser, data, settings, updateUserData} = useUser();
@@ -95,6 +108,49 @@ export const ProfileScreen = ({navigation, route}) => {
           }
         />
         <List
+          title={'Confirm transactions with biometrics'}
+          icon={<Icons.Scan size={24} />}
+          rightIcon={
+            <ToggleInput
+              onValueChange={() => {}}
+              click={async () => {
+                if (settings?.pinBiometric) {
+                  updateUserData({
+                    data: data,
+                    settings: {
+                      ...settings,
+                      pinBiometric: false,
+                      transactionPin: '',
+                    },
+                  });
+                } else {
+                  navigation.navigate('PinScreen', {
+                    proceed: async pin => {
+                      try {
+                        await saveUserDetailsToKeyChain({
+                          email: 'user_pin',
+                          password: pin,
+                          key: 'user_pin',
+                        });
+                        await validatePin?.(pin);
+                        updateUserData({
+                          data: data,
+                          settings: {
+                            ...settings,
+                            pinBiometric: true,
+                            transactionPin: pin,
+                          },
+                        });
+                      } catch (error) {}
+                    },
+                  });
+                }
+              }}
+              enableSwitch={settings?.pinBiometric}
+            />
+          }
+        />
+        <List
           onPress={() => {
             updateUserData({
               data: data,
@@ -130,7 +186,6 @@ export const ProfileScreen = ({navigation, route}) => {
           title={'Security'}
           icon={<Icons.Unlock size={24} />}
         />
-
         <List
           title={'Rate Us'}
           icon={<Icons.Like size={25} />}
@@ -149,7 +204,6 @@ export const ProfileScreen = ({navigation, route}) => {
           title={'Contact us'}
           icon={<Icons.SMS2 size={24} />}
         />
-
         <List
           onPress={() => {
             navigation.navigate('DeleteScreen');

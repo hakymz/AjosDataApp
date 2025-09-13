@@ -6,6 +6,7 @@ import {COLORS} from '../../../conts';
 // import Intercom from '@intercom/intercom-react-native';
 import {useUser} from '../../../hooks';
 import {Biometric, CreatePin} from '../bottomSheetModal/contents';
+import {useNavigation} from '@react-navigation/native';
 
 const Step1 = () => {
   const {top} = useSafeAreaInsets();
@@ -99,6 +100,7 @@ export const TourGuide = () => {
   const {tour, updateUserData, data, settings} = useUser();
   const [state, setState] = React.useState({step: 1});
   const {bottom} = useSafeAreaInsets();
+  const navigation = useNavigation();
 
   React.useEffect(() => {
     // if (!tour) {
@@ -125,11 +127,7 @@ export const TourGuide = () => {
             } else {
               updateUserData({tour: true});
               if (!data?.user?.setTransactionPin) {
-                BottomSheets.show({
-                  component: <CreatePin />,
-                  customSnapPoints: [600, 600],
-                  canClose: false,
-                });
+                navigation.navigate('SetPinScreen');
               } else if (!settings?.biometric) {
                 BottomSheets.show({
                   component: <Biometric />,

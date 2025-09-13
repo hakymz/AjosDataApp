@@ -55,6 +55,7 @@ import {
   UpdateProfileScreen,
 } from '../../screens/settings';
 import {PopupModal} from '../../components/popupModal/PopupModal';
+import {UpdatePinScreen} from '../../screens/general/security/UpdatePinScreen';
 
 const Stack = createStackNavigator();
 const MainStack = () => {
@@ -162,6 +163,7 @@ const MainStack = () => {
         <Stack.Screen name="PinSuccessScreen" component={PinSuccessScreen} />
         <Stack.Screen name="ChangePinScreen" component={ChangePinScreen} />
         <Stack.Screen name="BuyGiftCardScreen" component={BuyGiftCardScreen} />
+        <Stack.Screen name="UpdatePinScreen" component={UpdatePinScreen} />
         <Stack.Screen
           name="SellGiftCardSummaryScreen"
           component={SellGiftCardSummaryScreen}

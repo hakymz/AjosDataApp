@@ -1,15 +1,7 @@
 import React from 'react';
-import {
-  View,
-  Image,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  StatusBar,
-} from 'react-native';
+import {View, Image, FlatList, TouchableOpacity, StatusBar} from 'react-native';
 
-import {s} from 'react-native-size-matters';
-import {AVATAR, COLORS, IMAGES} from '../../../conts';
+import {COLORS, IMAGES} from '../../../conts';
 import {
   CircleButton,
   CustomSafeAreaView,
@@ -18,9 +10,6 @@ import {
   Text,
 } from '../../components/general';
 
-import {MainHeader} from '../../components/layouts';
-
-import {useQueryClient} from 'react-query';
 import {useUser} from '../../../hooks';
 import {
   fetchRequest,
@@ -44,7 +33,6 @@ const numberList = [
   'Delete',
 ];
 export const LoginWithPinScreen = ({navigation, route}) => {
-  const {proceed = () => {}} = route?.params || {};
   const {data, settings, updateUserData} = useUser();
   const [state, setState] = React.useState({
     error: false,
@@ -135,6 +123,11 @@ export const LoginWithPinScreen = ({navigation, route}) => {
         settings: currentSettings,
       });
     } catch (error) {
+      setState(prevState => ({
+        ...prevState,
+        pin: [],
+        currentPin: [],
+      }));
       console.log(error, 'errr');
     }
   };

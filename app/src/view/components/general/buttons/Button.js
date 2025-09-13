@@ -3,6 +3,8 @@ import {ActivityIndicator, TouchableOpacity, View} from 'react-native';
 import {s} from 'react-native-size-matters';
 import {COLORS} from '../../../../conts';
 import {Text} from '../text';
+import DropShadow from 'react-native-drop-shadow';
+
 export const Button = ({
   type = 'primary',
   big,
@@ -36,61 +38,73 @@ export const Button = ({
   };
 
   return (
-    <TouchableOpacity
-      disabled={disabled}
-      activeOpacity={0.8}
-      onPress={onPress}
-      style={{
-        height: getButtonSize(),
-        backgroundColor: disabled
-          ? '#6F889D40'
-          : configStyle[type].backgroundColor,
-        borderRadius: 16,
-        alignItems: 'center',
-        width: '100%',
-        flexDirection: 'row',
-        paddingHorizontal: 15,
-        justifyContent: 'space-between',
-        ...style,
-      }}>
-      {loading ? (
-        <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
-          <ActivityIndicator size={'small'} color={COLORS.secondary} />
-        </View>
-      ) : (
-        <>
-          {leftIcon && (
-            <View
-              style={{
-                justifyContent: 'flex-end',
-                width: 35,
-              }}>
-              {leftIcon}
-            </View>
-          )}
+    <DropShadow
+      style={
+        type == 'primary' &&
+        !disabled && {
+          // elevation: 13,
+          shadowColor: '#756EF3',
+          shadowOpacity: 0.5,
+          shadowRadius: 10,
+          shadowOffset: {height: 10},
+        }
+      }>
+      <TouchableOpacity
+        disabled={disabled}
+        activeOpacity={0.8}
+        onPress={onPress}
+        style={{
+          height: getButtonSize(),
+          backgroundColor: disabled
+            ? '#6F889D40'
+            : configStyle[type].backgroundColor,
+          borderRadius: 16,
+          alignItems: 'center',
+          width: '100%',
+          flexDirection: 'row',
+          paddingHorizontal: 15,
+          justifyContent: 'space-between',
+          ...style,
+        }}>
+        {loading ? (
+          <View
+            style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+            <ActivityIndicator size={'small'} color={COLORS.secondary} />
+          </View>
+        ) : (
+          <>
+            {leftIcon && (
+              <View style={{justifyContent: 'flex-end', width: 35}}>
+                {leftIcon}
+              </View>
+            )}
 
-          {title ? (
-            <Text
-              numberOfLines={1}
-              semiBold
-              size={fontSize}
-              color={textColor || configStyle[type].textColor}
-              style={{
-                flex: 1,
-                textAlign: rightIcon ? 'left' : 'center',
-                paddingHorizontal: 20,
-                ...titleStyle,
-              }}>
-              {title}
-            </Text>
-          ) : (
-            children
-          )}
-          {rightIcon && (
-            <View style={{alignItems: 'flex-end', width: 35}}>{rightIcon}</View>
-          )}
-        </>
-      )}
-    </TouchableOpacity>
+            {title ? (
+              <Text
+                numberOfLines={1}
+                semiBold
+                size={fontSize}
+                color={textColor || configStyle[type].textColor}
+                style={{
+                  flex: 1,
+                  textAlign: rightIcon ? 'left' : 'center',
+                  paddingHorizontal: 20,
+                  ...titleStyle,
+                }}>
+                {title}
+              </Text>
+            ) : (
+              children
+            )}
+
+            {rightIcon && (
+              <View style={{alignItems: 'flex-end', width: 35}}>
+                {rightIcon}
+              </View>
+            )}
+          </>
+        )}
+      </TouchableOpacity>
+    </DropShadow>
   );
 };

@@ -5,6 +5,7 @@ export const saveUserDetailsToKeyChain = async data => {
   try {
     await Keychain.setGenericPassword(data?.email, data?.password, {
       accessControl: undefined,
+      service: data?.key,
       // accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
     });
   } catch (error) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import {TouchableOpacity, View} from 'react-native';
 import {COLORS} from '../../../conts';
-import {fetchRequest} from '../../../helper';
+import {fetchRequest, parseJSON} from '../../../helper';
 
 import {
   BottomSheets,
@@ -25,6 +25,7 @@ const List = ({item}) => {
   } else {
     des = item?.receiptDetails?.type;
   }
+
   return (
     <TouchableOpacity
       onPress={() => {
@@ -56,7 +57,7 @@ const List = ({item}) => {
             fontWeight={500}
             size={14}
             color={COLORS.darkBlue}>
-            {JSON.parse(item?.receiptDetails)?.metaInfo?.description}
+            {parseJSON(item?.receiptDetails)?.metaInfo?.description}
           </Text>
           <Text style={{marginTop: 4}} color={'#848A94'} size={12}>
             {moment(item?.created_at).format('DD-MMM-YYYY')} |{' '}

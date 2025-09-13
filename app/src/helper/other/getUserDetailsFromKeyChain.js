@@ -3,14 +3,14 @@ import {Platform} from 'react-native';
 import ReactNativeBiometrics from 'react-native-biometrics';
 import Toast from '../../view/components/toast/Toast';
 
-export const getUserDetailsFromKeyChain = async () => {
+export const getUserDetailsFromKeyChain = async key => {
   try {
     const bio = await ReactNativeBiometrics.simplePrompt({
-      promptMessage: 'Confirm fingerprint',
+      promptMessage: 'Confirm biometrics',
     });
 
     if (bio?.success) {
-      const credentials = await Keychain.getGenericPassword({
+      const credentials = await Keychain.getGenericPassword(key, {
         accessControl: Platform.OS === 'android' ? undefined : undefined,
       });
 

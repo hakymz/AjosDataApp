@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  Image,
   StyleSheet,
   FlatList,
   TouchableOpacity,
@@ -9,7 +8,7 @@ import {
 } from 'react-native';
 
 import {s} from 'react-native-size-matters';
-import {AVATAR, COLORS} from '../../../../conts';
+import {COLORS} from '../../../../conts';
 import {
   CustomSafeAreaView,
   Icons,
@@ -18,8 +17,9 @@ import {
 } from '../../../components/general';
 
 import {MainHeader} from '../../../components/layouts';
-import {fetchRequest} from '../../../../helper';
-import {useQueryClient} from 'react-query';
+import {getUserDetailsFromKeyChain} from '../../../../helper';
+
+import {useUser} from '../../../../hooks';
 
 const numberList = [
   '1',
@@ -76,11 +76,29 @@ export const PinScreen = ({navigation, route}) => {
   };
 
   const Btn = ({value}) => {
+    const {settings} = useUser();
+
     return (
       <TouchableOpacity
-        disabled={!value}
-        onPress={() => {
-          addOrDeletePin(value, state, setState);
+        onPress={async () => {
+          try {
+            if (value) {
+              addOrDeletePin(value, state, setState);
+            } else {
+              if (settings?.pinBiometric) {
+                const details = await getUserDetailsFromKeyChain('user_pin');
+
+                if (!details) return;
+
+                const pin = details?.password;
+
+                navigation.goBack();
+                proceed?.(pin);
+              }
+            }
+          } catch (error) {
+            console.log(error);
+          }
         }}
         style={{
           height: 60,
@@ -93,7 +111,7 @@ export const PinScreen = ({navigation, route}) => {
           justifyContent: 'center',
         }}>
         <Text size={20} semiBold>
-          {value == '' && <Icons.FaceId />}
+          {value == '' && settings?.pinBiometric && <Icons.FaceId />}
           {value == 'Delete' ? <Icons.DeletePenBlue /> : value}
         </Text>
       </TouchableOpacity>

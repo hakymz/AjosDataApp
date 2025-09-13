@@ -13,34 +13,43 @@ import {MainHeader} from '../../../components/layouts';
 
 import {fetchRequest, openSuccessScreen} from '../../../../helper';
 import {PageList} from '../../../components/lists';
+import {useUser} from '../../../../hooks';
 
 export const ResetPasswordScreen = ({navigation}) => {
-  const updatePassword = async values => {
+  const {settings, user, updateUserData} = useUser();
+  const sendEmail = async values => {
+    // Reg user
     try {
       const response = await fetchRequest({
-        path: 'settings/change-password',
+        path: 'auth/forgot-password',
         data: {
-          oldPassword: values?.password,
-          password: values?.newPassword,
-          confirmPassword: values?.newPassword,
+          email: user?.email,
         },
-        method: 'PATCH',
       });
 
-      openSuccessScreen({
-        navigation,
-        title: 'Password Saved successfully',
-        subTitle: 'You can go ahead use this to Login... 👌',
-        btnTitle: 'Head back to Settings',
-        indicatorWidth: null,
-        proceed: () => {
-          navigation.navigate('SettingsScreen');
+      console.log(response);
+
+      updateUserData({
+        loggedIn: false,
+        settings: {
+          ...settings,
+          biometric: false,
+          pinBiometric: false,
+          loginWithPin: false,
         },
       });
+      setTimeout(() => {
+        navigation.navigate('OtpScreen', {
+          token: response?.data?.resetToken,
+          type: 'resetPassword',
+          email: user?.email,
+        });
+      }, 500);
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <CustomSafeAreaView backgroundColor={COLORS.white}>
       <MainHeader
@@ -91,7 +100,7 @@ export const ResetPasswordScreen = ({navigation}) => {
         </View>
 
         <View style={{flex: 1, justifyContent: 'flex-end'}}>
-          <Button title={'Send me OTP'} />
+          <Button title={'Send me OTP'} onPress={sendEmail} />
         </View>
       </KeyboardAvoidingViewWrapper>
     </CustomSafeAreaView>

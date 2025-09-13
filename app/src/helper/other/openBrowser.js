@@ -1,4 +1,4 @@
-import {InAppBrowser} from 'react-native-inappbrowser-reborn';
+// import {InAppBrowser} from 'react-native-inappbrowser-reborn';
 import {COLORS} from '../../conts';
 import {openLink} from './openLink';
 

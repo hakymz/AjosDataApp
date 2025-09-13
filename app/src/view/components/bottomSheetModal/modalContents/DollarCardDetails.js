@@ -3,7 +3,7 @@ import {View, Image} from 'react-native';
 import {BottomSheets, Button, Icons, Text} from '../../general';
 import {useNavigation} from '@react-navigation/native';
 import {PageList} from '../../lists';
-import {Copy} from '../../../../helper';
+import {Copy, parseJSON} from '../../../../helper';
 
 const List = ({details, name}) => {
   return (
@@ -38,8 +38,7 @@ const List = ({details, name}) => {
   );
 };
 export const DollarCardDetails = ({card}) => {
-  let cardDetails =
-    typeof card?.body == 'string' ? JSON.parse(card?.body) : card?.body?.card;
+  let cardDetails = parseJSON(card?.body);
 
   const navigation = useNavigation();
 

@@ -1,31 +1,17 @@
 import React from 'react';
-import {
-  View,
-  StatusBar,
-  SafeAreaView,
-  Keyboard,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import {View, StatusBar, SafeAreaView, Keyboard, Image} from 'react-native';
 import {COLORS} from '../../../conts';
 import {
   Button,
   CircleButton,
-  Icons,
   Input,
   KeyboardAvoidingViewWrapper,
-  OrLine,
-  SocialButton,
-  SupportButton,
   Text,
 } from '../../components/general';
 import {Formik} from 'formik';
 import * as yup from 'yup';
-import {AppNav} from '../../components/layouts';
 import {useLayouts, useUser} from '../../../hooks';
-import {HeaderImage} from '../../components/auth';
 import {fetchRequest, saveUserDetailsToKeyChain} from '../../../helper';
-import Toast from '../../components/toast/Toast';
 
 const validationSchema = yup.object().shape({
   email: yup
@@ -47,9 +33,7 @@ export const SignInScreen = ({navigation}) => {
         data: value,
       });
 
-      console.log(response, 'response response response');
-
-      await saveUserDetailsToKeyChain(value);
+      await saveUserDetailsToKeyChain({key: 'user_login', ...value});
 
       const currentSettings = {
         hideBalance: false,

@@ -3,7 +3,12 @@ import {FONTS} from '../../../../conts';
 import {s} from 'react-native-size-matters';
 import {MyIcons} from '../others';
 
-export const SearchInput = ({style, onChangeText, title = 'Search'}) => {
+export const SearchInput = ({
+  style,
+  onChangeText,
+  title = 'Search',
+  ...props
+}) => {
   return (
     <View style={{...styles.search, ...style}}>
       <MyIcons.Search size={20} />
@@ -15,8 +20,10 @@ export const SearchInput = ({style, onChangeText, title = 'Search'}) => {
           fontFamily: FONTS.PLUS_JAKARTA_SANS_FONTS.semiBold,
           color: '#848A94',
           marginHorizontal: 15,
+          flex: 1,
         }}
         placeholder={title}
+        {...props}
       />
     </View>
   );
