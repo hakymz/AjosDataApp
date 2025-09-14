@@ -24,7 +24,7 @@ import Toast from '../../components/toast/Toast';
 const List = ({title, icon, ...props}) => {
   return (
     <PageList {...props}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
         {icon}
         <Text
           style={{marginLeft: 10}}
@@ -46,7 +46,10 @@ const validatePin = async transactionPin => {
         transactionPin,
       },
     });
-  } catch (error) {}
+    return response;
+  } catch (error) {
+    throw error;
+  }
 };
 export const ProfileScreen = ({navigation, route}) => {
   const {logoutUser, data, settings, updateUserData} = useUser();
@@ -151,29 +154,28 @@ export const ProfileScreen = ({navigation, route}) => {
           }
         />
         <List
-          onPress={() => {
-            updateUserData({
-              data: data,
-              settings: {...settings, loginWithPin: !settings?.loginWithPin},
-            });
-          }}
           title={'Use PIN login'}
           icon={<Icons.AddCategory size={24} />}
           rightIcon={
             <ToggleInput
               onValueChange={() => {}}
               click={async () => {
-                try {
-                  updateUserData({
-                    data: data,
-                    settings: {
-                      ...settings,
-                      loginWithPin: !settings?.loginWithPin,
-                    },
-                  });
-                } catch (error) {
-                  console.log(error);
-                }
+                navigation.navigate('PinScreen', {
+                  proceed: async pin => {
+                    try {
+                      const response = await validatePin?.(pin);
+                      updateUserData({
+                        data: data,
+                        settings: {
+                          ...settings,
+                          loginWithPin: !settings?.loginWithPin,
+                        },
+                      });
+                    } catch (error) {
+                      console.log(error, 'error error pin');
+                    }
+                  },
+                });
               }}
               enableSwitch={settings?.loginWithPin}
             />

@@ -153,7 +153,6 @@ const Card = ({item, totalCards}) => {
   });
 
   const unfreezeCard = async () => {
-    console.log(item?.id);
     try {
       const response = await fetchRequest({
         path: `virtual-card/unfreeze/${item?.id}`,

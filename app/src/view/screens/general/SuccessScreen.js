@@ -137,8 +137,8 @@ export const SuccessScreen = ({route, navigation}) => {
               <Button
                 title={btnTitle}
                 onPress={() => {
-                  proceed?.();
                   navigation.goBack();
+                  proceed?.();
                 }}
               />
             </View>

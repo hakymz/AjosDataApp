@@ -51,6 +51,7 @@ import {
 import {
   ContactScreen,
   KycScreen,
+  NINScreen,
   ProfileDetailsScreen,
   UpdateProfileScreen,
 } from '../../screens/settings';
@@ -164,6 +165,7 @@ const MainStack = () => {
         <Stack.Screen name="ChangePinScreen" component={ChangePinScreen} />
         <Stack.Screen name="BuyGiftCardScreen" component={BuyGiftCardScreen} />
         <Stack.Screen name="UpdatePinScreen" component={UpdatePinScreen} />
+        <Stack.Screen name="NINScreen" component={NINScreen} />
         <Stack.Screen
           name="SellGiftCardSummaryScreen"
           component={SellGiftCardSummaryScreen}

@@ -121,7 +121,7 @@ export const KycScreen = ({navigation, route}) => {
           rightIcon={<></>}
         />
         <Text medium style={{marginBottom: 30}} size={14} color={'#979797'}>
-          You need to Verify your BVN to generate a Moniepoint account
+          You need to Verify your BVN to generate a {details?.name} account
         </Text>
         <Input
           conStyle={{}}

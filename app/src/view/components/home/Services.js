@@ -10,6 +10,8 @@ import {BottomSheets, Icons, Text} from '../general';
 import {useNavigation} from '@react-navigation/native';
 import {COLORS} from '../../../conts';
 import {GiftCardsOptions} from '../bottomSheetModal/modalContents';
+import {useUser} from '../../../hooks';
+import {parseJSON} from '../../../helper';
 
 const ServiceCard = ({item}) => {
   const {width} = useWindowDimensions();
@@ -55,7 +57,10 @@ const ServiceCard = ({item}) => {
   );
 };
 
-export const Services = ({navigation}) => {
+export const Services = ({}) => {
+  const {user} = useUser();
+  const navigation = useNavigation();
+
   const listData = [
     {
       name: 'Data',
@@ -93,7 +98,13 @@ export const Services = ({navigation}) => {
       name: 'Dollar',
       details: 'Card',
       icon: <Icons.DollarCard size={18} />,
-      screen: 'DollarCardDetailsScreen',
+      onPress: () => {
+        if (parseJSON(user?.isVerified)?.nin) {
+          navigation.navigate('DollarCardDetailsScreen');
+        } else {
+          navigation.navigate('NINScreen');
+        }
+      },
     },
   ];
   return (

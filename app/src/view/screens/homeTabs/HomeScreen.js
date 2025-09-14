@@ -66,22 +66,20 @@ export const HomeScreen = ({navigation, route}) => {
         const thereIsUpdate = await checkForAppUpdate();
         const hasValidclipboardNumber = await openClipboardNumberModal();
 
-        setTimeout(() => {
-          if (!data?.user?.setTransactionPin && tour) {
-            navigation.navigate('SetPinScreen');
-          } else if (thereIsUpdate && tour) {
-            BottomSheets.show({
-              component: <AppUpdate />,
-              customSnapPoints: [600, 600],
-              canClose: false,
-            });
-          } else if (!settings?.biometric && tour) {
-            // BottomSheets.show({
-            //   component: <Biometric />,
-            //   customSnapPoints: [600, 600],
-            // });
-          }
-        }, 500);
+        if (!data?.user?.setTransactionPin && tour) {
+          navigation.navigate('SetPinScreen');
+        } else if (thereIsUpdate && tour) {
+          BottomSheets.show({
+            component: <AppUpdate />,
+            customSnapPoints: [600, 600],
+            canClose: false,
+          });
+        } else if (!settings?.biometric && tour) {
+          // BottomSheets.show({
+          //   component: <Biometric />,
+          //   customSnapPoints: [600, 600],
+          // });
+        }
       }
     })();
   }, [route?.name]);

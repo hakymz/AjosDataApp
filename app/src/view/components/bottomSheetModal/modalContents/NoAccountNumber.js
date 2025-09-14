@@ -1,12 +1,28 @@
 import React from 'react';
 import {View, Image} from 'react-native';
 import {BottomSheets, Button, Text} from '../../general';
-import {useNavigation} from '@react-navigation/native';
 import {PageList} from '../../lists';
+import {fetchRequest} from '../../../../helper';
+import {AccountDetails} from './AccountDetails';
 
-export const NoAccountNumber = ({data}) => {
-  const navigation = useNavigation();
-  console.log(data);
+export const NoAccountNumber = ({data, type}) => {
+  const generateAccount = async () => {
+    try {
+      const response = await fetchRequest({
+        path: `/wallet/virtual-account?gateway=${type}`,
+      });
+      console.log(response?.data?.bankAccounts?.[0]);
+      BottomSheets.show({
+        component: (
+          <AccountDetails
+            data={{...response?.data?.bankAccounts?.[0], ...data}}
+          />
+        ),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View>
@@ -59,7 +75,7 @@ export const NoAccountNumber = ({data}) => {
         <Button
           onPress={() => {
             BottomSheets.hide();
-            navigation.navigate('ProfileDetailsScreen');
+            generateAccount();
           }}
           title={'Generate Account'}
         />

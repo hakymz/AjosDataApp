@@ -30,25 +30,13 @@ export const TopupOption = ({}) => {
     } catch (error) {
       const message = extractError(error);
       if (message == 'Virtual account not found') {
-        BottomSheets.show({component: <NoAccountNumber data={data} />});
+        BottomSheets.show({
+          component: <NoAccountNumber type={type} data={data} />,
+        });
       }
     }
   };
-  const generateAccount = async (type, data) => {
-    try {
-      const response = await fetchRequest({
-        path: `/wallet/virtual-account?gateway=${type}`,
-      });
-      console.log(response?.data?.bankAccounts?.[0]);
-      BottomSheets.show({
-        component: (
-          <AccountDetails
-            data={{...response?.data?.bankAccounts?.[0], ...data}}
-          />
-        ),
-      });
-    } catch (error) {}
-  };
+
   const list = [
     {
       name: 'Moniepoint Virtual Account',

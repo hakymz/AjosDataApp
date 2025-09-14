@@ -39,6 +39,7 @@ export const SignInScreen = ({navigation}) => {
         hideBalance: false,
         biometric: false,
         currency: 'NGN',
+        loginWithPin: false,
         ...settings,
         notification: false,
       };
