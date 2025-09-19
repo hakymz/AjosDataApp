@@ -106,6 +106,8 @@ import Plug2 from '../../../../assets/svgs/icons/plug2.svg';
 import Delete2 from '../../../../assets/svgs/icons/delete2.svg';
 import Freeze from '../../../../assets/svgs/icons/freeze.svg';
 import Freeze2 from '../../../../assets/svgs/icons/freeze2.svg';
+import TransactionOut from '../../../../assets/svgs/icons/transactionOut.svg';
+import TransactionIn from '../../../../assets/svgs/icons/transactionIn.svg';
 
 const width = 30;
 const height = 30;
@@ -120,6 +122,12 @@ const customStyle = props => {
   };
 };
 export const Icons = {
+  TransactionIn: ({...props}) => {
+    return <Svg {...customStyle(props)} file={TransactionIn} />;
+  },
+  TransactionOut: ({...props}) => {
+    return <Svg {...customStyle(props)} file={TransactionOut} />;
+  },
   Delete2: ({...props}) => {
     return <Svg {...customStyle(props)} file={Delete2} />;
   },

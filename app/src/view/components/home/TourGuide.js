@@ -129,10 +129,10 @@ export const TourGuide = () => {
               if (!data?.user?.setTransactionPin) {
                 navigation.navigate('SetPinScreen');
               } else if (!settings?.biometric) {
-                BottomSheets.show({
-                  component: <Biometric />,
-                  customSnapPoints: [600, 600],
-                });
+                // BottomSheets.show({
+                //   component: <Biometric />,
+                //   customSnapPoints: [600, 600],
+                // });
               }
             }
           }}

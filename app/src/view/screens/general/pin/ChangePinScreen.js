@@ -18,7 +18,11 @@ import {
 } from '../../../components/general';
 
 import {MainHeader} from '../../../components/layouts';
-import {fetchRequest, openSuccessScreen} from '../../../../helper';
+import {
+  fetchRequest,
+  openSuccessScreen,
+  saveUserDetailsToKeyChain,
+} from '../../../../helper';
 import {useQueryClient} from 'react-query';
 import {PageList} from '../../../components/lists';
 
@@ -52,7 +56,6 @@ export const ChangePinScreen = ({navigation, route}) => {
     let currentPin = state.currentPin;
     let oldPin = state.oldPin;
     let error = false;
-    console.log(oldPin, title, 'oldPinoldPin ');
 
     if (number == 'Cancel') {
       pin = [];
@@ -108,6 +111,12 @@ export const ChangePinScreen = ({navigation, route}) => {
           confirmPin: state?.currentPin,
         },
       });
+      await saveUserDetailsToKeyChain({
+        email: 'user_pin',
+        password: state?.currentPin,
+        key: 'user_pin',
+      });
+
       navigation.goBack();
       openSuccessScreen({
         navigation,
@@ -116,8 +125,17 @@ export const ChangePinScreen = ({navigation, route}) => {
         btnTitle: 'Go Home',
         proceed: () => navigation.navigate('HomeScreen'),
       });
+
       queryClient.invalidateQueries({queryKey: ['userData']});
-    } catch (error) {}
+    } catch (error) {
+      setState(prevState => ({
+        ...prevState,
+        error: false,
+        pin: [],
+        currentPin: [],
+        oldPin: [],
+      }));
+    }
   };
 
   const Btn = ({value}) => {

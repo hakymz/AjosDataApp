@@ -24,9 +24,6 @@ export const fetchRequest = async ({
   headers = null,
 }) => {
   const token = await getToken();
-  if (headers) {
-    console.log(headers, 'headers headers headers');
-  }
 
   if (token) {
     headers = {...headers, Authorization: `Bearer ${token}`};
@@ -64,7 +61,7 @@ export const fetchRequest = async ({
   } catch (error) {
     const {data: {message = ''} = {}, status} = error?.response || {};
 
-    // console.error({url: path, message, status});
+    console.error({url: path, message, status});
 
     if (status == 401) {
       Toast.show(

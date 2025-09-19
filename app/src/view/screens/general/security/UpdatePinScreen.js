@@ -13,7 +13,11 @@ import {
 } from '../../../components/general';
 import {MainHeader} from '../../../components/layouts';
 import * as yup from 'yup';
-import {fetchRequest, openSuccessScreen} from '../../../../helper';
+import {
+  fetchRequest,
+  openSuccessScreen,
+  saveUserDetailsToKeyChain,
+} from '../../../../helper';
 import {PageList} from '../../../components/lists';
 
 const validationSchema = yup.object().shape({
@@ -57,6 +61,12 @@ export const UpdatePinScreen = ({navigation}) => {
           password: values?.password,
           confirmPin: values?.confirmPin,
         },
+      });
+
+      await saveUserDetailsToKeyChain({
+        email: 'user_pin',
+        password: values?.newPin,
+        key: 'user_pin',
       });
 
       openSuccessScreen({
@@ -124,6 +134,7 @@ export const UpdatePinScreen = ({navigation}) => {
             onBlur={() => setFieldTouched('password', true)}
           />
           <Input
+            keyboardType="numeric"
             maxLength={4}
             password
             placeholder="Enter New Pin"
@@ -136,6 +147,7 @@ export const UpdatePinScreen = ({navigation}) => {
             onBlur={() => setFieldTouched('newPin', true)}
           />
           <Input
+            keyboardType="numeric"
             maxLength={4}
             password
             placeholder="Confirm Pin"

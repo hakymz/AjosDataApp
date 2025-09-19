@@ -25,11 +25,13 @@ import {
   FreezeCard,
   TerminateCard,
   TopupDollarCard,
+  TransactionSummary,
   WithdrawDollarCard,
 } from '../../../components/bottomSheetModal/modalContents';
 import {BlurView} from '@react-native-community/blur';
 import moment from 'moment';
 const List = ({item}) => {
+  console.log(item?.status);
   return (
     <TouchableOpacity
       onPress={() => {
@@ -64,14 +66,23 @@ const List = ({item}) => {
             ${item?.amount}
           </Text>
           <Text style={{marginTop: 4}} color={'#848A94'} size={12}>
-            {moment(item?.created_at).format('DD-MMM-YYYY')} |{' '}
+            {moment(item?.created_at).format('hh:mma')} |{' '}
+            {moment(item?.created_at).format('DD-MMM-YYYY')}
           </Text>
         </View>
 
-        <Image
-          source={{uri: item?.imageUrl || item?.image}}
-          style={{height: 43, width: 43, borderRadius: 40}}
-        />
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          {item?.status == 'debit' ? (
+            <Icons.TransactionOut />
+          ) : (
+            <Icons.TransactionIn />
+          )}
+
+          <Image
+            source={{uri: item?.imageUrl || item?.image}}
+            style={{height: 43, width: 43, borderRadius: 40}}
+          />
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -247,6 +258,11 @@ const Card = ({item, totalCards}) => {
 };
 
 const CardMenus = ({selectedCard}) => {
+  const {data: rate} = useQuery({
+    queryKey: ['getDollarCardRates'],
+    queryFn: getDollarCardRates,
+  });
+
   return (
     selectedCard?.status == 'active' && (
       <View style={{alignItems: 'center'}}>
@@ -336,11 +352,6 @@ export const DollarCardDetailsScreen = ({navigation}) => {
     queryFn: getDollarCards,
   });
 
-  const {data: rate} = useQuery({
-    queryKey: ['getDollarCardRates'],
-    queryFn: getDollarCardRates,
-  });
-
   if (card?.data?.length === 0) {
     navigation.replace('DollarCardScreen');
   }
@@ -352,124 +363,116 @@ export const DollarCardDetailsScreen = ({navigation}) => {
   return (
     <CustomSafeAreaView style={{backgroundColor: COLORS.background}}>
       <MainHeader nav title={'Dollar Card'} />
-      <KeyboardAvoidingViewWrapper
-        addMinHeight
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          backgroundColor: COLORS.background,
-          marginTop: 10,
-          paddingBottom: 80,
+
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          marginBottom: 20,
+          marginTop: 20,
+          justifyContent: 'space-between',
+          paddingHorizontal: 20,
         }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginBottom: 20,
-            marginTop: 20,
-            justifyContent: 'space-between',
-            paddingHorizontal: 20,
-          }}>
-          <Text size={25} semiBold color={COLORS.darkBlue}>
-            Cards
-          </Text>
-          {state?.selectedCard?.status == 'active' && (
-            <TouchableOpacity
-              onPress={() => {
-                BottomSheets.show({
-                  component: <DollarCardDetails card={state?.selectedCard} />,
-                });
-              }}
-              style={{
-                height: 35,
-                backgroundColor: COLORS.white,
-                paddingHorizontal: 18,
-                borderRadius: 32,
-                justifyContent: 'center',
-              }}>
-              <Text size={12} bold color={COLORS.dark2}>
-                View Card Details
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <ScrollView
-            contentContainerStyle={{
-              paddingHorizontal: 20,
-            }}
-            decelerationRate="fast"
-            snapToInterval={width - 120}
-            onScroll={({nativeEvent}) => {
-              if (!nativeEvent?.contentOffset) return;
-
-              const index = Math.round(nativeEvent.contentOffset.x / width);
-
-              setState(prevState => ({
-                ...prevState,
-                selectedCard: card?.data?.[index],
-              }));
-            }}
-            showsHorizontalScrollIndicator={false}
-            horizontal>
-            {card?.data?.map(item => (
-              <Card item={item} totalCards={card?.data?.length} />
-            ))}
-          </ScrollView>
-
+        <Text size={25} semiBold color={COLORS.darkBlue}>
+          Cards
+        </Text>
+        {state?.selectedCard?.status == 'active' && (
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('DollarCardScreen');
+              BottomSheets.show({
+                component: <DollarCardDetails card={state?.selectedCard} />,
+              });
             }}
             style={{
-              height: 183,
-              width: 38,
-              borderWidth: 1.4,
-              borderRadius: 18,
-              borderStyle: 'dashed',
+              height: 35,
+              backgroundColor: COLORS.white,
+              paddingHorizontal: 18,
+              borderRadius: 32,
               justifyContent: 'center',
-              marginRight: 20,
             }}>
-            <View
-              style={{
-                width: 100,
-                transform: [{rotate: '-90deg'}],
-                left: -33,
-                top: -20,
-              }}>
-              <Text size={12} medium style={{}} color={COLORS.dark2}>
-                Add Card
-              </Text>
-            </View>
+            <Text size={12} bold color={COLORS.dark2}>
+              View Card Details
+            </Text>
           </TouchableOpacity>
-        </View>
-        {/* Card menus */}
-        <CardMenus selectedCard={state?.selectedCard} />
+        )}
+      </View>
 
-        <View
-          style={{
-            marginTop: 20,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <ScrollView
+          contentContainerStyle={{
             paddingHorizontal: 20,
+          }}
+          decelerationRate="fast"
+          snapToInterval={width - 120}
+          onScroll={({nativeEvent}) => {
+            if (!nativeEvent?.contentOffset) return;
+
+            const index = Math.round(nativeEvent.contentOffset.x / width);
+
+            setState(prevState => ({
+              ...prevState,
+              selectedCard: card?.data?.[index],
+            }));
+          }}
+          showsHorizontalScrollIndicator={false}
+          horizontal>
+          {card?.data?.map(item => (
+            <Card item={item} totalCards={card?.data?.length} />
+          ))}
+        </ScrollView>
+
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('DollarCardScreen');
+          }}
+          style={{
+            height: 183,
+            width: 38,
+            borderWidth: 1.4,
+            borderRadius: 18,
+            borderStyle: 'dashed',
+            justifyContent: 'center',
+            marginRight: 20,
           }}>
-          <Text medium size={18} color={COLORS.dark}>
-            Transactions
-          </Text>
-          <Text style={{opacity: 0.5}} size={12} color={COLORS.dark}>
-            See all
-          </Text>
-        </View>
-        <InfiniteFlatList
-          keyProps="result"
-          renderItem={({item}) => <List item={item} />}
-          request={({pageParam}) =>
-            getHistory({pageParam, id: state?.selectedCard?.id})
-          }
-          queryKey={`getHistory${state?.selectedCard?.id}`}
-        />
-      </KeyboardAvoidingViewWrapper>
+          <View
+            style={{
+              width: 100,
+              transform: [{rotate: '-90deg'}],
+              left: -33,
+              top: -20,
+            }}>
+            <Text size={12} medium style={{}} color={COLORS.dark2}>
+              Add Card
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      {/* Card menus */}
+      <CardMenus selectedCard={state?.selectedCard} />
+
+      <View
+        style={{
+          marginTop: 20,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 20,
+        }}>
+        <Text medium size={18} color={COLORS.dark}>
+          Transactions
+        </Text>
+        <Text style={{opacity: 0.5}} size={12} color={COLORS.dark}>
+          See all
+        </Text>
+      </View>
+      <InfiniteFlatList
+        keyProps="result"
+        renderItem={({item}) => <List item={item} />}
+        request={({pageParam}) =>
+          getHistory({pageParam, id: state?.selectedCard?.id})
+        }
+        queryKey={`getHistory${state?.selectedCard?.id}`}
+      />
     </CustomSafeAreaView>
   );
 };

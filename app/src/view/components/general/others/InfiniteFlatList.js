@@ -12,6 +12,7 @@ export const InfiniteFlatList = ({
   category,
   contentContainerStyle,
   noDataCom,
+  ListHeaderComponent,
   ...props
 }) => {
   const [refreshing, setRefreshing] = React.useState(false);
@@ -109,7 +110,6 @@ export const InfiniteFlatList = ({
       }
       onEndReached={() => {
         loadingNextPage.current = true;
-        console.log('yess reacccc');
         setTimeout(() => {
           if (hasNextPage && !isFetching) {
             fetchNextPage();
