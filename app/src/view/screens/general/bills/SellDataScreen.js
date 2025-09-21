@@ -1,9 +1,6 @@
 import React from 'react';
 import {
   BottomSheets,
-  Button,
-  CheckBox,
-  CustomPicker,
   CustomSafeAreaView,
   Icons,
   Input,
@@ -28,7 +25,7 @@ import {
 import {COLORS, FONTS, GENERAL, NETWORKS} from '../../../../conts';
 import * as yup from 'yup';
 import {useBillsData, useLayouts, useUser} from '../../../../hooks';
-import {TransactionSummary} from '../../../components/bottomSheetModal/contents';
+
 import {useQuery, useQueryClient} from 'react-query';
 import {useFormik} from 'formik';
 import {
@@ -44,7 +41,10 @@ import {useIsFocused} from '@react-navigation/native';
 import {RecentCustomers} from '../../../components/home';
 import LinearGradient from 'react-native-linear-gradient';
 import RNPickerSelect from 'react-native-picker-select';
-import {BillsTransactionSummary} from '../../../components/bottomSheetModal/modalContents';
+import {
+  BillsTransactionSummary,
+  TransactionSummary,
+} from '../../../components/bottomSheetModal/modalContents';
 
 let validationSchema;
 
@@ -207,6 +207,7 @@ export const SellDataScreen = ({navigation, route}) => {
     handleChange,
     setValues,
     submitForm,
+    resetForm,
     validateForm,
     isValid,
   } = useFormik({
@@ -337,9 +338,7 @@ export const SellDataScreen = ({navigation, route}) => {
 
   const sellData = async (transactionPin, useCashback) => {
     try {
-      let response;
-
-      response = await fetchRequest({
+      let response = await fetchRequest({
         path: 'data-vending/purchase',
         data: {
           useCashback,
@@ -357,39 +356,17 @@ export const SellDataScreen = ({navigation, route}) => {
         headers: {debounceToken: new Date().getTime()},
       });
 
-      openSuccessScreen({
-        number: values?.phone,
-        navigation,
-        title: (
-          <Text color={'#27A770'} size={18}>
-            Data Successfully sold to{' '}
-            <Text color={'#27A770'} size={18} fontWeight={'700'}>
-              {values?.phone}
-            </Text>
-          </Text>
-        ),
-
-        btnComponent: (
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: 80,
-              justifyContent: 'center',
-            }}>
-            <SuccessHomeBtn title={'Go Home'} />
-            <SuccessShadowBtn
-              title={'View Receipt'}
-              onPress={() => {
-                BottomSheets.show({
-                  component: <TransactionSummary details={response?.data} />,
-                  customSnapPoints: ['85%', '85%'],
-                });
-              }}
-            />
-          </View>
-        ),
-      });
       getAndUpdateUserData();
+      resetForm();
+
+      openSuccessScreen({
+        navigation,
+        proceed: () => {
+          BottomSheets.show({
+            component: <TransactionSummary details={response?.data} />,
+          });
+        },
+      });
     } catch (error) {
       console.log(error, 'errrss');
     }
@@ -402,7 +379,7 @@ export const SellDataScreen = ({navigation, route}) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: 30,
-          paddingBottom: 40,
+          paddingBottom: 70,
           minHeight: minHeight - 70,
         }}>
         <View style={{paddingHorizontal: 20}}>

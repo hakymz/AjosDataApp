@@ -9,21 +9,12 @@ import {
   SearchInput,
   Text,
 } from '../../../components/general';
-import {AppNav, MainHeader} from '../../../components/layouts';
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import {MainHeader} from '../../../components/layouts';
+import {Image, TouchableOpacity, useWindowDimensions, View} from 'react-native';
 import {COLORS, GENERAL} from '../../../../conts';
 import {fetchRequest, formatAmount} from '../../../../helper';
 import {useQuery} from 'react-query';
-import {GiftCard, UploadImage} from '../../../components/giftCard';
-import {useOrientation} from '../../../../hooks';
+import {UploadImage} from '../../../components/giftCard';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
 import Toast from '../../../components/toast/Toast';
@@ -276,7 +267,7 @@ export const SellGiftCardScreen = ({navigation, route}) => {
 
           <CustomPicker
             error={touched?.cardCategory && errors?.cardCategory}
-            data={giftCardData}
+            data={giftCardData ?? []}
             value={values?.cardCategory}
             onValueChange={value => {
               setFieldValue('cardCategory', value);
@@ -288,7 +279,7 @@ export const SellGiftCardScreen = ({navigation, route}) => {
           />
           <CustomPicker
             error={touched?.cardSubCategory && errors?.cardSubCategory}
-            data={giftCardDataSub}
+            data={giftCardDataSub ?? []}
             value={values?.cardSubCategory}
             onValueChange={value => {
               setFieldValue('cardSubCategory', value);

@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Image} from 'react-native';
 import {BottomSheets, Button, Input, Text} from '../../general';
 import {useNavigation} from '@react-navigation/native';
-import {fetchRequest} from '../../../../helper';
+import {fetchRequest, formatAmount} from '../../../../helper';
 import {COLORS, FONTS, GENERAL, IMAGES} from '../../../../conts';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
@@ -13,10 +13,12 @@ import {useQueryClient} from 'react-query';
 import {useUser} from '../../../../hooks';
 
 let validationSchema;
-export const TopupDollarCard = ({card}) => {
+export const TopupDollarCard = ({card, rate}) => {
   const navigation = useNavigation();
   const queryClients = useQueryClient();
   const {getAndUpdateUserData} = useUser();
+
+  const conversionRate = rate?.conversionRate;
 
   validationSchema = yup.object().shape({
     amount: yup.string().required('Please input amount'),
@@ -137,7 +139,7 @@ export const TopupDollarCard = ({card}) => {
           textAlign={'right'}
           style={{opacity: 0.5}}
           color={COLORS.black}>
-          Conversion rate: $1 = ₦1,750{' '}
+          Conversion rate: $1 = ₦{formatAmount(conversionRate)}{' '}
         </Text>
         <Text
           size={12}
@@ -150,7 +152,7 @@ export const TopupDollarCard = ({card}) => {
         <Input
           editable={false}
           currency={GENERAL.nairaSign}
-          value={values.amount}
+          value={values.amount * conversionRate}
           // error={touched?.amount && errors?.amount}
           placeholder="0.0"
           inputStyle={{

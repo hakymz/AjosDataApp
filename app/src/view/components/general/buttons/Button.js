@@ -40,14 +40,15 @@ export const Button = ({
   return (
     <DropShadow
       style={
-        type == 'primary' &&
-        !disabled && {
-          // elevation: 13,
-          shadowColor: '#756EF3',
-          shadowOpacity: 0.5,
-          shadowRadius: 10,
-          shadowOffset: {height: 10},
-        }
+        type == 'primary' && !disabled
+          ? {
+              // elevation: 13,
+              shadowColor: '#756EF3',
+              shadowOpacity: 0.5,
+              shadowRadius: 10,
+              shadowOffset: {height: 10},
+            }
+          : {shadowOffset: {height: 0}}
       }>
       <TouchableOpacity
         disabled={disabled}

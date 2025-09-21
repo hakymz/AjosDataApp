@@ -43,7 +43,7 @@ export const CustomPicker = React.forwardRef(
       label:
         item?.name?.toString?.()?.trim?.() ||
         item?.plan?.toString?.()?.trim?.(),
-      value: item,
+      value: item ?? null,
       color: itemColor,
     }));
 
@@ -134,14 +134,14 @@ export const CustomPicker = React.forwardRef(
               }
               value={selectedValue}
               placeholder={{
-                value: '',
-                label: placeholder,
+                value: null,
+                label: placeholder ?? null,
                 color: itemColor,
               }}
               onValueChange={value => {
                 onValueChange(value);
               }}
-              items={dataSet}
+              items={dataSet ?? []}
             />
           </View>
           <View

@@ -216,7 +216,7 @@ export const ElectricityScreen = ({navigation}) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: 30,
-          paddingBottom: 100,
+          paddingBottom: 140,
           paddingHorizontal: 20,
           minHeight: minHeight - 70,
         }}>

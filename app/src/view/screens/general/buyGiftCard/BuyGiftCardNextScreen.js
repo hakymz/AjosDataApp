@@ -31,6 +31,7 @@ import {
   openSuccessScreen,
 } from '../../../../helper';
 import {BuyGiftCardTransactionSummary} from '../../../components/bottomSheetModal/modalContents/BuyGiftCardTransactionSummary';
+import {TransactionSummary} from '../../../components/bottomSheetModal/modalContents';
 
 let validationSchema = yup.object().shape({
   amount: yup.object().required('Please input amount'),
@@ -95,6 +96,7 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
     setFieldValue,
     setFieldTouched,
     handleSubmit,
+    resetForm,
   } = useFormik({
     initialValues: {amount: '', total: ''},
     validationSchema: validationSchema,
@@ -130,10 +132,17 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
         },
         pageError: {navigation},
       });
+      resetForm();
+      navigation.navigate('HomeScreen');
       openSuccessScreen({
         navigation,
         subTitle:
           'We have successfully sent the Gift Card to your default email and to your receipt.',
+        proceed: () => {
+          BottomSheets.show({
+            component: <TransactionSummary details={response?.data} />,
+          });
+        },
       });
     } catch (error) {}
   };
@@ -145,6 +154,8 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
         .min(giftData?.minRecipientDenomination)
         .max(giftData?.maxRecipientDenomination),
     });
+
+    console.log(giftData?.denominationType, 'poooo');
   }
 
   React.useEffect(() => {
@@ -224,41 +235,6 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
             </View>
           </View>
         </View>
-        {/* <GiftCardBigInput
-          type={giftData?.denominationType}
-          data={fixedRecipientToSenderDenominationsMap}
-          onChangeText={value => {
-            if (giftData?.denominationType == 'FIXED') {
-              setFieldValue('amount', value?.total);
-              setState(prevState => ({
-                ...prevState,
-                selectedDenominationsMap: value,
-              }));
-            } else {
-              setFieldValue('amount', value);
-            }
-          }}
-          onBlur={() => {
-            setFieldTouched('amount', true);
-          }}
-          conutryCode={giftData?.country?.isoName}
-          countryLogo={giftData?.flagUrl}
-          cardLogo={{uri: giftData?.logoUrls?.[0]}}
-          title={
-            giftData?.denominationType == 'FIXED'
-              ? 'Select Amount'
-              : 'Card Value'
-          }
-          placeholder="0.00"
-          error={touched.amount && errors.amount}
-          value={values?.amount}
-          textColor={{
-            active: COLORS.white,
-            blur: COLORS.white,
-            placeholderTextColor: COLORS.white,
-          }}
-          backgroundColor={COLORS.black}
-        /> */}
 
         <View style={{marginTop: 20}}>
           {giftData?.denominationType == 'FIXED' ? (
@@ -281,10 +257,13 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
                 setFieldValue('amount', value);
               }}
               value={values?.amount}
-              error={touched?.total && errors?.total}
-              currency="NGN"
+              error={touched?.amount && errors?.amount}
+              // currency="NGN"
               placeholder={'Amount'}
               onBlur={() => {
+                setFieldTouched('amount', true);
+              }}
+              onFocus={() => {
                 setFieldTouched('amount', true);
               }}
             />
@@ -331,7 +310,7 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
           editable={false}
           value={`${GENERAL.nairaSign}${formatAmount(values?.total)}`}
           error={touched?.total && errors?.total}
-          currency="NGN"
+          // currency="NGN"
           placeholder={'You Pay'}
           inputStyle={{
             color: COLORS.darkBlue,
@@ -379,7 +358,10 @@ export const BuyGiftCardNextScreen = ({navigation, route}) => {
             />
             <Text
               onPress={() => {
-                openLink(CONTACTS.termsLink);
+                setState(prevState => ({
+                  ...prevState,
+                  isChecked: !prevState.isChecked,
+                }));
               }}
               color={'#7F8192'}
               fontWeight={'500'}

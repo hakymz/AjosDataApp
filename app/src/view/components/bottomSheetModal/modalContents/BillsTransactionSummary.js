@@ -28,8 +28,8 @@ const List = ({name, details}) => {
   );
 };
 const Cashback = ({useCashback, state, setState}) => {
-  const {data} = useUser();
-  const maincashbackBalance = data?.wallet?.cashback?.balance;
+  const {data, user} = useUser();
+  const maincashbackBalance = data?.user?.wallet?.cashback?.balance;
 
   return (
     <View style={{height: 34, marginTop: 10, flexDirection: 'row'}}>
@@ -55,19 +55,20 @@ const Cashback = ({useCashback, state, setState}) => {
         </Text>
       </View>
       <TouchableOpacity
-        disabled={maincashbackBalance < 1}
+        disabled={maincashbackBalance * 1 < 1}
         onPress={() => {
           if (state?.cashbackBalance > 0) {
             setState(prevState => {
               let cashbackBalance = prevState?.cashbackBalance;
+              let totalAmount = 0;
 
               if (!prevState?.useCashback) {
-                if (cashbackBalance > prevState?.amount) {
+                if (cashbackBalance * 1 > prevState?.amount * 1) {
                   totalAmount = 0;
                   cashbackBalance = maincashbackBalance - prevState?.amount;
                 } else {
                   totalAmount = prevState?.amount - cashbackBalance;
-                  cashbackBalance = maincashbackBalance;
+                  cashbackBalance = 0;
                 }
               } else {
                 totalAmount = prevState?.amount;
@@ -106,9 +107,9 @@ export const BillsTransactionSummary = ({
   logo,
 }) => {
   const navigation = useNavigation();
-  const {data} = useUser();
+  const {data, user} = useUser();
 
-  const maincashbackBalance = data?.wallet?.cashback?.balance;
+  const maincashbackBalance = user?.wallet?.cashback?.balance;
   const [state, setState] = React.useState({
     totalAmount: details?.amount,
     amount: details?.amount,
@@ -157,7 +158,7 @@ export const BillsTransactionSummary = ({
       </View>
       <View style={{marginTop: 60}}>
         <Text style={{marginBottom: 20}} bold size={20} textAlign={'center'}>
-          Total - ₦{formatAmount(details?.amount)}
+          Total - ₦{formatAmount(state?.totalAmount)}
         </Text>
         <Button
           onPress={() => {

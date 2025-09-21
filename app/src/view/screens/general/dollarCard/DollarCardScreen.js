@@ -17,11 +17,12 @@ import {
   openSuccessScreen,
 } from '../../../../helper';
 
-import {useQuery} from 'react-query';
+import {useQuery, useQueryClient} from 'react-query';
 import {TransactionSummary} from '../../../components/bottomSheetModal/modalContents';
 
 export const DollarCardScreen = ({navigation}) => {
   const [state, setState] = React.useState({isChecked: false});
+  const queryClient = useQueryClient();
 
   const createCard = async (transactionPin, useCashback) => {
     try {
@@ -34,6 +35,8 @@ export const DollarCardScreen = ({navigation}) => {
         headers: {debounceToken: new Date().getTime()},
       });
 
+      navigation.gooBack();
+      queryClient.invalidateQueries({queryKey: ['getDollarCards']});
       openSuccessScreen({
         navigation,
         subTitle: 'We have successfully created your virtual dollar card.',
@@ -53,12 +56,12 @@ export const DollarCardScreen = ({navigation}) => {
             source={require('../../../../assets/images/others/virtualCardCreated.png')}
           />
         ),
-        btnTitle: 'Okay',
-        // proceed: () => {
-        //   BottomSheets.show({
-        //     component: <TransactionSummary details={response?.data} />,
-        //   });
-        // },
+
+        proceed: () => {
+          BottomSheets.show({
+            component: <TransactionSummary details={response?.data} />,
+          });
+        },
       });
       getAndUpdateUserData();
     } catch (error) {

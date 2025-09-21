@@ -13,17 +13,23 @@ import {ScrollView, StyleSheet, View} from 'react-native';
 import {COLORS, GENERAL, IMAGES} from '../../../../conts';
 
 import {useLayouts} from '../../../../hooks';
-import {TransactionSummary} from '../../../components/bottomSheetModal/contents';
+
 import {useQuery} from 'react-query';
 import {useFormik} from 'formik';
 
 import * as yup from 'yup';
 import {Copy, fetchRequest, openSuccessScreen} from '../../../../helper';
 import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
-import {BillsTransactionSummary} from '../../../components/bottomSheetModal/modalContents';
+import {
+  BillsTransactionSummary,
+  TransactionSummary,
+} from '../../../components/bottomSheetModal/modalContents';
 
 const validationSchema = yup.object().shape({
-  phone: yup.string().required('Please enter phone no'),
+  phone: yup
+    .string('Invalid phone no')
+    .required('Please enter phone no')
+    .matches(/^\+?[0-9]{10,15}$/, 'Invalid phone no'),
   provider: yup.object().required('Please select provider'),
 });
 
@@ -53,10 +59,11 @@ export const EPinScreen = ({route, navigation}) => {
     getVariationCodeById,
   );
 
-  const selectedType = React.useMemo(() => {
-    return educationVariationCode?.filter(
+  React.useEffect(() => {
+    const selected = educationVariationCode?.filter(
       item => item?.name?.toUpperCase() == type,
     )?.[0];
+    setFieldValue('provider', selected);
   }, [educationVariationCode]);
 
   const {
@@ -74,7 +81,7 @@ export const EPinScreen = ({route, navigation}) => {
   } = useFormik({
     initialValues: {
       amount: '',
-      provider: selectedType,
+      provider: '',
       phone: __DEV__ ? '08011111111' : '',
     },
     validationSchema: validationSchema,
@@ -102,10 +109,7 @@ export const EPinScreen = ({route, navigation}) => {
             }`,
           },
         ];
-        console.log(
-          values?.provider?.name?.toLowerCase?.(),
-          IMAGES?.[values?.provider?.name?.toLowerCase?.()],
-        );
+
         BottomSheets.show({
           component: (
             <BillsTransactionSummary
@@ -141,70 +145,11 @@ export const EPinScreen = ({route, navigation}) => {
 
       openSuccessScreen({
         navigation,
-        title: (
-          <Text color={'#27A770'} size={18}>
-            Token Purchased Successfully
-          </Text>
-        ),
-
-        btnComponent: (
-          <View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 80,
-                justifyContent: 'center',
-              }}>
-              <SuccessHomeBtn title={'Go Home'} />
-              <SuccessShadowBtn
-                title={'View Receipt'}
-                onPress={() => {
-                  BottomSheets.show({
-                    component: <TransactionSummary details={response?.data} />,
-                    customSnapPoints: ['85%', '85%'],
-                  });
-                }}
-              />
-            </View>
-
-            <View style={{paddingHorizontal: 20, marginTop: 40}}>
-              <View
-                style={{
-                  height: 94,
-                  backgroundColor: '#EFF1FB',
-                  borderRadius: 8,
-                  paddingHorizontal: 20,
-                  paddingVertical: 15,
-                  justifyContent: 'center',
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}>
-                  <Text md color={COLORS.blue}>
-                    Token
-                  </Text>
-                  <Icons.Copy
-                    size={20}
-                    onPress={() => {
-                      Copy(
-                        response?.data?.receiptDetails?.metaInfo?.moredetails
-                          ?.cards?.[0]?.Pin,
-                      );
-                    }}
-                  />
-                </View>
-                <Text style={{marginTop: 10}} color={COLORS.blue} size={19} md>
-                  {
-                    response?.data?.receiptDetails?.metaInfo?.moredetails
-                      ?.cards?.[0]?.Pin
-                  }
-                </Text>
-              </View>
-            </View>
-          </View>
-        ),
+        proceed: () => {
+          BottomSheets.show({
+            component: <TransactionSummary details={response?.data} />,
+          });
+        },
       });
     } catch (error) {
       console.log(error, 'errrss');
@@ -252,13 +197,13 @@ export const EPinScreen = ({route, navigation}) => {
               backgroundColor="#EFF1FB"
             />
             <Input
+              keyboardType="numeric"
               onPaste={value => {
                 setValues({
                   ...values,
                   phone: value,
                 });
               }}
-              editable={false}
               value={values.phone}
               error={touched?.phone && errors?.phone}
               onChangeText={handleChange('phone')}

@@ -46,11 +46,9 @@ const List = ({name, details, copy}) => {
     </View>
   );
 };
-export const TransactionSummary = ({proceed, btnTitle = 'Data', details}) => {
+export const TransactionSummary = ({details}) => {
   const navigation = useNavigation();
   const [state, setState] = React.useState({showBtn: true});
-
-  console.log(details);
 
   const viewShotRef = React.useRef();
 
@@ -218,20 +216,6 @@ export const TransactionSummary = ({proceed, btnTitle = 'Data', details}) => {
               ),
           )}
         </View>
-
-        <View style={{paddingHorizontal: 30}}>
-          {!state?.showBtn && (
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: 20,
-                marginBottom: 20,
-              }}>
-              <Image style={{width: 99, height: 43}} source={IMAGES.Logo} />
-            </View>
-          )}
-        </View>
       </ViewShot>
       <View style={{flex: 1, paddingBottom: 20}}>
         {state?.showBtn && (
@@ -244,6 +228,7 @@ export const TransactionSummary = ({proceed, btnTitle = 'Data', details}) => {
               alignItems: 'center',
             }}>
             <TouchableOpacity
+              onPress={captureAndShareScreenshot}
               style={{
                 backgroundColor: '#CBDB31',
                 height: 50,

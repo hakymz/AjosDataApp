@@ -12,8 +12,8 @@ const sendKeyToServer = async token => {
   try {
     const response = await fetchRequest({
       path: '/settings/fcm/add',
-      displayMessage: true,
-      showLoader: true,
+      displayMessage: false,
+      showLoader: false,
       data: {token: token, device_type: GENERAL.platform},
       method: 'POST',
     });

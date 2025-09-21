@@ -21,9 +21,13 @@ const Stack = createStackNavigator();
 const AuthStack = () => {
   const {settings, appHasBeenOpened} = useUser();
   let initialRouteName = 'SignInScreen';
-  if (settings?.loginWithPin) {
+  if (!appHasBeenOpened) {
+    initialRouteName = 'OnboardingScreen';
+  } else if (settings?.loginWithPin) {
     initialRouteName = 'LoginWithPinScreen';
   }
+
+  console.log(appHasBeenOpened);
   return (
     <Stack.Navigator
       initialRouteName={initialRouteName}

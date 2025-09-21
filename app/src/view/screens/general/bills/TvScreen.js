@@ -228,7 +228,7 @@ export const TvScreen = ({navigation}) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: 20,
-          paddingBottom: 100,
+          paddingBottom: 130,
           paddingHorizontal: 20,
           minHeight: minHeight - 70,
         }}>

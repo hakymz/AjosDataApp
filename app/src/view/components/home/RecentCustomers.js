@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {ScrollView, TouchableOpacity, View} from 'react-native';
 import {useBillsData} from '../../../hooks';
 import {Text} from '../general';
 import {useQuery} from 'react-query';
@@ -9,13 +9,10 @@ import {removeCountryCode} from '../../../helper';
 
 export const RecentCustomers = ({onPress, value}) => {
   const {getCustomers} = useBillsData();
-  const {
-    data: customersData,
-    status,
-    refetch,
-    isSuccess,
-    error,
-  } = useQuery({queryKey: ['getCustomersAirtimeCom'], queryFn: getCustomers});
+  const {data: customersData} = useQuery({
+    queryKey: ['getCustomersAirtimeCom'],
+    queryFn: getCustomers,
+  });
 
   const list = [
     {
@@ -56,7 +53,7 @@ export const RecentCustomers = ({onPress, value}) => {
 
       <ScrollView
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{flex: 0, paddingHorizontal: 20}}
+        contentContainerStyle={{marginHorizontal: 20}}
         style={{flexGrow: 0}}
         horizontal>
         {customersData?.result.map((item, index) => (

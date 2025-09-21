@@ -15,8 +15,6 @@ import {COLORS} from '../../../conts';
 import {TabsIcons} from '../../components/general/others/TabsIcons';
 import {HomeNavigator} from '../nestedNavigators';
 import {Text} from '../../components/general';
-import {PopupModal} from '../../components/popupModal/PopupModal';
-import {Finder} from '../../components/popupModal';
 
 const MyTabBar = ({state, descriptors, navigation}) => {
   return (
@@ -39,6 +37,7 @@ const MyTabBar = ({state, descriptors, navigation}) => {
           shadowColor: 'rgba(0,0,0,0.4)',
           shadowRadius: 20,
           shadowOpacity: 1,
+          elevation: 10,
           shadowOffset: {height: 10},
         }}>
         {state.routes.map((route, index) => {
@@ -91,7 +90,7 @@ const MyTabBar = ({state, descriptors, navigation}) => {
                   {Icon && <Icon size={21} focused={isFocused} />}
                   <Text
                     style={{marginLeft: 5}}
-                    size={13}
+                    size={12}
                     medium
                     color={'#F2F4F5'}>
                     {label}

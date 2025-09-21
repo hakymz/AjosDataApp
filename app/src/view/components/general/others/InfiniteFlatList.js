@@ -90,6 +90,7 @@ export const InfiniteFlatList = ({
 
   return (
     <FlatList
+      nestedScrollEnabled
       ListHeaderComponent={() => {
         if (pageData?.length == 0) {
           return (
@@ -104,11 +105,12 @@ export const InfiniteFlatList = ({
           );
         }
       }}
-      // onEndReachedThreshold ={0}
+      onEndReachedThreshold={0.3} // triggers when ~20% from bottom
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
       onEndReached={() => {
+        console.log('yes');
         loadingNextPage.current = true;
         setTimeout(() => {
           if (hasNextPage && !isFetching) {
@@ -118,7 +120,7 @@ export const InfiniteFlatList = ({
       }}
       contentContainerStyle={{
         paddingHorizontal: 20,
-        paddingBottom: 20,
+        // paddingBottom: 20,
         paddingTop: 20,
         ...contentContainerStyle,
       }}

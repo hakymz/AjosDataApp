@@ -147,7 +147,7 @@ export const HomeScreen = ({navigation, route}) => {
           }
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingBottom: GENERAL.platform == 'ios' ? 80 : 100,
+            paddingBottom: GENERAL.platform == 'ios' ? 80 : 120,
             paddingTop: 20,
           }}
           onMomentumScrollEnd={({nativeEvent}) => {}}>

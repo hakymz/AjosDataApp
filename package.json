@@ -3,13 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "npm i react-native-picker-select --legacy-peer-deps && react-native run-android",
     "ios": "react-native run-ios --simulator='iPhone 16 Pro'",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
     "build:android-release": "cd android && ./gradlew clean && ./gradlew bundleRelease",
-    "android-release": "react-native run-android --mode=release"
+    "android-release": "npm i react-native-picker-select --legacy-peer-deps && react-native run-android --mode=release"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "^4.6.1",
@@ -20,7 +20,7 @@
     "@react-native-firebase/app": "^20.5.0",
     "@react-native-firebase/messaging": "^23.3.1",
     "@react-native-masked-view/masked-view": "^0.2.6",
-    "@react-native-picker/picker": "^2.4.1",
+    "@react-native-picker/picker": "^2.11.2",
     "@react-navigation/bottom-tabs": "^6.3.1",
     "@react-navigation/material-top-tabs": "^6.6.14",
     "@react-navigation/native": "^6.1.18",
@@ -62,7 +62,7 @@
     "react-native-orientation-locker": "^1.4.0",
     "react-native-pager-view": "^6.5.1",
     "react-native-permissions": "^3.7.3",
-    "react-native-picker-select": "^8.1.0",
+    "react-native-picker-select": "^9.3.1",
     "react-native-qrcode-svg": "^6.1.2",
     "react-native-raw-bottom-sheet": "^3.0.0",
     "react-native-reanimated": "^3.8.1",

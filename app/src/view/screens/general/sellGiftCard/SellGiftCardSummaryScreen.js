@@ -157,8 +157,6 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
         });
       }
 
-      console.log(formData);
-
       const response1 = await fetchRequest({
         path: '/fileupload',
         headers: {'Content-Type': 'multipart/form-data'},
@@ -185,6 +183,8 @@ export const SellGiftCardSummaryScreen = ({navigation, route}) => {
       });
 
       navigation.navigate('HomeScreen');
+
+      console.log(response);
 
       openSuccessScreen({
         navigation,

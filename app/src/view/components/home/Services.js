@@ -26,7 +26,7 @@ const ServiceCard = ({item}) => {
         }
       }}
       style={{
-        width: width / 3 - 25,
+        width: width / 3 - 20,
         height: 118,
         backgroundColor: COLORS.white,
         borderRadius: 24,

@@ -3,13 +3,13 @@ import React from 'react';
 import {ScrollView} from 'react-native';
 import {COLORS} from '../../../../conts';
 import {CustomSafeAreaView, Text} from '../../../components/general';
-import {AppNav} from '../../../components/layouts';
+import {AppNav, MainHeader} from '../../../components/layouts';
 export const NotificationExpandedScreen = ({route}) => {
   const details = route?.params;
 
   return (
-    <CustomSafeAreaView>
-      <AppNav title={'Notifications'} />
+    <CustomSafeAreaView backgroundColor={COLORS.white}>
+      <MainHeader title={'Notifications'} backgroundColor={COLORS.white} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 30,

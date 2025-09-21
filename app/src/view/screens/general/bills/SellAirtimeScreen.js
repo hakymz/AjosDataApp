@@ -13,10 +13,7 @@ import {Image, Keyboard, TouchableOpacity, View} from 'react-native';
 import {COLORS, FONTS, GENERAL, NETWORKS} from '../../../../conts';
 
 import {useBillsData, useLayouts, useUser} from '../../../../hooks';
-import {
-  ResellTransactionSummary,
-  TransactionSummary,
-} from '../../../components/bottomSheetModal/contents';
+
 import {useFormik} from 'formik';
 import * as yup from 'yup';
 import {
@@ -30,7 +27,10 @@ import {useQuery} from 'react-query';
 import {SuccessHomeBtn, SuccessShadowBtn} from '../SuccessScreen';
 import {useIsFocused} from '@react-navigation/native';
 import {RecentCustomers} from '../../../components/home';
-import {BillsTransactionSummary} from '../../../components/bottomSheetModal/modalContents';
+import {
+  BillsTransactionSummary,
+  TransactionSummary,
+} from '../../../components/bottomSheetModal/modalContents';
 
 let validationSchema;
 
@@ -144,11 +144,11 @@ export const SellAirtimeScreen = ({navigation, route}) => {
       const response = await fetchRequest({
         path: 'billpayment/airtime/buy',
         data: {
-          ...values,
+          // ...values,
           phoneNumber: values?.phone,
           useCashback,
           transactionPin,
-          networkId: values?.network?.networkId,
+          networkId: values?.network?.network,
           amount: values?.amount * 1,
         },
         pageError: {
@@ -156,39 +156,15 @@ export const SellAirtimeScreen = ({navigation, route}) => {
         },
         headers: {debounceToken: new Date().getTime()},
       });
+      resetForm();
 
       openSuccessScreen({
-        number: values?.phone,
         navigation,
-        title: (
-          <Text color={'#27A770'} size={18}>
-            Airtime Successfully sold to{' '}
-            <Text color={'#27A770'} size={18} fontWeight={'700'}>
-              {values?.phone}
-            </Text>
-          </Text>
-        ),
-        btnTitle: 'Okay',
-        btnComponent: (
-          <View
-            style={{
-              flexDirection: 'row',
-              marginTop: 80,
-              justifyContent: 'center',
-            }}>
-            <SuccessHomeBtn title={'Go Home'} />
-            <SuccessShadowBtn
-              title={'View Receipt'}
-              onPress={() => {
-                // navigation.goBack();
-                BottomSheets.show({
-                  component: <TransactionSummary details={response?.data} />,
-                  customSnapPoints: ['85%', '85%'],
-                });
-              }}
-            />
-          </View>
-        ),
+        proceed: () => {
+          BottomSheets.show({
+            component: <TransactionSummary details={response?.data} />,
+          });
+        },
       });
       getAndUpdateUserData();
     } catch (error) {
@@ -211,7 +187,7 @@ export const SellAirtimeScreen = ({navigation, route}) => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: 20,
-          paddingBottom: 100,
+          paddingBottom: 150,
           paddingHorizontal: 20,
           minHeight: minHeight - 70,
         }}>

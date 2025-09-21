@@ -6,15 +6,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
+  RefreshControl,
 } from 'react-native';
 import {s} from 'react-native-size-matters';
-import {COLORS, FONTS} from '../../../../conts';
+import {COLORS, FONTS, GENERAL} from '../../../../conts';
 import {
   BottomSheets,
   CustomSafeAreaView,
   Icons,
   InfiniteFlatList,
-  KeyboardAvoidingViewWrapper,
   Text,
 } from '../../../components/general';
 import {MainHeader} from '../../../components/layouts';
@@ -31,7 +31,6 @@ import {
 import {BlurView} from '@react-native-community/blur';
 import moment from 'moment';
 const List = ({item}) => {
-  console.log(item?.status);
   return (
     <TouchableOpacity
       onPress={() => {
@@ -63,7 +62,8 @@ const List = ({item}) => {
             fontWeight={500}
             size={14}
             color={COLORS.darkBlue}>
-            ${item?.amount}
+            {GENERAL.nairaSign}
+            {item?.amount}
           </Text>
           <Text style={{marginTop: 4}} color={'#848A94'} size={12}>
             {moment(item?.created_at).format('hh:mma')} |{' '}
@@ -114,7 +114,7 @@ const getDollarCards = async () => {
     const response = await fetchRequest({
       path: '/virtual-card',
       method: 'GET',
-      showLoader: false,
+      showLoader: true,
     });
 
     return response;
@@ -181,7 +181,7 @@ const Card = ({item, totalCards}) => {
         marginRight: 10,
         overflow: 'hidden',
         borderRadius: 18,
-        width: totalCards == 1 ? width - 90 : width - 120,
+        width: totalCards == 1 ? width - 90 : width - 100,
       }}>
       {item?.status == 'freeze' && (
         <View
@@ -346,6 +346,8 @@ const getHistory = async ({pageParam = 1, id}) => {
 export const DollarCardDetailsScreen = ({navigation}) => {
   const [state, setState] = React.useState({selectedCard: null});
   const {width} = useWindowDimensions();
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = React.useState(false);
 
   const {data: card} = useQuery({
     queryKey: ['getDollarCards'],
@@ -356,6 +358,12 @@ export const DollarCardDetailsScreen = ({navigation}) => {
     navigation.replace('DollarCardScreen');
   }
 
+  const refresh = async () => {
+    setRefreshing(true);
+    await queryClient.invalidateQueries(['getDollarCards']);
+    setRefreshing(false);
+  };
+
   React.useEffect(() => {
     setState(prevState => ({...prevState, selectedCard: card?.data?.[0]}));
   }, [card]);
@@ -363,135 +371,130 @@ export const DollarCardDetailsScreen = ({navigation}) => {
   return (
     <CustomSafeAreaView style={{backgroundColor: COLORS.background}}>
       <MainHeader nav title={'Dollar Card'} />
-
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginBottom: 20,
-          marginTop: 20,
-          justifyContent: 'space-between',
-          paddingHorizontal: 20,
-        }}>
-        <Text size={25} semiBold color={COLORS.darkBlue}>
-          Cards
-        </Text>
-        {state?.selectedCard?.status == 'active' && (
-          <TouchableOpacity
-            onPress={() => {
-              BottomSheets.show({
-                component: <DollarCardDetails card={state?.selectedCard} />,
-              });
-            }}
-            style={{
-              height: 35,
-              backgroundColor: COLORS.white,
-              paddingHorizontal: 18,
-              borderRadius: 32,
-              justifyContent: 'center',
-            }}>
-            <Text size={12} bold color={COLORS.dark2}>
-              View Card Details
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-        <ScrollView
-          contentContainerStyle={{
-            paddingHorizontal: 20,
-          }}
-          decelerationRate="fast"
-          snapToInterval={width - 120}
-          onScroll={({nativeEvent}) => {
-            if (!nativeEvent?.contentOffset) return;
-
-            const index = Math.round(nativeEvent.contentOffset.x / width);
-
-            setState(prevState => ({
-              ...prevState,
-              selectedCard: card?.data?.[index],
-            }));
-          }}
-          showsHorizontalScrollIndicator={false}
-          horizontal>
-          {card?.data?.map(item => (
-            <Card item={item} totalCards={card?.data?.length} />
-          ))}
-        </ScrollView>
-
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('DollarCardScreen');
-          }}
-          style={{
-            height: 183,
-            width: 38,
-            borderWidth: 1.4,
-            borderRadius: 18,
-            borderStyle: 'dashed',
-            justifyContent: 'center',
-            marginRight: 20,
-          }}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            tintColor={COLORS.lightBlue}
+            colors={[COLORS.primary, COLORS.lightBlue]}
+            refreshing={refreshing}
+            onRefresh={refresh}
+          />
+        }>
+        <>
           <View
             style={{
-              width: 100,
-              transform: [{rotate: '-90deg'}],
-              left: -33,
-              top: -20,
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 20,
+              marginTop: 20,
+              justifyContent: 'space-between',
+              paddingHorizontal: 20,
             }}>
-            <Text size={12} medium style={{}} color={COLORS.dark2}>
-              Add Card
+            <Text size={25} semiBold color={COLORS.darkBlue}>
+              Cards
+            </Text>
+            {state?.selectedCard?.status == 'active' && (
+              <TouchableOpacity
+                onPress={() => {
+                  BottomSheets.show({
+                    component: <DollarCardDetails card={state?.selectedCard} />,
+                  });
+                }}
+                style={{
+                  height: 35,
+                  backgroundColor: COLORS.white,
+                  paddingHorizontal: 18,
+                  borderRadius: 32,
+                  justifyContent: 'center',
+                }}>
+                <Text size={12} bold color={COLORS.dark2}>
+                  View Card Details
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <ScrollView
+              contentContainerStyle={{
+                paddingHorizontal: 20,
+              }}
+              decelerationRate="fast"
+              snapToInterval={width - 100}
+              onMomentumScrollEnd={({nativeEvent}) => {
+                if (!nativeEvent?.contentOffset) return;
+
+                const index = Math.round(
+                  nativeEvent.contentOffset.x / (width - 100),
+                );
+
+                setState(prevState => ({
+                  ...prevState,
+                  selectedCard: card?.data?.[index],
+                }));
+              }}
+              showsHorizontalScrollIndicator={false}
+              horizontal>
+              {card?.data?.map(item => (
+                <Card item={item} totalCards={card?.data?.length} />
+              ))}
+            </ScrollView>
+
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('DollarCardScreen');
+              }}
+              style={{
+                height: 183,
+                width: 38,
+                borderWidth: 1.4,
+                borderRadius: 18,
+                borderStyle: 'dashed',
+                justifyContent: 'center',
+                marginRight: 20,
+              }}>
+              <View
+                style={{
+                  width: 100,
+                  transform: [{rotate: '-90deg'}],
+                  left: -33,
+                  top: -20,
+                }}>
+                <Text size={12} medium style={{}} color={COLORS.dark2}>
+                  Add Card
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+          {/* Card menus */}
+          <CardMenus selectedCard={state?.selectedCard} />
+
+          <View
+            style={{
+              marginTop: 20,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 20,
+            }}>
+            <Text medium size={18} color={COLORS.dark}>
+              Transactions
+            </Text>
+            <Text style={{opacity: 0.5}} size={12} color={COLORS.dark}>
+              See all
             </Text>
           </View>
-        </TouchableOpacity>
-      </View>
-      {/* Card menus */}
-      <CardMenus selectedCard={state?.selectedCard} />
-
-      <View
-        style={{
-          marginTop: 20,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: 20,
-        }}>
-        <Text medium size={18} color={COLORS.dark}>
-          Transactions
-        </Text>
-        <Text style={{opacity: 0.5}} size={12} color={COLORS.dark}>
-          See all
-        </Text>
-      </View>
-      <InfiniteFlatList
-        keyProps="result"
-        renderItem={({item}) => <List item={item} />}
-        request={({pageParam}) =>
-          getHistory({pageParam, id: state?.selectedCard?.id})
-        }
-        queryKey={`getHistory${state?.selectedCard?.id}`}
-      />
+        </>
+        <InfiniteFlatList
+          nestedScrollEnabled
+          keyProps="result"
+          renderItem={({item}) => <List item={item} />}
+          request={({pageParam}) =>
+            getHistory({pageParam, id: state?.selectedCard?.id})
+          }
+          queryKey={`getHistory${state?.selectedCard?.id}`}
+        />
+      </ScrollView>
     </CustomSafeAreaView>
   );
 };
-
-const style = StyleSheet.create({
-  con: {
-    height: 310,
-    backgroundColor: COLORS.yellow,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
-  },
-
-  iconCon: {
-    height: 42,
-    width: 42,
-    backgroundColor: COLORS.white,
-    borderRadius: 100,
-    marginBottom: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

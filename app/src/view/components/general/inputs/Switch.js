@@ -15,9 +15,9 @@ export const Switch = ({
   onPress,
   backgroundColors = [COLORS.primary, 'rgba(150, 150, 150, 1)'],
 }) => {
-  const thumbPostion = useSharedValue(20);
+  const thumbPostion = useSharedValue(0);
   // const backgroundColor = useSharedValue('rgb(183, 198, 226)');
-  const backgroundColorProgress = useSharedValue(1);
+  const backgroundColorProgress = useSharedValue(0);
 
   // const [enabled, setEnabled] = React.useState(false);
   const thumbAnimatedStyle = useAnimatedStyle(() => {

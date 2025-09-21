@@ -118,7 +118,15 @@ export const TourGuide = () => {
         </View>
 
         <TouchableOpacity
+          style={{
+            width: 129,
+            height: 191,
+            right: -5,
+            position: 'absolute',
+            bottom: bottom - 30,
+          }}
           onPress={() => {
+            console.log(state?.step);
             if (state?.step < 5) {
               setState(prevState => ({
                 ...prevState,
@@ -135,16 +143,9 @@ export const TourGuide = () => {
                 // });
               }
             }
-          }}
-          style={{}}>
+          }}>
           <Image
-            style={{
-              width: 129,
-              height: 191,
-              right: -5,
-              position: 'absolute',
-              bottom: bottom - 30,
-            }}
+            style={{height: '100%', width: '100%'}}
             source={require('../../../assets/images/onboarding/nextButton.png')}
           />
         </TouchableOpacity>

@@ -14,8 +14,14 @@ export const Finder = ({}) => {
     const searchL = search?.toLowerCase();
     if (searchL == 'electricity') {
       navigation.navigate('ElectricityScreen');
+    } else if (searchL == 'dollarcard' || searchL == 'virtualcard') {
+      navigation.navigate('DollarCardScreen');
     } else if (searchL == 'data') {
       navigation.navigate('SellDataScreen');
+    } else if (searchL == 'giftcard' || searchL == 'sellgiftcard') {
+      navigation.navigate('SellGiftCardScreen');
+    } else if (searchL == 'buygiftcard') {
+      navigation.navigate('BuyGiftCardCountryScreen');
     } else if (searchL == 'airtime') {
       navigation.navigate('SellAirtimeScreen');
     } else if (searchL == 'sms') {

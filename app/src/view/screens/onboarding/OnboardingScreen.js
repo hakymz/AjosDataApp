@@ -18,6 +18,7 @@ import onboardingScreens from '../../../conts/onboardingScreens';
 
 export const OnboardingScreen = ({navigation}) => {
   const {width} = useWindowDimensions();
+  const ref = React.useRef();
   const {updateUserData} = useUser();
   const [state, setState] = React.useState({
     indicatorIndex: 0,
@@ -29,6 +30,13 @@ export const OnboardingScreen = ({navigation}) => {
   };
   const goNextOrSkip = () => {
     if (state.indicatorIndex < 2) {
+      // Scroll to next item with ref
+      ref.current?.scrollToIndex({
+        index: state.indicatorIndex + 1,
+        animated: true,
+      });
+
+      // Update state
       setState(prevState => ({
         ...prevState,
         indicatorIndex: prevState.indicatorIndex + 1,
@@ -54,11 +62,12 @@ export const OnboardingScreen = ({navigation}) => {
             flex: 1,
           }}>
           <FlatList
+            ref={ref}
             data={onboardingScreens}
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            onScroll={event => {
+            onMomentumScrollEnd={event => {
               const x = event?.nativeEvent?.contentOffset?.x;
               const currentIndex = Math.round(x / (width - 48));
               if (state.indicatorIndex != currentIndex) {
@@ -124,7 +133,7 @@ export const OnboardingScreen = ({navigation}) => {
             <View
               style={{
                 flexDirection: 'row',
-                marginBottom: 40,
+                // marginBottom: 40,
                 marginTop: 20,
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -144,7 +153,7 @@ export const OnboardingScreen = ({navigation}) => {
                 }}
                 style={{}}>
                 <Image
-                  style={{width: 129, height: 191, right: -5}}
+                  style={{width: 109, height: 171, right: -5}}
                   source={require('../../../assets/images/onboarding/nextButton.png')}
                 />
               </TouchableOpacity>
